@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, CheckCircle2, Award } from 'lucide-react';
+import CountUpNumber from './CountUpNumber';
 
 const Hero = ({ onScheduleClick }) => {
   return (
@@ -106,15 +107,15 @@ const Hero = ({ onScheduleClick }) => {
               className="mt-12 grid grid-cols-3 gap-8"
             >
               <div>
-                <div className="text-4xl font-bold text-white mb-1">500+</div>
+                <div className="text-4xl font-bold text-white mb-1"><CountUpNumber end={500} suffix="+" /></div>
                 <div className="text-sm text-gray-400">Enterprise Clients</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-1">99.9%</div>
+                <div className="text-4xl font-bold text-white mb-1"><CountUpNumber end={99.9} decimals={1} suffix="%" /></div>
                 <div className="text-sm text-gray-400">Threat Detection</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-1">15+</div>
+                <div className="text-4xl font-bold text-white mb-1"><CountUpNumber end={15} suffix="+" /></div>
                 <div className="text-sm text-gray-400">Years Experience</div>
               </div>
             </motion.div>
@@ -157,7 +158,7 @@ const Hero = ({ onScheduleClick }) => {
                     <span className="text-sm text-gray-400">Threat Prevention Rate</span>
                     <span className="text-primary font-semibold text-sm">Excellent</span>
                   </div>
-                  <div className="text-3xl font-bold text-white mb-2">99.8%</div>
+                  <div className="text-3xl font-bold text-white mb-2"><CountUpNumber end={99.8} decimals={1} suffix="%" /></div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
                     <motion.div
                       initial={{ width: 0 }}
@@ -176,14 +177,14 @@ const Hero = ({ onScheduleClick }) => {
                 >
                   <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
                     <div className="text-sm text-gray-400 mb-2">Vulnerabilities</div>
-                    <div className="text-2xl font-bold text-white">0</div>
+                    <div className="text-2xl font-bold text-white"><CountUpNumber end={0} /></div>
                     <div className="text-xs text-green-400 mt-1 flex items-center">
                       <span className="mr-1">↓</span> Critical Issues
                     </div>
                   </div>
                   <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
                     <div className="text-sm text-gray-400 mb-2">Compliance</div>
-                    <div className="text-2xl font-bold text-white">100%</div>
+                    <div className="text-2xl font-bold text-white"><CountUpNumber end={100} suffix="%" /></div>
                     <div className="text-xs text-green-400 mt-1">All Standards Met</div>
                   </div>
                 </motion.div>
@@ -215,7 +216,7 @@ const Hero = ({ onScheduleClick }) => {
               className="absolute -bottom-6 -left-6 bg-gradient-to-br from-gray-800 to-gray-900 border border-primary/30 p-5 rounded-xl shadow-xl"
             >
               <div className="text-sm text-gray-400 mb-1">Threats Blocked Today</div>
-              <div className="text-3xl font-bold text-primary">2,847</div>
+              <div className="text-3xl font-bold text-primary"><CountUpNumber end={2847} /></div>
             </motion.div>
           </motion.div>
         </div>

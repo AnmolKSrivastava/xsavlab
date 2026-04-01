@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Cloud, Bot, ArrowRight, Lock, CheckCircle2, Users, TrendingUp, Globe, Package } from 'lucide-react';
+import CountUpNumber from './CountUpNumber';
 
 const ServiceCard = ({ icon: Icon, title, description, features, index, onScheduleClick, serviceId }) => {
   return (
@@ -120,8 +121,8 @@ const Services = ({ onScheduleClick }) => {
 
   const trustMetrics = [
     { icon: Lock, text: 'Enterprise-Grade Security', subtext: 'Bank-level encryption' },
-    { icon: Users, text: '500+ Clients', subtext: 'Across 25 industries' },
-    { icon: TrendingUp, text: '99.8% Success Rate', subtext: 'Client satisfaction' },
+    { icon: Users, value: 500, suffix: '+', label: 'Clients', subtext: 'Across 25 industries' },
+    { icon: TrendingUp, value: 99.8, decimals: 1, suffix: '%', label: 'Success Rate', subtext: 'Client satisfaction' },
     { icon: CheckCircle2, text: 'Certified Experts', subtext: 'ISO 27001 & SOC 2' },
   ];
 
@@ -184,7 +185,13 @@ const Services = ({ onScheduleClick }) => {
                 <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mx-auto mb-4">
                   <metric.icon className="w-6 h-6 text-primary" />
                 </div>
-                <div className="text-lg font-semibold text-white mb-1">{metric.text}</div>
+                <div className="text-lg font-semibold text-white mb-1">
+                  {metric.value !== undefined ? (
+                    <>
+                      <CountUpNumber end={metric.value} decimals={metric.decimals || 0} suffix={metric.suffix || ''} /> {metric.label}
+                    </>
+                  ) : metric.text}
+                </div>
                 <div className="text-sm text-gray-400">{metric.subtext}</div>
               </motion.div>
             ))}

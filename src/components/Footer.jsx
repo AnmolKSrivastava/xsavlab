@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Mail, Phone, MapPin, ArrowRight, CheckCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowRight, CheckCircle } from 'lucide-react';
+import companyLogo from '../assets/images/logo/xsav_lab_logo.jpeg';
 
 const Footer = () => {
   const footerLinks = {
@@ -20,8 +21,8 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="bg-primary/20 border border-primary/40 p-2.5 rounded-lg">
-                <Shield className="w-6 h-6 text-primary" />
+              <div className="bg-primary/20 border border-primary/40 p-1.5 rounded-lg">
+                <img src={companyLogo} alt="XSAV Lab logo" className="w-10 h-10 rounded object-cover" />
               </div>
               <div>
                 <div className="text-2xl font-bold text-white">XSAV Lab</div>

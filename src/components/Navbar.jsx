@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, Shield } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import companyLogo from '../assets/images/logo/xsav_lab_logo.jpeg';
 
 const Navbar = ({ onScheduleClick }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,8 +35,8 @@ const Navbar = ({ onScheduleClick }) => {
             className="flex items-center space-x-3 cursor-pointer"
             whileHover={{ scale: 1.02 }}
           >
-            <div className="bg-primary/10 border border-primary/30 p-2.5 rounded-lg">
-              <Shield className="w-6 h-6 text-primary" />
+            <div className="bg-primary/10 border border-primary/30 p-1.5 rounded-lg">
+              <img src={companyLogo} alt="XSAV Lab logo" className="w-10 h-10 rounded object-cover" />
             </div>
             <div className="flex flex-col">
               <span className="text-2xl font-bold text-white tracking-tight">

@@ -2,6 +2,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Award, Target, Zap, Shield, Link2, Mail } from 'lucide-react';
 import amitKumarImg from '../assets/images/team/amitKumarImg.png';
+import shivAryanImg from '../assets/images/team/Shiv Aryan.png';
+import sumitKumarImg from '../assets/images/team/sumitKumarImg.jpg';
+import CountUpNumber from './CountUpNumber';
 
 const TeamMember = ({ name, role, bio, image, linkedin, email, index }) => {
   return (
@@ -81,26 +84,26 @@ const About = () => {
   const team = [
     {
       name: 'Amit Kumar',
-      role: 'Founder and Chief Executive Officer',
-      bio: 'With over 15 years in cybersecurity, Amit leads our security operations and ensures enterprise-grade protection for all clients.',
+      role: 'Founder and CEO',
+      bio: 'As Founder and CEO, Amit leads XSAV Lab\'s vision and strategic direction, helping organizations strengthen cybersecurity posture while accelerating secure digital transformation.',
       image: amitKumarImg,
       linkedin: 'https://www.linkedin.com/in/amit-kumar-03084a19/',
       email: 'amit.tiwary@xsavlab.com',
     },
     {
-      name: 'Sarah Chen',
-      role: 'Head of Cloud Solutions',
-      bio: 'Sarah specializes in cloud architecture and DevOps, helping organizations migrate and optimize their infrastructure.',
-      image: null,
+      name: 'Shiv Aryan',
+      role: 'Business Director',
+      bio: 'Shiv leads business strategy, partnerships, and client success at XSAV Lab, aligning technology solutions with measurable business outcomes and long-term growth goals.',
+      image: shivAryanImg,
       linkedin: 'https://linkedin.com',
       email: 'sarah@xsavlab.com',
     },
     {
-      name: 'Michael Rodriguez',
-      role: 'Lead Software Architect',
-      bio: 'Michael brings 12+ years of software development expertise, crafting custom solutions that drive business growth.',
-      image: null,
-      linkedin: 'https://linkedin.com',
+      name: 'Sumit Kumar',
+      role: 'CTO',
+      bio: 'As CTO, Sumit architects secure, scalable platforms and drives innovation across cloud, AI, and cybersecurity initiatives to deliver enterprise-grade performance.',
+      image: sumitKumarImg,
+      linkedin: 'https://www.linkedin.com/in/sumit-tiwary-38343b202/',
       email: 'michael@xsavlab.com',
     },
   ];
@@ -189,19 +192,19 @@ const About = () => {
         >
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">2018</div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={2018} /></div>
               <div className="text-gray-400">Founded</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">500+</div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={500} suffix="+" /></div>
               <div className="text-gray-400">Clients Served</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">25+</div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={25} suffix="+" /></div>
               <div className="text-gray-400">Industries</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">99.9%</div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={99.9} decimals={1} suffix="%" /></div>
               <div className="text-gray-400">Client Satisfaction</div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Shield, Cloud, ArrowRight, Award } from 'lucide-react';
+import CountUpNumber from './CountUpNumber';
 
 const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: Icon, index }) => {
   return (
@@ -49,7 +50,12 @@ const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: 
                 transition={{ delay: 0.3 + idx * 0.1 }}
                 className="text-3xl font-bold text-primary mb-1"
               >
-                {result.value}
+                <CountUpNumber
+                  end={result.end}
+                  decimals={result.decimals || 0}
+                  suffix={result.suffix || ''}
+                  prefix={result.prefix || ''}
+                />
               </motion.div>
               <div className="text-xs text-gray-400">{result.label}</div>
             </div>
@@ -77,9 +83,9 @@ const CaseStudies = () => {
       challenge: 'Legacy security systems unable to detect sophisticated threats, resulting in compliance risks and potential data breaches.',
       solution: 'Deployed AI-powered Security Operations Center with 24/7 threat monitoring, automated incident response, and comprehensive security audits.',
       results: [
-        { value: '92%', label: 'Threat Reduction' },
-        { value: '65%', label: 'Faster Response' },
-        { value: '100%', label: 'Compliance Achieved' },
+        { end: 92, suffix: '%', label: 'Threat Reduction' },
+        { end: 65, suffix: '%', label: 'Faster Response' },
+        { end: 100, suffix: '%', label: 'Compliance Achieved' },
       ],
       icon: Shield,
     },
@@ -89,9 +95,9 @@ const CaseStudies = () => {
       challenge: 'On-premise infrastructure with high operational costs, limited scalability, and frequent downtime affecting customer experience.',
       solution: 'Complete cloud migration to AWS with automated DevOps pipelines, Infrastructure as Code, and intelligent cost optimization strategies.',
       results: [
-        { value: '42%', label: 'Cost Savings' },
-        { value: '99.9%', label: 'Uptime SLA' },
-        { value: '3x', label: 'Performance Boost' },
+        { end: 42, suffix: '%', label: 'Cost Savings' },
+        { end: 99.9, decimals: 1, suffix: '%', label: 'Uptime SLA' },
+        { end: 3, suffix: 'x', label: 'Performance Boost' },
       ],
       icon: Cloud,
     },
@@ -101,9 +107,9 @@ const CaseStudies = () => {
       challenge: 'Manual patient support processes overwhelming staff, leading to long wait times and decreased patient satisfaction scores.',
       solution: 'Implemented custom AI chatbot with HIPAA-compliant infrastructure, integrated with existing EMR systems for seamless patient interactions.',
       results: [
-        { value: '80%', label: 'Queries Automated' },
-        { value: '50%', label: 'Response Time Cut' },
-        { value: '4.8/5', label: 'Patient Satisfaction' },
+        { end: 80, suffix: '%', label: 'Queries Automated' },
+        { end: 50, suffix: '%', label: 'Response Time Cut' },
+        { end: 4.8, decimals: 1, suffix: '/5', label: 'Patient Satisfaction' },
       ],
       icon: TrendingUp,
     },
