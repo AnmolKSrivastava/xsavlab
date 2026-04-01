@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Award, Target, Zap, Shield, Link2, Mail } from 'lucide-react';
+import amitKumarImg from '../assets/images/team/amitKumarImg.png';
 
 const TeamMember = ({ name, role, bio, image, linkedin, email, index }) => {
   return (
@@ -79,12 +80,12 @@ const About = () => {
 
   const team = [
     {
-      name: 'John Anderson',
-      role: 'Chief Security Officer',
-      bio: 'With over 15 years in cybersecurity, John leads our security operations and ensures enterprise-grade protection for all clients.',
-      image: null,
-      linkedin: 'https://linkedin.com',
-      email: 'john@xsavlab.com',
+      name: 'Amit Kumar',
+      role: 'Founder and Chief Executive Officer',
+      bio: 'With over 15 years in cybersecurity, Amit leads our security operations and ensures enterprise-grade protection for all clients.',
+      image: amitKumarImg,
+      linkedin: 'https://www.linkedin.com/in/amit-kumar-03084a19/',
+      email: 'amit.tiwary@xsavlab.com',
     },
     {
       name: 'Sarah Chen',
