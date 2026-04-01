@@ -14,7 +14,7 @@ const Navbar = ({ onScheduleClick }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const menuItems = ['Services', 'About', 'Process', 'Case Studies', 'Contact'];
+  const menuItems = ['About', 'Services', 'Process', 'Case Studies', 'Contact'];
 
   return (
     <motion.nav
@@ -30,7 +30,8 @@ const Navbar = ({ onScheduleClick }) => {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <motion.div
-            className="flex items-center space-x-3"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center space-x-3 cursor-pointer"
             whileHover={{ scale: 1.02 }}
           >
             <div className="bg-primary/10 border border-primary/30 p-2.5 rounded-lg">
