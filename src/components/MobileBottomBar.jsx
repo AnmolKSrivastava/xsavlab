@@ -1,12 +1,25 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Phone, MessageCircle, Calendar } from 'lucide-react';
+import { theme } from '../config/theme';
 
 const MobileBottomBar = () => {
   const actions = [
-    { icon: Phone, label: 'Call', color: 'from-green-500 to-green-600' },
-    { icon: MessageCircle, label: 'Chat', color: 'from-primary to-secondary' },
-    { icon: Calendar, label: 'Book', color: 'from-purple-500 to-purple-600' },
+    { 
+      icon: Phone, 
+      label: 'Call', 
+      gradient: `linear-gradient(to right, ${theme.components.mobileBottomBar.callButton.gradientFrom}, ${theme.components.mobileBottomBar.callButton.gradientTo})` 
+    },
+    { 
+      icon: MessageCircle, 
+      label: 'Chat', 
+      gradient: `linear-gradient(to right, ${theme.colors.primary}, ${theme.colors.secondary})` 
+    },
+    { 
+      icon: Calendar, 
+      label: 'Book', 
+      gradient: `linear-gradient(to right, ${theme.components.mobileBottomBar.bookButton.gradientFrom}, ${theme.components.mobileBottomBar.bookButton.gradientTo})` 
+    },
   ];
 
   return (
@@ -21,7 +34,8 @@ const MobileBottomBar = () => {
             key={action.label}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`bg-gradient-to-r ${action.color} py-3 rounded-xl font-semibold text-sm flex items-center justify-center space-x-2 shadow-lg`}
+            style={{ background: action.gradient }}
+            className="py-3 rounded-xl font-semibold text-sm flex items-center justify-center space-x-2 shadow-lg text-white"
           >
             <action.icon className="w-4 h-4" />
             <span>{action.label}</span>
