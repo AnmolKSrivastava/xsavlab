@@ -12,13 +12,6 @@ const QuantumBackground = () => {
     duration: Math.random() * 10 + 15, // 15-25s
   }));
 
-  // Grid dots for quantum circuit effect
-  const gridDots = Array.from({ length: 50 }, (_, i) => ({
-    id: i,
-    left: (i % 10) * 10 + 5,
-    top: Math.floor(i / 10) * 20 + 10,
-  }));
-
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
       {/* Animated gradient overlay */}
