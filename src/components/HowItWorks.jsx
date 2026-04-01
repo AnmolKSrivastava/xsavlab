@@ -68,7 +68,7 @@ const HowItWorks = () => {
 
         {/* Desktop: Horizontal Timeline */}
         <div className="hidden lg:block">
-          <div className="relative mb-20">
+          <div className="relative mb-28 pb-4">
             {/* Connecting Line */}
             <div className="absolute top-20 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent" />
 
@@ -111,7 +111,7 @@ const HowItWorks = () => {
         </div>
 
         {/* Mobile: Vertical Timeline */}
-        <div className="lg:hidden space-y-8 mb-16">
+        <div className="lg:hidden space-y-8 mb-24">
           {steps.map((step, index) => (
             <motion.div
               key={step.number}
@@ -152,7 +152,7 @@ const HowItWorks = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-2xl p-8 md:p-12"
+          className="relative z-20 bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-2xl p-8 md:p-12"
         >
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <div>
