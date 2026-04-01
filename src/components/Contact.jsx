@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, CheckCircle, Clock, Shield, ArrowRight } from 'lucide-react';
 
-const Contact = () => {
+const Contact = ({ preSelectedService = 'cybersecurity' }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     company: '',
-    service: 'cybersecurity',
+    service: preSelectedService,
     message: '',
   });
+
+  useEffect(() => {
+    if (preSelectedService) {
+      setFormData(prev => ({ ...prev, service: preSelectedService }));
+    }
+  }, [preSelectedService]);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
@@ -212,8 +218,10 @@ const Contact = () => {
                       className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                     >
                       <option value="cybersecurity">Cybersecurity Services</option>
-                      <option value="cloud">Cloud Solutions</option>
-                      <option value="ai">AI Integration</option>
+                      <option value="cloud">Cloud Infrastructure</option>
+                      <option value="ai">AI Integration Services</option>
+                      <option value="website">Custom Website Development</option>
+                      <option value="software">Enterprise Software Solutions</option>
                       <option value="consulting">General Consulting</option>
                     </select>
                   </div>

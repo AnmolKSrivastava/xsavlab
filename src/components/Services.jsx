@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Cloud, Bot, ArrowRight, Lock, CheckCircle2, Users, TrendingUp, Globe, Package } from 'lucide-react';
 
-const ServiceCard = ({ icon: Icon, title, description, features, index }) => {
+const ServiceCard = ({ icon: Icon, title, description, features, index, onScheduleClick, serviceId }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -36,21 +36,23 @@ const ServiceCard = ({ icon: Icon, title, description, features, index }) => {
 
       {/* Learn More */}
       <motion.button
+        onClick={() => onScheduleClick && onScheduleClick(serviceId)}
         whileHover={{ x: 5 }}
         className="flex items-center space-x-2 text-primary font-semibold group/btn"
       >
-        <span>Explore Service</span>
+        <span>Get Started</span>
         <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
       </motion.button>
     </motion.div>
   );
 };
 
-const Services = () => {
+const Services = ({ onScheduleClick }) => {
   const services = [
     {
       icon: Shield,
       title: 'Cybersecurity Services',
+      serviceId: 'cybersecurity',
       description: 'Comprehensive security solutions to protect your business from evolving cyber threats with 24/7 monitoring and expert response.',
       features: [
         'Security Assessment & Penetration Testing',
@@ -63,6 +65,7 @@ const Services = () => {
     {
       icon: Cloud,
       title: 'Cloud Infrastructure',
+      serviceId: 'cloud',
       description: 'Scalable and secure cloud solutions with DevOps automation, cost optimization, and enterprise-grade reliability.',
       features: [
         'Cloud Migration & Strategy (AWS, Azure, GCP)',
@@ -75,6 +78,7 @@ const Services = () => {
     {
       icon: Bot,
       title: 'AI Integration Services',
+      serviceId: 'ai',
       description: 'Strategic AI implementation and custom automation solutions to enhance efficiency and drive business innovation.',
       features: [
         'AI Strategy & Consulting',
@@ -87,6 +91,7 @@ const Services = () => {
     {
       icon: Globe,
       title: 'Custom Website Development',
+      serviceId: 'website',
       description: 'Professional web solutions tailored to your business needs, from corporate websites to complex web applications.',
       features: [
         'Custom Website Design & Development',
@@ -100,6 +105,7 @@ const Services = () => {
     {
       icon: Package,
       title: 'Enterprise Software Solutions',
+      serviceId: 'software',
       description: 'Scalable, secure custom software solutions built to streamline operations and drive business growth.',
       features: [
         'Custom Business Applications',
@@ -154,7 +160,7 @@ const Services = () => {
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {services.map((service, index) => (
-            <ServiceCard key={service.title} {...service} index={index} />
+            <ServiceCard key={service.title} {...service} index={index} onScheduleClick={onScheduleClick} />
           ))}
         </div>
 

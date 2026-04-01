@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X, Shield } from 'lucide-react';
 
-const Navbar = () => {
+const Navbar = ({ onScheduleClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -60,6 +60,7 @@ const Navbar = () => {
 
           <div className="hidden lg:flex items-center space-x-4">
             <motion.button
+              onClick={() => onScheduleClick && onScheduleClick()}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
@@ -98,7 +99,13 @@ const Navbar = () => {
               </a>
             ))}
             <div className="pt-4">
-              <button className="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all">
+              <button 
+                onClick={() => {
+                  onScheduleClick && onScheduleClick();
+                  setIsOpen(false);
+                }}
+                className="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
+              >
                 Schedule Consultation
               </button>
             </div>

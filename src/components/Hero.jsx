@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, CheckCircle2, Award } from 'lucide-react';
 
-const Hero = () => {
+const Hero = ({ onScheduleClick }) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-16">
       {/* Subtle Background Elements */}
@@ -75,6 +75,7 @@ const Hero = () => {
               className="flex flex-col sm:flex-row gap-4"
             >
               <motion.button
+                onClick={() => onScheduleClick && onScheduleClick('cybersecurity')}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 shadow-xl shadow-primary/25 transition-all"
@@ -83,6 +84,12 @@ const Hero = () => {
                 <ArrowRight className="w-5 h-5" />
               </motion.button>
               <motion.button
+                onClick={() => {
+                  const servicesSection = document.getElementById('services');
+                  if (servicesSection) {
+                    servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="border-2 border-gray-600 hover:border-primary text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all"
