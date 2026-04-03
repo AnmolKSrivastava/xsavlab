@@ -28,7 +28,7 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
     setError(null);
 
     try {
-      const response = await submitEnquiry(formData);
+      await submitEnquiry(formData);
       setSubmitted(true);
       setFormData({ name: '', email: '', company: '', service: preSelectedService, message: '' });
       
