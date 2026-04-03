@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, CheckCircle, Clock, Shield, ArrowRight } from 'lucide-react';
+import { Mail, Phone, MapPin, CheckCircle, Clock, Shield, ArrowRight, AlertCircle, Loader } from 'lucide-react';
+import { submitEnquiry } from '../services/enquiry';
 
 const Contact = ({ preSelectedService = 'cybersecurity' }) => {
   const [formData, setFormData] = useState({
@@ -16,15 +17,31 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
       setFormData(prev => ({ ...prev, service: preSelectedService }));
     }
   }, [preSelectedService]);
+  
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({ name: '', email: '', company: '', service: 'cybersecurity', message: '' });
-    }, 3000);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await submitEnquiry(formData);
+      setSubmitted(true);
+      setFormData({ name: '', email: '', company: '', service: preSelectedService, message: '' });
+      
+      // Hide success message after 4 seconds
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 4000);
+    } catch (err) {
+      setError(err.message || 'Failed to send your enquiry. Please try again.');
+      console.error('Submission error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -136,6 +153,7 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
             className="lg:col-span-3"
           >
             <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-8 relative">
+              {/* Success Message */}
               {submitted && (
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
@@ -153,7 +171,23 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
                       <CheckCircle className="w-16 h-16 text-green-500" />
                     </motion.div>
                     <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
-                    <p className="text-gray-300">We'll get back to you within 24 hours.</p>
+                    <p className="text-gray-300">Thank you! We've sent a confirmation email to <span className="text-primary font-semibold">{formData.email}</span></p>
+                    <p className="text-gray-400 text-sm mt-3">Our team will respond within 24 hours.</p>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Error Message */}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-6 bg-red-500/10 border border-red-500/50 rounded-lg p-4 flex items-start space-x-3"
+                >
+                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-red-500 font-semibold">Error</h4>
+                    <p className="text-red-400 text-sm">{error}</p>
                   </div>
                 </motion.div>
               )}
@@ -169,10 +203,11 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
                       type="text"
                       name="name"
                       required
+                      disabled={loading}
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="John Doe"
-                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -183,10 +218,11 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
                       type="email"
                       name="email"
                       required
+                      disabled={loading}
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="john@company.com"
-                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -200,10 +236,11 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
                     <input
                       type="text"
                       name="company"
+                      disabled={loading}
                       value={formData.company}
                       onChange={handleChange}
                       placeholder="Company Name"
-                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -213,9 +250,10 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
                     <select
                       name="service"
                       required
+                      disabled={loading}
                       value={formData.service}
                       onChange={handleChange}
-                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <option value="cybersecurity">Cybersecurity Services</option>
                       <option value="cloud">Cloud Infrastructure</option>
@@ -235,23 +273,34 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
                   <textarea
                     name="message"
                     required
+                    disabled={loading}
                     value={formData.message}
                     onChange={handleChange}
                     rows="5"
                     placeholder="Tell us about your security challenges and goals..."
-                    className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"
+                    className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
                 {/* Submit */}
                 <motion.button
                   type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all flex items-center justify-center space-x-2"
+                  disabled={loading}
+                  whileHover={!loading ? { scale: 1.02 } : {}}
+                  whileTap={!loading ? { scale: 0.98 } : {}}
+                  className="w-full bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <span>Send Message</span>
-                  <ArrowRight className="w-5 h-5" />
+                  {loading ? (
+                    <>
+                      <Loader className="w-5 h-5 animate-spin" />
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
                 </motion.button>
               </form>
             </div>
