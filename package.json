@@ -19,7 +19,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "audit": "npm audit --audit-level=moderate",
+    "audit:fix": "npm audit fix",
+    "audit:production": "npm audit --production --audit-level=moderate",
+    "security:check": "npm audit && cd functions && npm audit"
   },
   "eslintConfig": {
     "extends": [

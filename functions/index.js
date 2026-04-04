@@ -2,7 +2,34 @@ const { onRequest } = require('firebase-functions/v2/https');
 const { defineSecret } = require('firebase-functions/params');
 const admin = require('firebase-admin');
 const nodemailer = require('nodemailer');
-const cors = require('cors')({ origin: true });
+
+// Configure CORS with whitelist of allowed origins
+const allowedOrigins = [
+  'https://xsavlab.web.app',
+  'https://xsavlab.firebaseapp.com',
+  'http://localhost:3000',
+  'http://localhost:5000',
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Reject requests with no origin (except for same-origin requests)
+    if (!origin) {
+      console.warn('CORS blocked: No origin header');
+      return callback(new Error('Not allowed by CORS'));
+    }
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.warn('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+
+const cors = require('cors')(corsOptions);
 
 const EMAIL_USER = defineSecret('EMAIL_USER');
 const EMAIL_PASSWORD = defineSecret('EMAIL_PASSWORD');
@@ -12,14 +39,80 @@ const ADMIN_EMAIL = defineSecret('ADMIN_EMAIL');
 admin.initializeApp();
 
 /**
+ * HTML escape helper to prevent XSS attacks in emails
+ * @param {string} text - Text to escape
+ * @returns {string} - HTML-safe text
+ */
+function escapeHtml(text) {
+  if (!text) return '';
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+    '/': '&#x2F;',
+  };
+  return String(text).replace(/[&<>"'/]/g, (char) => map[char]);
+}
+
+/**
+ * Rate limiting helper - checks if IP/email has exceeded submission limits
+ * @param {string} identifier - IP address or email to check
+ * @returns {Promise<boolean>} - true if rate limit exceeded
+ */
+async function checkRateLimit(identifier) {
+  const now = new Date();
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+  // Check submissions in last hour (max 3)
+  const recentSubmissions = await admin
+    .firestore()
+    .collection('enquiries')
+    .where('ipAddress', '==', identifier)
+    .where('createdAt', '>', oneHourAgo)
+    .get();
+
+  if (recentSubmissions.size >= 3) {
+    return true; // Rate limit exceeded
+  }
+
+  // Check submissions in last 24 hours (max 10)
+  const dailySubmissions = await admin
+    .firestore()
+    .collection('enquiries')
+    .where('ipAddress', '==', identifier)
+    .where('createdAt', '>', oneDayAgo)
+    .get();
+
+  if (dailySubmissions.size >= 10) {
+    return true; // Rate limit exceeded
+  }
+
+  return false; // Rate limit OK
+}
+
+/**
  * Cloud Function: Handle contact form submissions
  * Receives enquiry data and sends confirmation email to user
  */
-exports.sendEnquiry = onRequest({ secrets: [EMAIL_USER, EMAIL_PASSWORD, ADMIN_EMAIL] }, (req, res) => {
+exports.sendEnquiry = onRequest({ 
+  secrets: [EMAIL_USER, EMAIL_PASSWORD, ADMIN_EMAIL],
+  maxInstances: 10,
+  memory: '256MiB',
+  timeoutSeconds: 60,
+}, (req, res) => {
   cors(req, res, async () => {
     // Only allow POST requests
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // Check request body size (limit to 10KB)
+    const bodySize = JSON.stringify(req.body).length;
+    if (bodySize > 10240) {
+      return res.status(413).json({ error: 'Request payload too large' });
     }
 
     try {
@@ -36,6 +129,34 @@ exports.sendEnquiry = onRequest({ secrets: [EMAIL_USER, EMAIL_PASSWORD, ADMIN_EM
         return res.status(400).json({ error: 'Invalid email format' });
       }
 
+      // Validate input lengths
+      if (name.length > 100) {
+        return res.status(400).json({ error: 'Name must be less than 100 characters' });
+      }
+      if (email.length > 255) {
+        return res.status(400).json({ error: 'Email must be less than 255 characters' });
+      }
+      if (company && company.length > 200) {
+        return res.status(400).json({ error: 'Company name must be less than 200 characters' });
+      }
+      if (message.length > 5000) {
+        return res.status(400).json({ error: 'Message must be less than 5000 characters' });
+      }
+      if (service.length > 50) {
+        return res.status(400).json({ error: 'Invalid service selection' });
+      }
+
+      // Rate limiting check
+      const clientIp = req.ip || req.headers['x-forwarded-for'] || 'unknown';
+      const isRateLimited = await checkRateLimit(clientIp);
+      
+      if (isRateLimited) {
+        console.warn('Rate limit exceeded for IP:', clientIp);
+        return res.status(429).json({ 
+          error: 'Too many requests. Please try again later.' 
+        });
+      }
+
       // Store enquiry in Firestore
       const enquiryData = {
         name,
@@ -45,7 +166,7 @@ exports.sendEnquiry = onRequest({ secrets: [EMAIL_USER, EMAIL_PASSWORD, ADMIN_EM
         message,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         status: 'new',
-        ipAddress: req.ip,
+        ipAddress: clientIp,
       };
 
       const enquiryRef = await admin
@@ -66,6 +187,12 @@ exports.sendEnquiry = onRequest({ secrets: [EMAIL_USER, EMAIL_PASSWORD, ADMIN_EM
 
       const fromEmail = EMAIL_USER.value();
       const adminEmail = ADMIN_EMAIL.value();
+
+      // Sanitize user inputs for email
+      const safeName = escapeHtml(name);
+      const safeEmail = escapeHtml(email);
+      const safeCompany = escapeHtml(company || 'Not provided');
+      const safeMessage = escapeHtml(message).replace(/\n/g, '<br>');
 
       // Send confirmation email to user
       const userMailOptions = {
@@ -93,21 +220,21 @@ exports.sendEnquiry = onRequest({ secrets: [EMAIL_USER, EMAIL_PASSWORD, ADMIN_EM
                 </div>
                 
                 <div class="content">
-                  <p>Hi <span class="highlight">${name}</span>,</p>
+                  <p>Hi <span class="highlight">${safeName}</span>,</p>
                   
                   <p>We have received your enquiry and appreciate your interest in XSavLab's services.</p>
                   
                   <h3>Your Enquiry Details:</h3>
                   <ul>
-                    <li><strong>Name:</strong> ${name}</li>
-                    <li><strong>Email:</strong> ${email}</li>
-                    <li><strong>Company:</strong> ${company || 'Not provided'}</li>
+                    <li><strong>Name:</strong> ${safeName}</li>
+                    <li><strong>Email:</strong> ${safeEmail}</li>
+                    <li><strong>Company:</strong> ${safeCompany}</li>
                     <li><strong>Service Interest:</strong> ${formatServiceName(service)}</li>
                   </ul>
                   
                   <p><strong>Your Message:</strong></p>
                   <p style="background: white; padding: 15px; border-left: 4px solid #667EEA; border-radius: 4px;">
-                    ${message.replace(/\n/g, '<br>')}
+                    ${safeMessage}
                   </p>
                   
                   <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
@@ -140,7 +267,7 @@ exports.sendEnquiry = onRequest({ secrets: [EMAIL_USER, EMAIL_PASSWORD, ADMIN_EM
       const adminMailOptions = {
         from: `"XSavLab" <${fromEmail}>`,
         to: adminEmail || 'admin@xsavlab.com',
-        subject: `New Enquiry: ${name} - ${formatServiceName(service)}`,
+        subject: `New Enquiry: ${safeName} - ${formatServiceName(service)}`,
         html: `
           <!DOCTYPE html>
           <html>
@@ -165,13 +292,13 @@ exports.sendEnquiry = onRequest({ secrets: [EMAIL_USER, EMAIL_PASSWORD, ADMIN_EM
                     <span class="label">Enquiry ID:</span> ${enquiryRef.id}
                   </div>
                   <div class="field">
-                    <span class="label">Name:</span> ${name}
+                    <span class="label">Name:</span> ${safeName}
                   </div>
                   <div class="field">
-                    <span class="label">Email:</span> <a href="mailto:${email}">${email}</a>
+                    <span class="label">Email:</span> <a href="mailto:${email}">${safeEmail}</a>
                   </div>
                   <div class="field">
-                    <span class="label">Company:</span> ${company || 'Not provided'}
+                    <span class="label">Company:</span> ${safeCompany}
                   </div>
                   <div class="field">
                     <span class="label">Service:</span> ${formatServiceName(service)}
@@ -179,7 +306,7 @@ exports.sendEnquiry = onRequest({ secrets: [EMAIL_USER, EMAIL_PASSWORD, ADMIN_EM
                   <div class="field">
                     <span class="label">Message:</span>
                     <p style="background: white; padding: 15px; border-left: 4px solid #667EEA;">
-                      ${message.replace(/\n/g, '<br>')}
+                      ${safeMessage}
                     </p>
                   </div>
                   <div class="field">
@@ -210,7 +337,6 @@ exports.sendEnquiry = onRequest({ secrets: [EMAIL_USER, EMAIL_PASSWORD, ADMIN_EM
       console.error('Error processing enquiry:', error);
       return res.status(500).json({
         error: 'Failed to process enquiry. Please try again later.',
-        details: error.message,
       });
     }
   });
@@ -241,7 +367,31 @@ exports.getEnquiries = onRequest((req, res) => {
       // Check for authorization header
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'Unauthorized' });
+        return res.status(401).json({ error: 'Unauthorized - No token provided' });
+      }
+
+      // Extract the token
+      const token = authHeader.split('Bearer ')[1];
+      
+      // Verify the Firebase ID token
+      let decodedToken;
+      try {
+        decodedToken = await admin.auth().verifyIdToken(token);
+      } catch (error) {
+        console.error('Token verification failed:', error);
+        return res.status(401).json({ error: 'Unauthorized - Invalid token' });
+      }
+
+      // Check if user is admin by looking up admin document
+      const adminDoc = await admin
+        .firestore()
+        .collection('admins')
+        .doc(decodedToken.uid)
+        .get();
+
+      if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
+        console.warn('Non-admin user attempted to access enquiries:', decodedToken.uid);
+        return res.status(403).json({ error: 'Forbidden - Admin access required' });
       }
 
       // Retrieve enquiries from Firestore

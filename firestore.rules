@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Enquiries collection - locked down
+    match /enquiries/{enquiryId} {
+      // Only authenticated admins can read enquiries
+      allow read: if isAdmin();
+      
+      // No direct writes allowed - only Cloud Functions can write
+      // Cloud Functions use Admin SDK which bypasses security rules
+      allow write: if false;
+    }
+    
+    // Admins collection - manage admin users
+    match /admins/{userId} {
+      // Only admins can read admin list
+      allow read: if isAdmin();
+      
+      // Only admins can create/update other admins
+      allow write: if isAdmin();
+    }
+    
+    // By default, deny all access to any other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

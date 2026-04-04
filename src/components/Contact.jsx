@@ -50,8 +50,8 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
 
   const contactInfo = [
     { icon: Mail, label: 'Email', value: 'contact@xsavlab.com', href: 'mailto:contact@xsavlab.com' },
-    { icon: Phone, label: 'Phone', value: '+1 (555) 123-4567', href: 'tel:+15551234567' },
-    { icon: MapPin, label: 'Location', value: 'San Francisco, CA, USA', href: '#' },
+    { icon: Phone, label: 'Phone', value: '+91 9884319716', href: 'tel:+919884319716' },
+    { icon: MapPin, label: 'Location', value: 'Pune, Maharashtra, India', href: '#' },
   ];
 
   const quickLinks = [
