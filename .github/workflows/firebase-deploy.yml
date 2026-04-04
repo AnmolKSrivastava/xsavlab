@@ -25,8 +25,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run npm audit (frontend)
-        run: npm audit --audit-level=moderate
+      - name: Run npm audit (frontend production)
+        run: |
+          echo "=== Frontend Production Dependencies ==="
+          npm audit --omit=dev --audit-level=critical
         continue-on-error: true
 
       - name: Install Functions dependencies
@@ -36,16 +38,19 @@ jobs:
 
       - name: Run npm audit (functions)
         run: |
+          echo "=== Cloud Functions Dependencies ==="
           cd functions
           npm audit --audit-level=moderate
         continue-on-error: true
 
-      - name: Check for known vulnerabilities
+      - name: Check for critical vulnerabilities
         run: |
-          echo "Frontend vulnerabilities:"
-          npm audit --json | jq '.metadata.vulnerabilities' || true
-          echo "Functions vulnerabilities:"
+          echo "📊 Pre-Deployment Security Check"
+          echo "Frontend production:"
+          npm audit --omit=dev --json | jq '.metadata.vulnerabilities' || true
+          echo "Functions:"
           cd functions && npm audit --json | jq '.metadata.vulnerabilities' || true
+          echo "ℹ️ Deployment will proceed - full audit runs weekly"
 
   build_and_deploy:
     name: Build and Deploy

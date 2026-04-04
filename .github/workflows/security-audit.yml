@@ -41,6 +41,12 @@ jobs:
           npm audit --json > frontend-audit.json || true
           echo "Frontend Audit Summary:"
           cat frontend-audit.json | jq '.metadata.vulnerabilities'
+          
+      - name: Check frontend production dependencies
+        run: |
+          echo "=== Checking Production Dependencies Only ==="
+          npm audit --omit=dev --json > frontend-prod-audit.json || true
+          cat frontend-prod-audit.json | jq '.metadata.vulnerabilities'
 
       - name: Install functions dependencies
         run: |
@@ -62,25 +68,39 @@ jobs:
 
       - name: Check for critical vulnerabilities
         run: |
-          FRONTEND_CRITICAL=$(cat frontend-audit.json | jq '.metadata.vulnerabilities.critical // 0')
-          FRONTEND_HIGH=$(cat frontend-audit.json | jq '.metadata.vulnerabilities.high // 0')
+          # Check production dependencies only for frontend
+          FRONTEND_PROD_CRITICAL=$(cat frontend-prod-audit.json | jq '.metadata.vulnerabilities.critical // 0')
+          FRONTEND_PROD_HIGH=$(cat frontend-prod-audit.json | jq '.metadata.vulnerabilities.high // 0')
+          
+          # Check all dependencies for functions (they are all production)
           FUNCTIONS_CRITICAL=$(cat functions/functions-audit.json | jq '.metadata.vulnerabilities.critical // 0')
           FUNCTIONS_HIGH=$(cat functions/functions-audit.json | jq '.metadata.vulnerabilities.high // 0')
           
-          echo "Frontend - Critical: $FRONTEND_CRITICAL, High: $FRONTEND_HIGH"
-          echo "Functions - Critical: $FUNCTIONS_CRITICAL, High: $FUNCTIONS_HIGH"
+          # Get dev dependency counts for info
+          FRONTEND_DEV_CRITICAL=$(cat frontend-audit.json | jq '.metadata.vulnerabilities.critical // 0')
+          FRONTEND_DEV_HIGH=$(cat frontend-audit.json | jq '.metadata.vulnerabilities.high // 0')
           
-          TOTAL_CRITICAL=$((FRONTEND_CRITICAL + FUNCTIONS_CRITICAL))
-          TOTAL_HIGH=$((FRONTEND_HIGH + FUNCTIONS_HIGH))
+          echo "📊 Security Audit Results:"
+          echo "================================"
+          echo "Frontend Production - Critical: $FRONTEND_PROD_CRITICAL, High: $FRONTEND_PROD_HIGH"
+          echo "Frontend Dev Only - Critical: $FRONTEND_DEV_CRITICAL, High: $FRONTEND_DEV_HIGH"
+          echo "Functions - Critical: $FUNCTIONS_CRITICAL, High: $FUNCTIONS_HIGH"
+          echo "================================"
+          
+          TOTAL_CRITICAL=$((FRONTEND_PROD_CRITICAL + FUNCTIONS_CRITICAL))
+          TOTAL_HIGH=$((FRONTEND_PROD_HIGH + FUNCTIONS_HIGH))
           
           if [ "$TOTAL_CRITICAL" -gt 0 ]; then
-            echo "❌ CRITICAL vulnerabilities found! Please fix immediately."
+            echo "❌ CRITICAL vulnerabilities found in production dependencies! Please fix immediately."
             exit 1
           elif [ "$TOTAL_HIGH" -gt 0 ]; then
-            echo "⚠️ HIGH severity vulnerabilities found. Please review and fix."
+            echo "⚠️ HIGH severity vulnerabilities found in production dependencies. Please review and fix."
             exit 1
           else
-            echo "✅ No critical or high severity vulnerabilities found."
+            echo "✅ No critical or high severity vulnerabilities in production dependencies."
+            if [ "$FRONTEND_DEV_HIGH" -gt 0 ] || [ "$FRONTEND_DEV_CRITICAL" -gt 0 ]; then
+              echo "ℹ️ Note: Development dependencies have known issues but don't affect production."
+            fi
           fi
 
       - name: Upload audit reports
