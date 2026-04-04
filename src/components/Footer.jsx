@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, ArrowRight, CheckCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowRight, CheckCircle, Shield } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import companyLogo from '../assets/images/logo/xsav_lab_logo.jpeg';
 
 const Footer = () => {
@@ -115,8 +116,19 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-400 text-center md:text-left">
-              © {new Date().getFullYear()} XSAV Lab. All rights reserved.
+            <div className="flex items-center gap-6">
+              <div className="text-sm text-gray-400 text-center md:text-left">
+                © {new Date().getFullYear()} XSAV Lab. All rights reserved.
+              </div>
+              {/* Admin Login Link */}
+              <Link
+                to="/admin-login"
+                className="text-xs text-gray-600 hover:text-primary transition-colors flex items-center gap-1 group"
+                title="Admin Portal"
+              >
+                <Shield className="w-3 h-3 group-hover:rotate-12 transition-transform" />
+                <span>Admin</span>
+              </Link>
             </div>
             <div className="flex items-center space-x-3 text-sm text-gray-400">
               <CheckCircle className="w-4 h-4 text-green-500" />

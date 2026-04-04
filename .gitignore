@@ -20,6 +20,17 @@
 .env.test.local
 .env.production.local
 
+# Firebase service account (sensitive credentials)
+serviceAccountKey.json
+setup-admin.js
+**/serviceAccountKey*.json
+
+# Firebase cache and logs
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

@@ -176,30 +176,33 @@ exports.sendEnquiry = onRequest({
 
       console.log('Enquiry stored with ID:', enquiryRef.id);
 
-      // Configure transporter per request to read secret values at runtime.
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: EMAIL_USER.value(),
-          pass: EMAIL_PASSWORD.value(),
-        },
-      });
+      // Try to send emails (optional - won't fail if secrets not configured)
+      let emailsSent = false;
+      try {
+        // Configure transporter per request to read secret values at runtime.
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: EMAIL_USER.value(),
+            pass: EMAIL_PASSWORD.value(),
+          },
+        });
 
-      const fromEmail = EMAIL_USER.value();
-      const adminEmail = ADMIN_EMAIL.value();
+        const fromEmail = EMAIL_USER.value();
+        const adminEmail = ADMIN_EMAIL.value();
 
-      // Sanitize user inputs for email
-      const safeName = escapeHtml(name);
-      const safeEmail = escapeHtml(email);
-      const safeCompany = escapeHtml(company || 'Not provided');
-      const safeMessage = escapeHtml(message).replace(/\n/g, '<br>');
+        // Sanitize user inputs for email
+        const safeName = escapeHtml(name);
+        const safeEmail = escapeHtml(email);
+        const safeCompany = escapeHtml(company || 'Not provided');
+        const safeMessage = escapeHtml(message).replace(/\n/g, '<br>');
 
-      // Send confirmation email to user
-      const userMailOptions = {
-        from: `"XSavLab" <${fromEmail}>`,
-        to: email,
-        subject: 'We Received Your Enquiry - XSavLab',
-        html: `
+        // Send confirmation email to user
+        const userMailOptions = {
+          from: `"XSavLab" <${fromEmail}>`,
+          to: email,
+          subject: 'We Received Your Enquiry - XSavLab',
+          html: `
           <!DOCTYPE html>
           <html>
             <head>
@@ -261,14 +264,14 @@ exports.sendEnquiry = onRequest({
             </body>
           </html>
         `,
-      };
+        };
 
-      // Send admin notification email
-      const adminMailOptions = {
-        from: `"XSavLab" <${fromEmail}>`,
-        to: adminEmail || 'admin@xsavlab.com',
-        subject: `New Enquiry: ${safeName} - ${formatServiceName(service)}`,
-        html: `
+        // Send admin notification email
+        const adminMailOptions = {
+          from: `"XSavLab" <${fromEmail}>`,
+          to: adminEmail || 'admin@xsavlab.com',
+          subject: `New Enquiry: ${safeName} - ${formatServiceName(service)}`,
+          html: `
           <!DOCTYPE html>
           <html>
             <head>
@@ -317,21 +320,32 @@ exports.sendEnquiry = onRequest({
             </body>
           </html>
         `,
-      };
+        };
 
-      // Send both emails
-      await Promise.all([
-        transporter.sendMail(userMailOptions),
-        transporter.sendMail(adminMailOptions),
-      ]);
+        // Send both emails
+        await Promise.all([
+          transporter.sendMail(userMailOptions),
+          transporter.sendMail(adminMailOptions),
+        ]);
 
-      console.log('Emails sent successfully for enquiry:', enquiryRef.id);
+        console.log('Emails sent successfully for enquiry:', enquiryRef.id);
+        emailsSent = true;
+
+      } catch (emailError) {
+        // Email sending failed (likely due to missing secrets)
+        // This is non-critical - enquiry is already stored in Firestore
+        console.error('Email sending failed (non-critical):', emailError.message);
+        console.log('Enquiry saved to Firestore but emails not sent. Configure EMAIL_USER, EMAIL_PASSWORD, and ADMIN_EMAIL secrets to enable email notifications.');
+      }
 
       // Return success response
       return res.status(200).json({
         success: true,
-        message: 'Enquiry received successfully. Confirmation email sent.',
+        message: emailsSent 
+          ? 'Enquiry received successfully. Confirmation email sent.'
+          : 'Enquiry received successfully. Email notifications are not configured.',
         enquiryId: enquiryRef.id,
+        emailsSent,
       });
     } catch (error) {
       console.error('Error processing enquiry:', error);
@@ -417,3 +431,79 @@ exports.getEnquiries = onRequest((req, res) => {
     }
   });
 });
+
+/**
+ * Cloud Function: Set admin custom claims
+ * Protected endpoint - only existing admins can create new admins
+ * This is a one-time setup function to create your first admin user
+ * 
+ * Usage: After creating a user in Firebase Console, call this function with their email
+ */
+exports.setAdminRole = onRequest((req, res) => {
+  cors(req, res, async () => {
+    // Only allow POST requests
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+      }
+
+      // SECURITY: Only authenticated admins can create new admins
+      // The initial admin should be created manually via Firebase Console
+      
+      // Verify the requesting user is an admin
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized - No token provided' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      let decodedToken;
+      
+      try {
+        decodedToken = await admin.auth().verifyIdToken(token);
+      } catch (error) {
+        console.error('Token verification failed:', error);
+        return res.status(401).json({ error: 'Unauthorized - Invalid token' });
+      }
+
+      // Check if requesting user has admin privileges
+      if (decodedToken.admin !== true) {
+        console.warn('Non-admin user attempted to set admin role:', decodedToken.uid);
+        return res.status(403).json({ error: 'Forbidden - Only admins can create other admins' });
+      }
+
+      // Get the user to be made admin
+      const targetUser = await admin.auth().getUserByEmail(email);
+      
+      // Set custom claims
+      await admin.auth().setCustomUserClaims(targetUser.uid, { admin: true });
+      
+      // Add to Firestore
+      await admin.firestore().collection('admins').doc(targetUser.uid).set({
+        email: targetUser.email,
+        role: 'admin',
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdBy: decodedToken.uid,
+      });
+      
+      console.log(`Admin ${decodedToken.email} granted admin role to: ${email}`);
+      return res.status(200).json({ message: `Success! ${email} is now an admin.` });
+      
+    } catch (error) {
+      console.error('Error setting admin role:', error);
+      
+      if (error.code === 'auth/user-not-found') {
+        return res.status(404).json({ error: 'User not found. Please create the user first in Firebase Console.' });
+      }
+      
+      return res.status(500).json({ error: 'Failed to set admin role' });
+    }
+  });
+});
+

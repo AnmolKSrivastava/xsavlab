@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -9,9 +10,34 @@ import TrustSection from './components/TrustSection';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import QuantumBackground from './components/QuantumBackground';
+import ScrollToTop from './components/ScrollToTop';
+import AdminLogin from './components/AdminLogin';
+import AdminDashboard from './components/AdminDashboard';
+
+// Home Page Component
+function HomePage({ selectedService, handleScheduleConsultation }) {
+  return (
+    <>
+      <Navbar onScheduleClick={handleScheduleConsultation} />
+      <Hero onScheduleClick={handleScheduleConsultation} />
+      <About />
+      <Services onScheduleClick={handleScheduleConsultation} />
+      <HowItWorks />
+      <CaseStudies />
+      <TrustSection />
+      <Contact preSelectedService={selectedService} />
+      <Footer />
+    </>
+  );
+}
 
 function App() {
   const [selectedService, setSelectedService] = useState('cybersecurity');
+
+  // Scroll to top on page load/refresh
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleScheduleConsultation = (service = 'cybersecurity') => {
     setSelectedService(service);
@@ -23,23 +49,32 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-navy text-white overflow-x-hidden relative">
-      {/* Quantum animated background */}
-      <QuantumBackground />
-      
-      {/* Main content - positioned above background */}
-      <div className="relative z-10">
-        <Navbar onScheduleClick={handleScheduleConsultation} />
-      <Hero onScheduleClick={handleScheduleConsultation} />
-      <About />
-      <Services onScheduleClick={handleScheduleConsultation} />
-      <HowItWorks />
-      <CaseStudies />
-      <TrustSection />
-      <Contact preSelectedService={selectedService} />
-      <Footer />
+    <Router>
+      <div className="min-h-screen bg-dark-navy text-white overflow-x-hidden relative">
+        {/* Quantum animated background */}
+        <QuantumBackground />
+        
+        {/* Main content - positioned above background */}
+        <div className="relative z-10">
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <HomePage 
+                  selectedService={selectedService} 
+                  handleScheduleConsultation={handleScheduleConsultation} 
+                />
+              } 
+            />
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          </Routes>
+        </div>
+        
+        {/* Scroll to top button */}
+        <ScrollToTop />
       </div>
-    </div>
+    </Router>
   );
 }
 
