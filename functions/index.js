@@ -507,3 +507,271 @@ exports.setAdminRole = onRequest((req, res) => {
   });
 });
 
+/**
+ * Create Admin User
+ * Creates a new Firebase Auth user with admin role and custom claims
+ * Only Super Admins can create users
+ */
+exports.createAdminUser = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const { email, password, displayName, role } = req.body;
+
+      // Validate input
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+      }
+
+      if (!['superadmin', 'admin', 'moderator'].includes(role)) {
+        return res.status(400).json({ error: 'Invalid role. Must be: superadmin, admin, or moderator' });
+      }
+
+      // Verify requesting user is a super admin
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      // Only super admins can create users
+      if (decodedToken.role !== 'superadmin') {
+        return res.status(403).json({ error: 'Only super admins can create users' });
+      }
+
+      // Create the user
+      const userRecord = await admin.auth().createUser({
+        email,
+        password,
+        displayName: displayName || email.split('@')[0],
+      });
+
+      // Set custom claims
+      await admin.auth().setCustomUserClaims(userRecord.uid, {
+        admin: true,
+        role: role,
+      });
+
+      // Store user profile in Firestore
+      await admin.firestore().collection('users').doc(userRecord.uid).set({
+        email: userRecord.email,
+        displayName: userRecord.displayName,
+        role: role,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdBy: decodedToken.uid,
+        createdByEmail: decodedToken.email,
+        status: 'active',
+      });
+
+      console.log(`Super admin ${decodedToken.email} created user: ${email} with role: ${role}`);
+      return res.status(200).json({
+        message: 'User created successfully',
+        user: {
+          uid: userRecord.uid,
+          email: userRecord.email,
+          displayName: userRecord.displayName,
+          role: role,
+        },
+      });
+
+    } catch (error) {
+      console.error('Error creating admin user:', error);
+      
+      if (error.code === 'auth/email-already-exists') {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+      if (error.code === 'auth/invalid-email') {
+        return res.status(400).json({ error: 'Invalid email address' });
+      }
+      if (error.code === 'auth/weak-password') {
+        return res.status(400).json({ error: 'Password must be at least 6 characters' });
+      }
+      
+      return res.status(500).json({ error: 'Failed to create user' });
+    }
+  });
+});
+
+/**
+ * Update User Role
+ * Updates an existing user's role and custom claims
+ * Only Super Admins can update roles
+ */
+exports.updateUserRole = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const { userId, role } = req.body;
+
+      if (!userId || !role) {
+        return res.status(400).json({ error: 'User ID and role are required' });
+      }
+
+      if (!['superadmin', 'admin', 'moderator'].includes(role)) {
+        return res.status(400).json({ error: 'Invalid role' });
+      }
+
+      // Verify requesting user
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      // Only super admins can update roles
+      if (decodedToken.role !== 'superadmin') {
+        return res.status(403).json({ error: 'Only super admins can update user roles' });
+      }
+
+      // Prevent users from removing their own super admin status
+      if (userId === decodedToken.uid && decodedToken.role === 'superadmin' && role !== 'superadmin') {
+        return res.status(400).json({ error: 'Cannot remove your own super admin privileges' });
+      }
+
+      // Update custom claims
+      await admin.auth().setCustomUserClaims(userId, {
+        admin: true,
+        role: role,
+      });
+
+      // Update Firestore
+      await admin.firestore().collection('users').doc(userId).update({
+        role: role,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedBy: decodedToken.uid,
+      });
+
+      console.log(`User ${userId} role updated to: ${role} by ${decodedToken.email}`);
+      return res.status(200).json({ message: 'Role updated successfully' });
+
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      return res.status(500).json({ error: 'Failed to update role' });
+    }
+  });
+});
+
+/**
+ * List Admin Users
+ * Returns all users with their roles
+ * Super admins see all, regular admins see limited info
+ */
+exports.listAdminUsers = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify requesting user
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      // Only admins and super admins can view users
+      if (!decodedToken.admin) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+
+      // Get users from Firestore
+      const usersSnapshot = await admin.firestore().collection('users').get();
+      
+      const users = [];
+      usersSnapshot.forEach(doc => {
+        const userData = doc.data();
+        users.push({
+          uid: doc.id,
+          email: userData.email,
+          displayName: userData.displayName,
+          role: userData.role,
+          status: userData.status,
+          createdAt: userData.createdAt,
+          // Only show sensitive info to super admins
+          ...(decodedToken.role === 'superadmin' && {
+            createdBy: userData.createdBy,
+            createdByEmail: userData.createdByEmail,
+          }),
+        });
+      });
+
+      return res.status(200).json({ users });
+
+    } catch (error) {
+      console.error('Error listing users:', error);
+      return res.status(500).json({ error: 'Failed to list users' });
+    }
+  });
+});
+
+/**
+ * Delete Admin User
+ * Deletes a user from Firebase Auth and Firestore
+ * Only Super Admins can delete users
+ */
+exports.deleteAdminUser = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'DELETE') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const { userId } = req.body;
+
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      // Verify requesting user
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      // Only super admins can delete users
+      if (decodedToken.role !== 'superadmin') {
+        return res.status(403).json({ error: 'Only super admins can delete users' });
+      }
+
+      // Prevent users from deleting themselves
+      if (userId === decodedToken.uid) {
+        return res.status(400).json({ error: 'Cannot delete your own account' });
+      }
+
+      // Delete from Firebase Auth
+      await admin.auth().deleteUser(userId);
+
+      // Delete from Firestore
+      await admin.firestore().collection('users').doc(userId).delete();
+
+      console.log(`User ${userId} deleted by ${decodedToken.email}`);
+      return res.status(200).json({ message: 'User deleted successfully' });
+
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      
+      if (error.code === 'auth/user-not-found') {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      
+      return res.status(500).json({ error: 'Failed to delete user' });
+    }
+  });
+});
+

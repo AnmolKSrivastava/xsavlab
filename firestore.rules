@@ -11,7 +11,22 @@ service cloud.firestore {
     // Helper function to check if user is admin
     function isAdmin() {
       return isAuthenticated() && 
-             get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+             request.auth.token.admin == true;
+    }
+    
+    // Helper function to check if user is super admin
+    function isSuperAdmin() {
+      return isAuthenticated() && 
+             request.auth.token.role == 'superadmin';
+    }
+    
+    // Helper function to check if user has minimum role
+    function hasRole(minRole) {
+      let userRole = request.auth.token.role;
+      return isAuthenticated() && 
+             (userRole == 'superadmin' || 
+              (minRole == 'admin' && (userRole == 'admin' || userRole == 'superadmin')) ||
+              (minRole == 'moderator' && (userRole == 'moderator' || userRole == 'admin' || userRole == 'superadmin')));
     }
     
     // Enquiries collection - locked down
@@ -19,9 +34,14 @@ service cloud.firestore {
       // Only authenticated admins can read enquiries
       allow read: if isAdmin();
       
-      // No direct writes allowed - only Cloud Functions can write
+      // Only admins can update status and isRead fields
+      allow update: if isAdmin() && 
+                     request.resource.data.diff(resource.data).affectedKeys()
+                       .hasOnly(['status', 'isRead', 'updatedAt', 'readAt']);
+      
+      // Only Cloud Functions can create enquiries
       // Cloud Functions use Admin SDK which bypasses security rules
-      allow write: if false;
+      allow create, delete: if false;
     }
     
     // Admins collection - manage admin users
@@ -31,6 +51,22 @@ service cloud.firestore {
       
       // Only admins can create/update other admins
       allow write: if isAdmin();
+    }
+    
+    // Users collection - role-based user management
+    match /users/{userId} {
+      // Super admins can read all users, regular admins can read users too
+      allow read: if hasRole('admin');
+      
+      // Only super admins can create users (via Cloud Function)
+      // Users can update their own profile (limited fields)
+      allow update: if isSuperAdmin() || 
+                     (request.auth.uid == userId && 
+                      request.resource.data.diff(resource.data).affectedKeys()
+                        .hasOnly(['displayName', 'updatedAt']));
+      
+      // Only Cloud Functions can create/delete
+      allow create, delete: if false;
     }
     
     // By default, deny all access to any other collections

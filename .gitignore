@@ -23,6 +23,7 @@
 # Firebase service account (sensitive credentials)
 serviceAccountKey.json
 setup-admin.js
+setup-superadmin.js
 **/serviceAccountKey*.json
 
 # Firebase cache and logs
