@@ -35,12 +35,16 @@ import {
   ThumbsDown,
   FileText,
   Send,
-  AlertCircle
+  AlertCircle,
+  Briefcase,
+  Phone,
+  User
 } from 'lucide-react';
 import { auth } from '../config/firebase';
 import app from '../config/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, query, orderBy, limit, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -60,6 +64,10 @@ const AdminDashboard = () => {
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [blogPosts, setBlogPosts] = useState([]);
   const [blogPostsLoading, setBlogPostsLoading] = useState(false);
+  const [jobs, setJobs] = useState([]);
+  const [jobsLoading, setJobsLoading] = useState(false);
+  const [applications, setApplications] = useState([]);
+  const [applicationsLoading, setApplicationsLoading] = useState(false);
 
   useEffect(() => {
     // Check authentication and admin status
@@ -205,13 +213,14 @@ const AdminDashboard = () => {
         {/* Tabs */}
         <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-xl overflow-hidden">
           {/* Tab Headers */}
-          <div className="border-b border-gray-800 flex">
-            <TabButton
-              active={activeTab === 'enquiries'}
-              onClick={() => setActiveTab('enquiries')}
-              icon={<Mail className="w-4 h-4" />}
-              label="Enquiries"
-            />
+          <div className="border-b border-gray-800 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800/50">
+            <div className="flex min-w-max">
+              <TabButton
+                active={activeTab === 'enquiries'}
+                onClick={() => setActiveTab('enquiries')}
+                icon={<Mail className="w-4 h-4" />}
+                label="Enquiries"
+              />
             {/* All admins can manage ventures */}
             {(userRole === 'admin' || userRole === 'superadmin' || userRole === 'moderator') && (
               <TabButton
@@ -257,6 +266,24 @@ const AdminDashboard = () => {
                 label="Blog"
               />
             )}
+            {/* All admins can manage jobs */}
+            {(userRole === 'admin' || userRole === 'superadmin' || userRole === 'moderator') && (
+              <TabButton
+                active={activeTab === 'jobs'}
+                onClick={() => setActiveTab('jobs')}
+                icon={<Briefcase className="w-4 h-4" />}
+                label="Careers"
+              />
+            )}
+            {/* All admins can manage applications */}
+            {(userRole === 'admin' || userRole === 'superadmin' || userRole === 'moderator') && (
+              <TabButton
+                active={activeTab === 'applications'}
+                onClick={() => setActiveTab('applications')}
+                icon={<UserCheck className="w-4 h-4" />}
+                label="Applications"
+              />
+            )}
             {/* Only admins and super admins can see users tab */}
             {(userRole === 'admin' || userRole === 'superadmin') && (
               <TabButton
@@ -275,6 +302,7 @@ const AdminDashboard = () => {
                 label="Settings"
               />
             )}
+            </div>
           </div>
 
           {/* Tab Content */}
@@ -285,6 +313,8 @@ const AdminDashboard = () => {
             {activeTab === 'successStories' && <SuccessStoriesTab user={user} userRole={userRole} successStories={successStories} setSuccessStories={setSuccessStories} successStoriesLoading={successStoriesLoading} setSuccessStoriesLoading={setSuccessStoriesLoading} />}
             {activeTab === 'reviews' && <ReviewsTab user={user} userRole={userRole} reviews={reviews} setReviews={setReviews} reviewsLoading={reviewsLoading} setReviewsLoading={setReviewsLoading} />}
             {activeTab === 'blog' && <BlogTab user={user} userRole={userRole} blogPosts={blogPosts} setBlogPosts={setBlogPosts} blogPostsLoading={blogPostsLoading} setBlogPostsLoading={setBlogPostsLoading} />}
+            {activeTab === 'jobs' && <JobsTab user={user} userRole={userRole} jobs={jobs} setJobs={setJobs} jobsLoading={jobsLoading} setJobsLoading={setJobsLoading} />}
+            {activeTab === 'applications' && <ApplicationsTab user={user} userRole={userRole} applications={applications} setApplications={setApplications} applicationsLoading={applicationsLoading} setApplicationsLoading={setApplicationsLoading} />}
             {activeTab === 'users' && <UsersTab user={user} userRole={userRole} users={users} setUsers={setUsers} usersLoading={usersLoading} setUsersLoading={setUsersLoading} />}
             {activeTab === 'settings' && <SettingsTab />}
           </div>
@@ -3794,5 +3824,1128 @@ const SettingsTab = () => (
     </div>
   </div>
 );
+
+// Jobs Tab Component
+const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading }) => {
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterDepartment, setFilterDepartment] = useState('all');
+  const [isCreating, setIsCreating] = useState(false);
+  const [editingJob, setEditingJob] = useState(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    department: '',
+    location: '',
+    jobType: 'Full-time',
+    experienceLevel: 'Mid-level',
+    description: '',
+    requirements: '',
+    responsibilities: '',
+    benefits: '',
+    salaryRange: '',
+    featured: false
+  });
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  const jobTypes = ['Full-time', 'Part-time', 'Contract', 'Internship'];
+  const experienceLevels = ['Entry-level', 'Mid-level', 'Senior', 'Lead', 'Executive'];
+  const departments = ['Cybersecurity', 'Cloud Services', 'Development', 'Operations', 'Sales', 'Marketing', 'Administration'];
+
+  // Fetch jobs
+  const fetchJobs = useCallback(async () => {
+    if (!user) return;
+    
+    setJobsLoading(true);
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/getJobs', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch jobs');
+
+      const data = await response.json();
+      setJobs(data.jobs || []);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      setError('Failed to load jobs');
+    } finally {
+      setJobsLoading(false);
+    }
+  }, [user, setJobsLoading, setJobs]);
+
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
+
+  // Create or update job
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitLoading(true);
+    setError(null);
+
+    try {
+      const token = await user.getIdToken();
+      const endpoint = editingJob 
+        ? 'https://us-central1-xsavlab.cloudfunctions.net/updateJob'
+        : 'https://us-central1-xsavlab.cloudfunctions.net/createJob';
+
+      const payload = {
+        ...formData,
+        requirements: formData.requirements.split('\n').map(r => r.trim()).filter(r => r),
+        responsibilities: formData.responsibilities.split('\n').map(r => r.trim()).filter(r => r),
+        benefits: formData.benefits.split('\n').map(b => b.trim()).filter(b => b)
+      };
+
+      if (editingJob) {
+        payload.jobId = editingJob.id;
+      }
+
+      const response = await fetch(endpoint, {
+        method: editingJob ? 'POST' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save job');
+      }
+
+      setSuccess(editingJob ? 'Job updated successfully!' : 'Job posted successfully!');
+      setIsCreating(false);
+      setEditingJob(null);
+      setFormData({
+        title: '',
+        department: '',
+        location: '',
+        jobType: 'Full-time',
+        experienceLevel: 'Mid-level',
+        description: '',
+        requirements: '',
+        responsibilities: '',
+        benefits: '',
+        salaryRange: '',
+        featured: false
+      });
+      fetchJobs();
+
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  // Delete job
+  const handleDelete = async (jobId) => {
+    if (!window.confirm('Are you sure you want to delete this job posting?')) return;
+
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/deleteJob', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ jobId })
+      });
+
+      if (!response.ok) throw new Error('Failed to delete job');
+
+      setSuccess('Job deleted successfully');
+      fetchJobs();
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Edit job
+  const handleEdit = (job) => {
+    setEditingJob(job);
+    setFormData({
+      title: job.title,
+      department: job.department,
+      location: job.location,
+      jobType: job.jobType,
+      experienceLevel: job.experienceLevel,
+      description: job.description,
+      requirements: Array.isArray(job.requirements) ? job.requirements.join('\n') : '',
+      responsibilities: Array.isArray(job.responsibilities) ? job.responsibilities.join('\n') : '',
+      benefits: Array.isArray(job.benefits) ? job.benefits.join('\n') : '',
+      salaryRange: job.salaryRange || '',
+      featured: job.featured || false
+    });
+    setIsCreating(true);
+  };
+
+  // Update job status
+  const handleStatusChange = async (jobId, newStatus) => {
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/updateJob', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ jobId, status: newStatus })
+      });
+
+      if (!response.ok) throw new Error('Failed to update status');
+
+      setSuccess('Status updated successfully');
+      fetchJobs();
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Filter jobs
+  const filteredJobs = jobs.filter(job => {
+    const statusMatch = filterStatus === 'all' || job.status === filterStatus;
+    const departmentMatch = filterDepartment === 'all' || job.department === filterDepartment;
+    return statusMatch && departmentMatch;
+  });
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'open': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'on-hold': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'closed': return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+      case 'filled': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
+  if (jobsLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading jobs...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Career Management</h2>
+          <p className="text-gray-400 mt-1">Post and manage job openings</p>
+        </div>
+        <button
+          onClick={() => {
+            setIsCreating(!isCreating);
+            setEditingJob(null);
+            setFormData({
+              title: '',
+              department: '',
+              location: '',
+              jobType: 'Full-time',
+              experienceLevel: 'Mid-level',
+              description: '',
+              requirements: '',
+              responsibilities: '',
+              benefits: '',
+              salaryRange: '',
+              featured: false
+            });
+          }}
+          className="bg-primary hover:bg-primary/80 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Post New Job</span>
+        </button>
+      </div>
+
+      {/* Success/Error Messages */}
+      {success && (
+        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+          <p className="text-green-400 text-sm flex items-center">
+            <CheckCircle className="w-4 h-4 mr-2" />
+            {success}
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+          <p className="text-red-400 text-sm flex items-center">
+            <AlertCircle className="w-4 h-4 mr-2" />
+            {error}
+          </p>
+        </div>
+      )}
+
+      {/* Create/Edit Job Form */}
+      {isCreating && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gray-800/30 border border-gray-700 rounded-lg p-6"
+        >
+          <h3 className="text-xl font-semibold text-white mb-4">
+            {editingJob ? 'Edit Job Posting' : 'Post New Job'}
+          </h3>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Job Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Senior Cybersecurity Analyst"
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Department *</label>
+                <select
+                  required
+                  value={formData.department}
+                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                >
+                  <option value="">Select Department</option>
+                  {departments.map(dept => (
+                    <option key={dept} value={dept}>{dept}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Location *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  placeholder="Remote / Pune, India"
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Job Type *</label>
+                <select
+                  required
+                  value={formData.jobType}
+                  onChange={(e) => setFormData({ ...formData, jobType: e.target.value })}
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                >
+                  {jobTypes.map(type => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Experience Level *</label>
+                <select
+                  required
+                  value={formData.experienceLevel}
+                  onChange={(e) => setFormData({ ...formData, experienceLevel: e.target.value })}
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                >
+                  {experienceLevels.map(level => (
+                    <option key={level} value={level}>{level}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
+                <textarea
+                  required
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows="4"
+                  placeholder="Brief overview of the role..."
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Requirements (one per line)</label>
+                <textarea
+                  value={formData.requirements}
+                  onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
+                  rows="5"
+                  placeholder="5+ years in cybersecurity&#10;Certified Ethical Hacker (CEH)&#10;Experience with SIEM tools"
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Responsibilities (one per line)</label>
+                <textarea
+                  value={formData.responsibilities}
+                  onChange={(e) => setFormData({ ...formData, responsibilities: e.target.value })}
+                  rows="5"
+                  placeholder="Conduct security assessments&#10;Monitor security systems&#10;Respond to incidents"
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Benefits (one per line)</label>
+                <textarea
+                  value={formData.benefits}
+                  onChange={(e) => setFormData({ ...formData, benefits: e.target.value })}
+                  rows="4"
+                  placeholder="Health insurance&#10;Remote work options&#10;Professional development budget"
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Salary Range</label>
+                <input
+                  type="text"
+                  value={formData.salaryRange}
+                  onChange={(e) => setFormData({ ...formData, salaryRange: e.target.value })}
+                  placeholder="$80,000 - $120,000"
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={formData.featured}
+                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  className="w-4 h-4 text-primary bg-gray-900 border-gray-700 rounded focus:ring-primary"
+                />
+                <label htmlFor="featured" className="text-sm font-medium text-gray-300">
+                  Featured Job
+                </label>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCreating(false);
+                  setEditingJob(null);
+                }}
+                className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={submitLoading}
+                className="px-6 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50"
+              >
+                {submitLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>{editingJob ? 'Update Job' : 'Post Job'}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      )}
+
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="bg-gray-800/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+        >
+          <option value="all">All Statuses</option>
+          <option value="open">Open</option>
+          <option value="on-hold">On Hold</option>
+          <option value="closed">Closed</option>
+          <option value="filled">Filled</option>
+        </select>
+
+        <select
+          value={filterDepartment}
+          onChange={(e) => setFilterDepartment(e.target.value)}
+          className="bg-gray-800/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+        >
+          <option value="all">All Departments</option>
+          {departments.map(dept => (
+            <option key={dept} value={dept}>{dept}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Jobs List */}
+      <div className="space-y-4">
+        {filteredJobs.length === 0 ? (
+          <div className="bg-gray-800/30 border border-gray-700 rounded-lg p-8 text-center">
+            <Briefcase className="w-12 h-12 text-gray-500 mx-auto mb-3" />
+            <p className="text-gray-400">No jobs found</p>
+          </div>
+        ) : (
+          filteredJobs.map(job => (
+            <motion.div
+              key={job.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gray-800/30 border border-gray-700 rounded-lg p-6 hover:border-gray-600 transition-colors"
+            >
+              <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                <div className="flex-grow">
+                  <div className="flex items-start gap-3 mb-2">
+                    <h3 className="text-xl font-semibold text-white">{job.title}</h3>
+                    {job.featured && (
+                      <span className="bg-yellow-500/20 text-yellow-400 text-xs px-2 py-1 rounded border border-yellow-500/30">
+                        Featured
+                      </span>
+                    )}
+                    <span className={`text-xs px-2 py-1 rounded border ${getStatusColor(job.status)}`}>
+                      {job.status.replace('-', ' ').toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-3 text-sm text-gray-400 mb-3">
+                    <span>{job.department}</span>
+                    <span>•</span>
+                    <span>{job.location}</span>
+                    <span>•</span>
+                    <span>{job.jobType}</span>
+                    <span>•</span>
+                    <span>{job.experienceLevel}</span>
+                  </div>
+                  <p className="text-gray-300 mb-3">{job.description.substring(0, 150)}...</p>
+                  <div className="flex items-center gap-4 text-sm text-gray-400">
+                    <span>{job.applicantCount || 0} applications</span>
+                    <span>•</span>
+                    <span>Posted {new Date(job.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 min-w-[180px]">
+                  <select
+                    value={job.status}
+                    onChange={(e) => handleStatusChange(job.id, e.target.value)}
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-primary text-sm"
+                  >
+                    <option value="open">Open</option>
+                    <option value="on-hold">On Hold</option>
+                    <option value="closed">Closed</option>
+                    <option value="filled">Filled</option>
+                  </select>
+
+                  <button
+                    onClick={() => handleEdit(job)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors text-sm"
+                  >
+                    <Edit className="w-4 h-4" />
+                    <span>Edit</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(job.id)}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors text-sm"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Applications Tab Component
+const ApplicationsTab = ({ user, userRole, applications, setApplications, applicationsLoading, setApplicationsLoading }) => {
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterJob, setFilterJob] = useState('all');
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [newNote, setNewNote] = useState('');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  // Helper function to decode HTML entities in URLs
+  const decodeHtmlEntities = (text) => {
+    if (!text || typeof text !== 'string') return text;
+    
+    const entities = {
+      '&amp;': '&',
+      '&lt;': '<',
+      '&gt;': '>',
+      '&quot;': '"',
+      '&#x27;': "'",
+      '&#x2F;': '/',
+      '&#x60;': '`',
+      '&#x3D;': '='
+    };
+    
+    return text.replace(/&[#\w]+;/g, (entity) => entities[entity] || entity);
+  };
+
+  // Fetch applications
+  const fetchApplications = useCallback(async () => {
+    if (!user) return;
+    
+    setApplicationsLoading(true);
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/getApplications', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch applications');
+
+      const data = await response.json();
+      
+      // Clean up escaped URLs in applications
+      const cleanedApplications = (data.applications || []).map(app => ({
+        ...app,
+        portfolioUrl: decodeHtmlEntities(app.portfolioUrl),
+        linkedInUrl: decodeHtmlEntities(app.linkedInUrl)
+      }));
+      
+      setApplications(cleanedApplications);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+      setError('Failed to load applications');
+    } finally {
+      setApplicationsLoading(false);
+    }
+  }, [user, setApplicationsLoading, setApplications]);
+
+  useEffect(() => {
+    fetchApplications();
+  }, [fetchApplications]);
+
+  // Update application status
+  const handleStatusChange = async (applicationId, newStatus, note = '') => {
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/updateApplicationStatus', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ applicationId, status: newStatus, note })
+      });
+
+      if (!response.ok) throw new Error('Failed to update status');
+
+      setSuccess('Status updated successfully');
+      fetchApplications();
+      setNewNote('');
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Download resume from storage path (admin only)
+  const handleDownloadResume = async (resumePath) => {
+    try {
+      const storage = getStorage();
+      const resumeRef = ref(storage, resumePath);
+      const downloadURL = await getDownloadURL(resumeRef);
+      
+      // Open in new tab
+      window.open(downloadURL, '_blank');
+    } catch (error) {
+      console.error('Error downloading resume:', error);
+      setError('Failed to download resume. Please try again.');
+      setTimeout(() => setError(null), 3000);
+    }
+  };
+
+  // Filter applications
+  const filteredApplications = applications.filter(app => {
+    const statusMatch = filterStatus === 'all' || app.status === filterStatus;
+    const jobMatch = filterJob === 'all' || app.jobId === filterJob;
+    return statusMatch && jobMatch;
+  });
+
+  // Get unique jobs for filter
+  const uniqueJobs = [...new Set(applications.map(app => ({ id: app.jobId, title: app.jobTitle })))];
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'new': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'screening': return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+      case 'interview': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'offer': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'hired': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+      case 'rejected': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
+  if (applicationsLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading applications...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h2 className="text-2xl font-bold text-white">Job Applications</h2>
+        <p className="text-gray-400 mt-1">Review and manage candidate applications</p>
+      </div>
+
+      {/* Success/Error Messages */}
+      {success && (
+        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+          <p className="text-green-400 text-sm flex items-center">
+            <CheckCircle className="w-4 h-4 mr-2" />
+            {success}
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+          <p className="text-red-400 text-sm flex items-center">
+            <AlertCircle className="w-4 h-4 mr-2" />
+            {error}
+          </p>
+        </div>
+      )}
+
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="bg-gray-800/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+        >
+          <option value="all">All Statuses</option>
+          <option value="new">New</option>
+          <option value="screening">Screening</option>
+          <option value="interview">Interview</option>
+          <option value="offer">Offer</option>
+          <option value="hired">Hired</option>
+          <option value="rejected">Rejected</option>
+        </select>
+
+        <select
+          value={filterJob}
+          onChange={(e) => setFilterJob(e.target.value)}
+          className="bg-gray-800/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary flex-grow"
+        >
+          <option value="all">All Jobs</option>
+          {uniqueJobs.map((job, index) => (
+            <option key={index} value={job.id}>{job.title}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Applications List */}
+      <div className="space-y-4">
+        {filteredApplications.length === 0 ? (
+          <div className="bg-gray-800/30 border border-gray-700 rounded-lg p-8 text-center">
+            <UserCheck className="w-12 h-12 text-gray-500 mx-auto mb-3" />
+            <p className="text-gray-400">No applications found</p>
+          </div>
+        ) : (
+          filteredApplications.map(app => (
+            <motion.div
+              key={app.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gray-800/30 border border-gray-700 rounded-lg p-6 hover:border-gray-600 transition-colors"
+            >
+              <div className="flex flex-col lg:flex-row justify-between gap-4">
+                <div className="flex-grow">
+                  <div className="flex items-start gap-3 mb-2">
+                    <h3 className="text-lg font-semibold text-white">{app.applicantName}</h3>
+                    <span className={`text-xs px-2 py-1 rounded border ${getStatusColor(app.status)}`}>
+                      {app.status.replace('-', ' ').toUpperCase()}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-2 text-sm text-gray-400 mb-3">
+                    <div className="flex items-center gap-2">
+                      <Briefcase className="w-4 h-4" />
+                      <span className="font-medium text-white">{app.jobTitle}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      <a href={`mailto:${app.applicantEmail}`} className="hover:text-primary">
+                        {app.applicantEmail}
+                      </a>
+                    </div>
+                    {app.applicantPhone && (
+                      <div className="flex items-center gap-2">
+                        <span>📞</span>
+                        <span>{app.applicantPhone}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {app.resumeUrl && (
+                      <a
+                        href={app.resumeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded text-xs hover:bg-blue-500/30 transition-colors flex items-center gap-1"
+                      >
+                        <FileText className="w-3 h-3" />
+                        Resume
+                      </a>
+                    )}
+                    {app.portfolioUrl && (
+                      <a
+                        href={app.portfolioUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-purple-500/20 text-purple-400 px-3 py-1 rounded text-xs hover:bg-purple-500/30 transition-colors flex items-center gap-1"
+                      >
+                        <Globe className="w-3 h-3" />
+                        Portfolio
+                      </a>
+                    )}
+                    {app.linkedInUrl && (
+                      <a
+                        href={app.linkedInUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded text-xs hover:bg-blue-600/30 transition-colors flex items-center gap-1"
+                      >
+                        <Users className="w-3 h-3" />
+                        LinkedIn
+                      </a>
+                    )}
+                  </div>
+
+                  <div className="text-xs text-gray-500">
+                    Submitted {new Date(app.submittedAt).toLocaleString()}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 min-w-[200px]">
+                  <select
+                    value={app.status}
+                    onChange={(e) => handleStatusChange(app.id, e.target.value)}
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-primary text-sm"
+                  >
+                    <option value="new">New</option>
+                    <option value="screening">Screening</option>
+                    <option value="interview">Interview</option>
+                    <option value="offer">Offer</option>
+                    <option value="hired">Hired</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+
+                  <button
+                    onClick={() => setSelectedApplication(app)}
+                    className="w-full bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors text-sm"
+                  >
+                    <Eye className="w-4 h-4" />
+                    <span>View Details</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Cover Letter Preview */}
+              {app.coverLetter && (
+                <div className="mt-4 pt-4 border-t border-gray-700">
+                  <p className="text-sm text-gray-400 font-medium mb-2">Cover Letter:</p>
+                  <p className="text-sm text-gray-300 line-clamp-3">{app.coverLetter}</p>
+                </div>
+              )}
+
+              {/* Notes Preview */}
+              {app.notes && app.notes.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-gray-700">
+                  <p className="text-sm text-gray-400 font-medium mb-2">Notes ({app.notes.length}):</p>
+                  <div className="space-y-2">
+                    {app.notes.slice(-2).map((note, index) => (
+                      <div key={index} className="bg-gray-900/50 rounded p-2 text-xs">
+                        <p className="text-gray-300">{note.content}</p>
+                        <p className="text-gray-500 mt-1">- {note.by}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          ))
+        )}
+      </div>
+
+      {/* Application Detail Modal */}
+      {selectedApplication && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto" onClick={() => setSelectedApplication(null)}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700/50 rounded-2xl shadow-2xl max-w-4xl w-full my-8 flex flex-col max-h-[calc(100vh-4rem)]"
+          >
+            {/* Header - Sticky */}
+            <div className="flex-shrink-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-b border-gray-700/50 p-6 backdrop-blur-xl">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
+                    <h3 className="text-2xl font-bold text-white">{selectedApplication.applicantName}</h3>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(selectedApplication.status)}`}>
+                      {selectedApplication.status.charAt(0).toUpperCase() + selectedApplication.status.slice(1)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-400 flex-wrap">
+                    <Briefcase className="w-4 h-4" />
+                    <p className="font-medium">{selectedApplication.jobTitle}</p>
+                    <span className="text-gray-600">•</span>
+                    <p className="text-sm">{selectedApplication.jobDepartment}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedApplication(null)}
+                  className="flex-shrink-0 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg p-2 transition-all ml-4"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-6">
+                {/* Contact Info Card */}
+                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-5">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                      <Mail className="w-4 h-4 text-blue-400" />
+                    </div>
+                    <h4 className="text-lg font-semibold text-white">Contact Information</h4>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="flex items-center gap-3 bg-gray-900/50 rounded-lg p-3">
+                      <Mail className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <p className="text-xs text-gray-500 mb-0.5">Email</p>
+                        <a href={`mailto:${selectedApplication.applicantEmail}`} className="text-primary hover:underline font-medium">
+                          {selectedApplication.applicantEmail}
+                        </a>
+                      </div>
+                    </div>
+                    {selectedApplication.applicantPhone && (
+                      <div className="flex items-center gap-3 bg-gray-900/50 rounded-lg p-3">
+                        <Phone className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-xs text-gray-500 mb-0.5">Phone</p>
+                          <p className="text-white font-medium">{selectedApplication.applicantPhone}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Application Materials Card */}
+                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-5">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                      <FileText className="w-4 h-4 text-purple-400" />
+                    </div>
+                    <h4 className="text-lg font-semibold text-white">Application Materials</h4>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {selectedApplication.resumeUrl && (
+                      <button
+                        onClick={() => handleDownloadResume(selectedApplication.resumeUrl)}
+                        className="group bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white px-5 py-3 rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-blue-500/50"
+                      >
+                        <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span className="font-medium">Download Resume</span>
+                      </button>
+                    )}
+                    {selectedApplication.portfolioUrl && (
+                      <a
+                        href={selectedApplication.portfolioUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white px-5 py-3 rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-purple-500/50"
+                      >
+                        <Globe className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span className="font-medium">View Portfolio</span>
+                      </a>
+                    )}
+                    {selectedApplication.linkedInUrl && (
+                      <a
+                        href={selectedApplication.linkedInUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-5 py-3 rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-blue-600/50"
+                      >
+                        <Users className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span className="font-medium">LinkedIn</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                {/* Cover Letter Card */}
+                {selectedApplication.coverLetter && (
+                  <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                        <FileText className="w-4 h-4 text-green-400" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-white">Cover Letter</h4>
+                    </div>
+                    <div className="bg-gray-900/80 rounded-lg p-4 border border-gray-700/30">
+                      <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{selectedApplication.coverLetter}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Status Update Card */}
+                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-5">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 text-orange-400" />
+                    </div>
+                    <h4 className="text-lg font-semibold text-white">Update Status</h4>
+                  </div>
+                  <select
+                    value={selectedApplication.status}
+                    onChange={(e) => {
+                      handleStatusChange(selectedApplication.id, e.target.value);
+                      setSelectedApplication({ ...selectedApplication, status: e.target.value });
+                    }}
+                    className="w-full bg-gray-900/80 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                  >
+                    <option value="new">New</option>
+                    <option value="screening">Screening</option>
+                    <option value="interview">Interview</option>
+                    <option value="offer">Offer</option>
+                    <option value="hired">Hired</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+
+                {/* Internal Notes Card */}
+                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-5">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                      <MessageSquare className="w-4 h-4 text-yellow-400" />
+                    </div>
+                    <h4 className="text-lg font-semibold text-white">Internal Notes</h4>
+                  </div>
+                  
+                  {/* Existing Notes */}
+                  <div className="space-y-3 mb-4 max-h-80 overflow-y-auto scrollbar-thin">
+                    {selectedApplication.notes && selectedApplication.notes.length > 0 ? (
+                      selectedApplication.notes.map((note, index) => (
+                        <div key={index} className="bg-gray-900/80 border border-gray-700/30 rounded-lg p-4">
+                          <p className="text-gray-300 mb-2 leading-relaxed">{note.content}</p>
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <User className="w-3 h-3" />
+                            <span>{note.by}</span>
+                            {note.timestamp && (
+                              <>
+                                <span>•</span>
+                                <Clock className="w-3 h-3" />
+                                <span>{new Date(note.timestamp).toLocaleString()}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-6">
+                        <MessageSquare className="w-12 h-12 text-gray-600 mx-auto mb-2" />
+                        <p className="text-gray-500 text-sm">No notes yet</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Add Note */}
+                  <div className="space-y-3 pt-4 border-t border-gray-700/50">
+                    <textarea
+                      value={newNote}
+                      onChange={(e) => setNewNote(e.target.value)}
+                      placeholder="Add an internal note about this candidate..."
+                      rows="3"
+                      className="w-full bg-gray-900/80 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder-gray-500"
+                    />
+                    <button
+                      onClick={() => {
+                        if (newNote.trim()) {
+                          handleStatusChange(selectedApplication.id, selectedApplication.status, newNote);
+                        }
+                      }}
+                      disabled={!newNote.trim()}
+                      className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-primary text-white px-5 py-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2"
+                    >
+                      <Send className="w-4 h-4" />
+                      Add Note
+                    </button>
+                  </div>
+                </div>
+
+                {/* Metadata Footer */}
+                <div className="bg-gray-800/30 border border-gray-700/30 rounded-xl p-4">
+                  <div className="flex flex-wrap gap-4 text-xs text-gray-500">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      <span>Submitted: {new Date(selectedApplication.submittedAt).toLocaleString()}</span>
+                    </div>
+                    {selectedApplication.lastUpdatedAt && (
+                      <>
+                        <span className="text-gray-700">•</span>
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4" />
+                          <span>Last Updated: {new Date(selectedApplication.lastUpdatedAt).toLocaleString()}</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default AdminDashboard;

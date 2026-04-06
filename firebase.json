@@ -58,6 +58,12 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "storage": [
+    {
+      "target": "default",
+      "rules": "storage.rules"
+    }
+  ],
   "emulators": {
     "functions": {
       "port": 5001

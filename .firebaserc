@@ -1,5 +1,16 @@
 {
   "projects": {
     "default": "xsavlab"
-  }
+  },
+  "targets": {
+    "xsavlab": {
+      "storage": {
+        "default": [
+          "xsavlab.appspot.com",
+          "xsavlab.firebasestorage.app"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

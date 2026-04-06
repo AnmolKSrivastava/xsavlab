@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, ArrowRight, CheckCircle, Shield } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowRight, CheckCircle, Shield, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import companyLogo from '../assets/images/logo/xsav_lab_logo.jpeg';
 
@@ -55,7 +55,7 @@ const Footer = () => {
             </div>
 
             {/* Certifications */}
-            <div>
+            <div className="mb-6">
               <div className="text-xs text-gray-500 uppercase tracking-wider mb-3">Certified & Compliant</div>
               <div className="flex flex-wrap gap-2">
                 {certifications.map((cert) => (
@@ -66,6 +66,22 @@ const Footer = () => {
                     {cert}
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Social Media */}
+            <div>
+              <div className="text-xs text-gray-500 uppercase tracking-wider mb-3">Connect With Us</div>
+              <div className="flex gap-3">
+                <a
+                  href="https://www.linkedin.com/company/xsavlab"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gray-800/50 border border-gray-700 hover:border-primary hover:bg-primary/10 p-3 rounded-lg transition-all group"
+                  aria-label="LinkedIn"
+                >
+                  <Users className="w-5 h-5 text-gray-400 group-hover:text-primary transition-colors" />
+                </a>
               </div>
             </div>
           </div>

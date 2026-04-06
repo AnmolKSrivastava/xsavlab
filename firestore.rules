@@ -137,6 +137,37 @@ service cloud.firestore {
       // Only admins can delete posts
       allow delete: if isAdmin();
     }
+
+    // Jobs Collection
+    match /jobs/{jobId} {
+      // Public can read open jobs
+      allow read: if resource.data.status == 'open' || isAdmin();
+      
+      // Only admins can create jobs
+      allow create: if isAdmin();
+      
+      // Only admins can update jobs
+      allow update: if isAdmin();
+      
+      // Only admins can delete jobs
+      allow delete: if isAdmin();
+    }
+
+    // Applications Collection
+    match /applications/{applicationId} {
+      // Public cannot read applications
+      // Only admins can read all applications
+      allow read: if isAdmin();
+      
+      // Anyone can create an application (submit)
+      allow create: if request.auth != null;
+      
+      // Only admins can update applications (change status, add notes)
+      allow update: if isAdmin();
+      
+      // Only admins can delete applications
+      allow delete: if isAdmin();
+    }
     
     // By default, deny all access to any other collections
     match /{document=**} {

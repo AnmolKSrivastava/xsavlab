@@ -2270,3 +2270,489 @@ exports.deleteBlogPost = onRequest((req, res) => {
   });
 });
 
+// ============================================
+// CAREERS FUNCTIONS
+// ============================================
+
+// Create a new job posting (admin only)
+exports.createJob = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify admin authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin) {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      const { 
+        title, 
+        department, 
+        location, 
+        jobType, 
+        experienceLevel, 
+        description, 
+        requirements, 
+        responsibilities,
+        benefits,
+        salaryRange,
+        featured 
+      } = req.body;
+
+      // Validation
+      if (!title || !department || !location || !jobType || !description) {
+        return res.status(400).json({ error: 'Required fields missing' });
+      }
+
+      // Sanitize and create job data
+      const jobData = {
+        title: escapeHtml(title),
+        department: escapeHtml(department),
+        location: escapeHtml(location),
+        jobType: escapeHtml(jobType),
+        experienceLevel: experienceLevel ? escapeHtml(experienceLevel) : 'Mid-level',
+        description: escapeHtml(description),
+        requirements: Array.isArray(requirements) ? requirements.map(r => escapeHtml(r)) : [],
+        responsibilities: Array.isArray(responsibilities) ? responsibilities.map(r => escapeHtml(r)) : [],
+        benefits: Array.isArray(benefits) ? benefits.map(b => escapeHtml(b)) : [],
+        salaryRange: salaryRange ? escapeHtml(salaryRange) : 'Competitive',
+        featured: featured === true,
+        status: 'open',
+        applicantCount: 0,
+        postedBy: {
+          uid: decodedToken.uid,
+          name: decodedToken.name || decodedToken.email || 'Admin',
+          email: decodedToken.email
+        },
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        closedAt: null
+      };
+
+      const docRef = await admin.firestore().collection('jobs').add(jobData);
+
+      return res.status(201).json({
+        message: 'Job posted successfully',
+        jobId: docRef.id
+      });
+
+    } catch (error) {
+      console.error('Error creating job:', error);
+      return res.status(500).json({ error: 'Failed to create job' });
+    }
+  });
+});
+
+// Get jobs (public sees open jobs, admins see all)
+exports.getJobs = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Check if user is admin
+      let isAdmin = false;
+      const authHeader = req.headers.authorization;
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split('Bearer ')[1];
+          const decodedToken = await admin.auth().verifyIdToken(token);
+          isAdmin = decodedToken.admin === true;
+        } catch (error) {
+          // Continue as public
+        }
+      }
+
+      const { department, jobType, status } = req.query;
+
+      let query = admin.firestore().collection('jobs');
+
+      // Public users only see open jobs
+      if (!isAdmin) {
+        query = query.where('status', '==', 'open');
+      } else if (status) {
+        // Admins can filter by status
+        query = query.where('status', '==', status);
+      }
+
+      // Apply filters
+      if (department && department !== 'all') {
+        query = query.where('department', '==', department);
+      }
+
+      if (jobType && jobType !== 'all') {
+        query = query.where('jobType', '==', jobType);
+      }
+
+      const snapshot = await query.get();
+
+      const jobs = [];
+      snapshot.forEach(doc => {
+        jobs.push({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate?.().toISOString() || null,
+          updatedAt: doc.data().updatedAt?.toDate?.().toISOString() || null,
+          closedAt: doc.data().closedAt?.toDate?.().toISOString() || null
+        });
+      });
+
+      // Sort: featured first, then by creation date
+      jobs.sort((a, b) => {
+        if (a.featured && !b.featured) return -1;
+        if (!a.featured && b.featured) return 1;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      return res.status(200).json({ jobs, count: jobs.length });
+
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      return res.status(500).json({ error: 'Failed to fetch jobs' });
+    }
+  });
+});
+
+// Update job (admin only)
+exports.updateJob = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'PUT' && req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify admin authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin) {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      const { jobId, ...updates } = req.body;
+
+      if (!jobId) {
+        return res.status(400).json({ error: 'Job ID is required' });
+      }
+
+      const jobRef = admin.firestore().collection('jobs').doc(jobId);
+      const jobDoc = await jobRef.get();
+
+      if (!jobDoc.exists) {
+        return res.status(404).json({ error: 'Job not found' });
+      }
+
+      // Prepare update data
+      const updateData = {
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      };
+
+      // Sanitize and add updates
+      if (updates.title) updateData.title = escapeHtml(updates.title);
+      if (updates.department) updateData.department = escapeHtml(updates.department);
+      if (updates.location) updateData.location = escapeHtml(updates.location);
+      if (updates.jobType) updateData.jobType = escapeHtml(updates.jobType);
+      if (updates.experienceLevel) updateData.experienceLevel = escapeHtml(updates.experienceLevel);
+      if (updates.description) updateData.description = escapeHtml(updates.description);
+      if (updates.requirements) updateData.requirements = Array.isArray(updates.requirements) ? updates.requirements.map(r => escapeHtml(r)) : [];
+      if (updates.responsibilities) updateData.responsibilities = Array.isArray(updates.responsibilities) ? updates.responsibilities.map(r => escapeHtml(r)) : [];
+      if (updates.benefits) updateData.benefits = Array.isArray(updates.benefits) ? updates.benefits.map(b => escapeHtml(b)) : [];
+      if (updates.salaryRange !== undefined) updateData.salaryRange = escapeHtml(updates.salaryRange);
+      if (updates.featured !== undefined) updateData.featured = updates.featured === true;
+      if (updates.status) {
+        updateData.status = updates.status;
+        if (updates.status === 'closed' || updates.status === 'filled') {
+          updateData.closedAt = admin.firestore.FieldValue.serverTimestamp();
+        }
+      }
+
+      await jobRef.update(updateData);
+
+      return res.status(200).json({ message: 'Job updated successfully' });
+
+    } catch (error) {
+      console.error('Error updating job:', error);
+      return res.status(500).json({ error: 'Failed to update job' });
+    }
+  });
+});
+
+// Delete job (admin only)
+exports.deleteJob = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'DELETE' && req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify admin authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin) {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      const jobId = req.body.jobId || req.query.jobId;
+
+      if (!jobId) {
+        return res.status(400).json({ error: 'Job ID is required' });
+      }
+
+      const jobRef = admin.firestore().collection('jobs').doc(jobId);
+      const jobDoc = await jobRef.get();
+
+      if (!jobDoc.exists) {
+        return res.status(404).json({ error: 'Job not found' });
+      }
+
+      await jobRef.delete();
+
+      console.log(`Job deleted by ${decodedToken.email}: ${jobId}`);
+      return res.status(200).json({ message: 'Job deleted successfully' });
+
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      return res.status(500).json({ error: 'Failed to delete job' });
+    }
+  });
+});
+
+// Submit job application (public)
+exports.submitApplication = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Authentication is optional for public job applications
+      let submittedBy = 'public';
+      const authHeader = req.headers.authorization;
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split('Bearer ')[1];
+          const decodedToken = await admin.auth().verifyIdToken(token);
+          submittedBy = decodedToken.uid;
+        } catch (authError) {
+          // If token is invalid, continue as public user
+          console.log('Invalid auth token, continuing as public user');
+        }
+      }
+
+      const { 
+        jobId,
+        applicantName,
+        applicantEmail,
+        applicantPhone,
+        coverLetter,
+        portfolioUrl,
+        linkedInUrl,
+        resumeUrl
+      } = req.body;
+
+      // Validation
+      if (!jobId || !applicantName || !applicantEmail || !resumeUrl) {
+        return res.status(400).json({ error: 'Required fields missing' });
+      }
+
+      // Verify job exists and is open
+      const jobRef = admin.firestore().collection('jobs').doc(jobId);
+      const jobDoc = await jobRef.get();
+
+      if (!jobDoc.exists) {
+        return res.status(404).json({ error: 'Job not found' });
+      }
+
+      const jobData = jobDoc.data();
+
+      if (jobData.status !== 'open') {
+        return res.status(400).json({ error: 'This position is no longer accepting applications' });
+      }
+
+      // Create application
+      const applicationData = {
+        jobId,
+        jobTitle: jobData.title,
+        jobDepartment: jobData.department,
+        applicantName: escapeHtml(applicantName),
+        applicantEmail: escapeHtml(applicantEmail),
+        applicantPhone: applicantPhone ? escapeHtml(applicantPhone) : '',
+        resumeUrl,
+        coverLetter: coverLetter ? escapeHtml(coverLetter) : '',
+        portfolioUrl: portfolioUrl || '',  // URLs don't need HTML escaping
+        linkedInUrl: linkedInUrl || '',    // URLs don't need HTML escaping
+        status: 'new',
+        notes: [],
+        submittedBy: submittedBy,
+        submittedAt: admin.firestore.FieldValue.serverTimestamp(),
+        lastUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        reviewedBy: null
+      };
+
+      const docRef = await admin.firestore().collection('applications').add(applicationData);
+
+      // Increment applicant count on job
+      await jobRef.update({
+        applicantCount: admin.firestore.FieldValue.increment(1)
+      });
+
+      return res.status(201).json({
+        message: 'Application submitted successfully',
+        applicationId: docRef.id
+      });
+
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      return res.status(500).json({ error: 'Failed to submit application' });
+    }
+  });
+});
+
+// Get applications (admin only)
+exports.getApplications = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify admin authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin) {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      const { jobId, status } = req.query;
+
+      let query = admin.firestore().collection('applications');
+
+      // Filter by job
+      if (jobId) {
+        query = query.where('jobId', '==', jobId);
+      }
+
+      // Filter by status
+      if (status && status !== 'all') {
+        query = query.where('status', '==', status);
+      }
+
+      const snapshot = await query.get();
+
+      const applications = [];
+      snapshot.forEach(doc => {
+        applications.push({
+          id: doc.id,
+          ...doc.data(),
+          submittedAt: doc.data().submittedAt?.toDate?.().toISOString() || null,
+          lastUpdatedAt: doc.data().lastUpdatedAt?.toDate?.().toISOString() || null
+        });
+      });
+
+      // Sort by submission date (newest first)
+      applications.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+
+      return res.status(200).json({ applications, count: applications.length });
+
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+      return res.status(500).json({ error: 'Failed to fetch applications' });
+    }
+  });
+});
+
+// Update application status (admin only)
+exports.updateApplicationStatus = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify admin authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin) {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      const { applicationId, status, note } = req.body;
+
+      if (!applicationId || !status) {
+        return res.status(400).json({ error: 'Application ID and status are required' });
+      }
+
+      const applicationRef = admin.firestore().collection('applications').doc(applicationId);
+      const applicationDoc = await applicationRef.get();
+
+      if (!applicationDoc.exists) {
+        return res.status(404).json({ error: 'Application not found' });
+      }
+
+      const updateData = {
+        status,
+        lastUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        reviewedBy: {
+          uid: decodedToken.uid,
+          name: decodedToken.name || decodedToken.email || 'Admin',
+          email: decodedToken.email
+        }
+      };
+
+      // Add note if provided
+      if (note) {
+        const noteData = {
+          by: decodedToken.name || decodedToken.email || 'Admin',
+          content: escapeHtml(note),
+          timestamp: admin.firestore.FieldValue.serverTimestamp()
+        };
+        updateData.notes = admin.firestore.FieldValue.arrayUnion(noteData);
+      }
+
+      await applicationRef.update(updateData);
+
+      return res.status(200).json({ message: 'Application status updated successfully' });
+
+    } catch (error) {
+      console.error('Error updating application status:', error);
+      return res.status(500).json({ error: 'Failed to update application status' });
+    }
+  });
+});
+

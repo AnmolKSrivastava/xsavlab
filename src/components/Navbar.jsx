@@ -23,6 +23,7 @@ const Navbar = ({ onScheduleClick }) => {
     { label: 'Services', href: '#services', type: 'hash' },
     { label: 'Ventures', href: '/ventures', type: 'route' },
     { label: 'Blog', href: '/blog', type: 'route' },
+    { label: 'Careers', href: '/careers', type: 'route' },
     { label: 'Process', href: '#process', type: 'hash' },
     { label: 'Case Studies', href: '#case-studies', type: 'hash' },
     { label: 'Contact', href: '#contact', type: 'hash' },

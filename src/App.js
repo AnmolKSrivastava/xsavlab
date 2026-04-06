@@ -19,6 +19,8 @@ import BlogListing from './components/BlogListing';
 import BlogPost from './components/BlogPost';
 import FeaturedVentures from './components/FeaturedVentures';
 import LatestBlogPosts from './components/LatestBlogPosts';
+import CareersPage from './components/CareersPage';
+import JobDetailPage from './components/JobDetailPage';
 
 // Home Page Component
 function HomePage({ selectedService, handleScheduleConsultation }) {
@@ -76,6 +78,8 @@ function App() {
             />
             <Route path="/blog" element={<BlogListing />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/careers" element={<CareersPage />} />
+            <Route path="/careers/:jobId" element={<JobDetailPage />} />
             <Route path="/ventures" element={<VenturesPage />} />
             <Route path="/ventures/:category" element={<VenturesPage />} />
             <Route path="/admin-login" element={<AdminLogin />} />
