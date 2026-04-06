@@ -39,15 +39,16 @@ const Footer = () => {
             <div className="space-y-3 mb-6">
               <a href="mailto:contact@xsavlab.com" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors">
                 <Mail className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">contact@xsavlab.com</span>
+                <span className="text-sm">Admin - contact@xsavlab.com</span>
+                <span className="text-sm">Sales - sales@xsavlab.com</span>
               </a>
-              <a href="tel:+15551234567" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors">
+              <a href="tel:+919884649716" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors">
                 <Phone className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">+1 (555) 123-4567</span>
+                <span className="text-sm">+91 9884649716</span>
               </a>
               <div className="flex items-center space-x-2 text-gray-400">
                 <MapPin className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">San Francisco, CA, USA</span>
+                <span className="text-sm">317-A, Sprint Tower, Hinjewadi Phase 1, Pune, Maharashtra, India - 411057</span>
               </div>
             </div>
 

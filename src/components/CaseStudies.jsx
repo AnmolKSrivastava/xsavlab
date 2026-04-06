@@ -78,7 +78,11 @@ const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: 
 
 const CaseStudies = () => {
   const { settings } = useSiteSettings();
-  const cs = settings.caseStudies;
+  const cs = settings.caseStudies || {
+    finserve: { threatReduction: 92, fasterResponse: 65, complianceAchieved: 100 },
+    retailmax: { costSavings: 42, uptimeSLA: 99.9, performanceBoost: 3 },
+    healthtech: { queriesAutomated: 80, responseTimeCut: 50, patientSatisfaction: 4.8 },
+  };
 
   const cases = [
     {
