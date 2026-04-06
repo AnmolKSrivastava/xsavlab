@@ -49,9 +49,11 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
   };
 
   const contactInfo = [
-    { icon: Mail, label: 'Email', value: 'contact@xsavlab.com', href: 'mailto:contact@xsavlab.com' },
-    { icon: Phone, label: 'Phone', value: '+91 9884319716', href: 'tel:+919884319716' },
-    { icon: MapPin, label: 'Location', value: 'Pune, Maharashtra, India', href: '#' },
+    { icon: Mail, label: 'Email', value: 'Admin - contact@xsavlab.com', href: 'mailto:contact@xsavlab.com' },
+    { icon: Mail, label: 'Email', value: 'Sales - sales@xsavlab.com', href: 'mailto:sales@xsavlab.com' },
+    { icon: Phone, label: 'Phone', value: '+91 9884649716', href: 'tel:+919884649716' },
+    { icon: MapPin, label: 'Location', value: '317-A, Sprint Tower, Hinjewadi Phase 1, Pune, Maharashtra, India - 411057', href: '#' },
+    { icon: MapPin, label: 'Location', value: 'Feltham, England', href: '#' },
   ];
 
   const quickLinks = [
