@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Quote, Award, Building2, Shield } from 'lucide-react';
 import CountUpNumber from './CountUpNumber';
@@ -7,30 +7,32 @@ import useSiteSettings from '../hooks/useSiteSettings';
 const TrustSection = () => {
   const { settings } = useSiteSettings();
   const stats = settings.statistics;
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const testimonials = [
-    {
-      name: 'Sarah Chen',
-      role: 'CTO, FinServe Global',
-      company: 'Fortune 500 Financial Services',
-      content: 'XSAV Lab\'s security assessment identified critical vulnerabilities and their team remediated everything within 72 hours. Their expertise is unmatched.',
-      rating: 5,
-    },
-    {
-      name: 'Michael Rodriguez',
-      role: 'VP of Technology',
-      company: 'HealthTech Solutions',
-      content: 'The cloud migration was executed flawlessly with zero downtime. We achieved 40% cost reduction while improving system performance dramatically.',
-      rating: 5,
-    },
-    {
-      name: 'Jennifer Park',
-      role: 'Chief Information Officer',
-      company: 'Enterprise Retail Corp',
-      content: 'Their SOC services provide us with 24/7 security monitoring and threat intelligence. Best decision we made for our cybersecurity posture.',
-      rating: 5,
-    },
-  ];
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/getReviews');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch reviews');
+      }
+
+      const data = await response.json();
+      // Take only first 3 approved reviews for display
+      setTestimonials((data.reviews || []).slice(0, 3));
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      // Keep empty array if fetch fails
+      setTestimonials([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const certifications = [
     { name: 'ISO 27001', desc: 'Information Security' },
@@ -73,34 +75,70 @@ const TrustSection = () => {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.15 }}
-                className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl p-8 transition-all duration-300 relative"
-              >
-                <Quote className="absolute top-6 right-6 w-10 h-10 text-primary/10" />
-                
-                <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  ))}
+            {loading ? (
+              // Loading skeleton
+              [...Array(3)].map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-8 animate-pulse"
+                >
+                  <div className="flex mb-4 space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="w-5 h-5 bg-gray-700 rounded" />
+                    ))}
+                  </div>
+                  <div className="space-y-3 mb-6">
+                    <div className="h-4 bg-gray-700 rounded w-full"></div>
+                    <div className="h-4 bg-gray-700 rounded w-5/6"></div>
+                    <div className="h-4 bg-gray-700 rounded w-4/6"></div>
+                  </div>
+                  <div className="border-t border-gray-700 pt-4 space-y-2">
+                    <div className="h-4 bg-gray-700 rounded w-2/3"></div>
+                    <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                    <div className="h-3 bg-gray-700 rounded w-1/3"></div>
+                  </div>
                 </div>
+              ))
+            ) : testimonials.length === 0 ? (
+              // Empty state
+              <div className="col-span-3 text-center py-12">
+                <p className="text-gray-400 text-lg">No client reviews available yet.</p>
+              </div>
+            ) : (
+              // Testimonials display
+              testimonials.map((testimonial, index) => (
+                <motion.div
+                  key={testimonial.id || index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15 }}
+                  className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl p-8 transition-all duration-300 relative"
+                >
+                  <Quote className="absolute top-6 right-6 w-10 h-10 text-primary/10" />
+                  
+                  <div className="flex mb-4">
+                    {[...Array(testimonial.rating || 5)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                    ))}
+                  </div>
 
-                <p className="text-gray-300 text-base mb-6 leading-relaxed">
-                  "{testimonial.content}"
-                </p>
+                  <p className="text-gray-300 text-base mb-6 leading-relaxed">
+                    "{testimonial.content}"
+                  </p>
 
-                <div className="border-t border-gray-700 pt-4">
-                  <div className="font-bold text-white mb-1">{testimonial.name}</div>
-                  <div className="text-sm text-gray-400 mb-1">{testimonial.role}</div>
-                  <div className="text-xs text-primary">{testimonial.company}</div>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="border-t border-gray-700 pt-4">
+                    <div className="font-bold text-white mb-1">{testimonial.clientName}</div>
+                    {testimonial.clientRole && (
+                      <div className="text-sm text-gray-400 mb-1">{testimonial.clientRole}</div>
+                    )}
+                    {testimonial.clientCompany && (
+                      <div className="text-xs text-primary">{testimonial.clientCompany}</div>
+                    )}
+                  </div>
+                </motion.div>
+              ))
+            )}
           </div>
         </motion.div>
 

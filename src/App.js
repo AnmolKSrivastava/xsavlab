@@ -7,6 +7,7 @@ import Services from './components/Services';
 import HowItWorks from './components/HowItWorks';
 import CaseStudies from './components/CaseStudies';
 import TrustSection from './components/TrustSection';
+import ReviewSubmissionForm from './components/ReviewSubmissionForm';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import QuantumBackground from './components/QuantumBackground';
@@ -14,6 +15,10 @@ import ScrollToTop from './components/ScrollToTop';
 import AdminLogin from './components/AdminLogin';
 import AdminDashboard from './components/AdminDashboard';
 import VenturesPage from './components/VenturesPage';
+import BlogListing from './components/BlogListing';
+import BlogPost from './components/BlogPost';
+import FeaturedVentures from './components/FeaturedVentures';
+import LatestBlogPosts from './components/LatestBlogPosts';
 
 // Home Page Component
 function HomePage({ selectedService, handleScheduleConsultation }) {
@@ -23,9 +28,12 @@ function HomePage({ selectedService, handleScheduleConsultation }) {
       <Hero onScheduleClick={handleScheduleConsultation} />
       <About />
       <Services onScheduleClick={handleScheduleConsultation} />
+      <FeaturedVentures />
+      <LatestBlogPosts />
       <HowItWorks />
       <CaseStudies />
       <TrustSection />
+      <ReviewSubmissionForm />
       <Contact preSelectedService={selectedService} />
       <Footer />
     </>
@@ -58,8 +66,7 @@ function App() {
         {/* Main content - positioned above background */}
         <div className="relative z-10">
           <Routes>
-            <Route 
-              path="/" 
+            <Route path="/" 
               element={
                 <HomePage 
                   selectedService={selectedService} 
@@ -67,6 +74,8 @@ function App() {
                 />
               } 
             />
+            <Route path="/blog" element={<BlogListing />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/ventures" element={<VenturesPage />} />
             <Route path="/ventures/:category" element={<VenturesPage />} />
             <Route path="/admin-login" element={<AdminLogin />} />

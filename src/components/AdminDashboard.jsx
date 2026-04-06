@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -28,7 +28,14 @@ import {
   Globe,
   Settings,
   Save,
-  Award
+  Award,
+  MessageSquare,
+  Star,
+  ThumbsUp,
+  ThumbsDown,
+  FileText,
+  Send,
+  AlertCircle
 } from 'lucide-react';
 import { auth } from '../config/firebase';
 import app from '../config/firebase';
@@ -49,6 +56,10 @@ const AdminDashboard = () => {
   const [venturesLoading, setVenturesLoading] = useState(false);
   const [successStories, setSuccessStories] = useState([]);
   const [successStoriesLoading, setSuccessStoriesLoading] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [blogPostsLoading, setBlogPostsLoading] = useState(false);
 
   useEffect(() => {
     // Check authentication and admin status
@@ -228,6 +239,24 @@ const AdminDashboard = () => {
                 label="Success Stories"
               />
             )}
+            {/* All admins can manage reviews */}
+            {(userRole === 'admin' || userRole === 'superadmin' || userRole === 'moderator') && (
+              <TabButton
+                active={activeTab === 'reviews'}
+                onClick={() => setActiveTab('reviews')}
+                icon={<MessageSquare className="w-4 h-4" />}
+                label="Client Reviews"
+              />
+            )}
+            {/* All admins can manage blog */}
+            {(userRole === 'admin' || userRole === 'superadmin' || userRole === 'moderator') && (
+              <TabButton
+                active={activeTab === 'blog'}
+                onClick={() => setActiveTab('blog')}
+                icon={<FileText className="w-4 h-4" />}
+                label="Blog"
+              />
+            )}
             {/* Only admins and super admins can see users tab */}
             {(userRole === 'admin' || userRole === 'superadmin') && (
               <TabButton
@@ -254,6 +283,8 @@ const AdminDashboard = () => {
             {activeTab === 'ventures' && <VenturesTab user={user} userRole={userRole} ventures={ventures} setVentures={setVentures} venturesLoading={venturesLoading} setVenturesLoading={setVenturesLoading} />}
             {activeTab === 'siteSettings' && <SiteSettingsTab user={user} userRole={userRole} />}
             {activeTab === 'successStories' && <SuccessStoriesTab user={user} userRole={userRole} successStories={successStories} setSuccessStories={setSuccessStories} successStoriesLoading={successStoriesLoading} setSuccessStoriesLoading={setSuccessStoriesLoading} />}
+            {activeTab === 'reviews' && <ReviewsTab user={user} userRole={userRole} reviews={reviews} setReviews={setReviews} reviewsLoading={reviewsLoading} setReviewsLoading={setReviewsLoading} />}
+            {activeTab === 'blog' && <BlogTab user={user} userRole={userRole} blogPosts={blogPosts} setBlogPosts={setBlogPosts} blogPostsLoading={blogPostsLoading} setBlogPostsLoading={setBlogPostsLoading} />}
             {activeTab === 'users' && <UsersTab user={user} userRole={userRole} users={users} setUsers={setUsers} usersLoading={usersLoading} setUsersLoading={setUsersLoading} />}
             {activeTab === 'settings' && <SettingsTab />}
           </div>
@@ -2701,6 +2732,1034 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
           ))
         )}
       </div>
+    </div>
+  );
+};
+
+// Reviews Tab
+const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setReviewsLoading }) => {
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [editingReview, setEditingReview] = useState(null);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const [formData, setFormData] = useState({
+    clientName: '',
+    clientRole: '',
+    clientCompany: '',
+    content: '',
+    rating: 5,
+    status: 'approved',
+    featured: false,
+    order: 0,
+  });
+
+  // Fetch reviews
+  useEffect(() => {
+    fetchReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchReviews = async () => {
+    setReviewsLoading(true);
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/getReviews', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch reviews');
+      }
+
+      const data = await response.json();
+      setReviews(data.reviews || []);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      setMessage({ type: 'error', text: 'Failed to load reviews' });
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
+  const handleApprove = async (reviewId) => {
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/approveReview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ reviewId }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to approve review');
+
+      setMessage({ type: 'success', text: 'Review approved successfully!' });
+      fetchReviews();
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message });
+    }
+  };
+
+  const handleReject = async (reviewId) => {
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/updateReview', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          reviewId,
+          updates: { status: 'rejected' },
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to reject review');
+
+      setMessage({ type: 'success', text: 'Review rejected' });
+      fetchReviews();
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message });
+    }
+  };
+
+  const handleEdit = (review) => {
+    setFormData({
+      clientName: review.clientName || '',
+      clientRole: review.clientRole || '',
+      clientCompany: review.clientCompany || '',
+      content: review.content || '',
+      rating: review.rating || 5,
+      status: review.status || 'approved',
+      featured: review.featured || false,
+      order: review.order || 0,
+    });
+    setEditingReview(review);
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setMessage({ type: '', text: '' });
+
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/updateReview', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          reviewId: editingReview.id,
+          updates: formData,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to update review');
+
+      setMessage({ type: 'success', text: 'Review updated successfully!' });
+      setEditingReview(null);
+      fetchReviews();
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message });
+    }
+  };
+
+  const handleDelete = async (reviewId, clientName) => {
+    if (!window.confirm(`Are you sure you want to delete the review from "${clientName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/deleteReview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ reviewId }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to delete review');
+
+      setMessage({ type: 'success', text: 'Review deleted successfully!' });
+      fetchReviews();
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message });
+    }
+  };
+
+  const getStatusBadgeColor = (status) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'pending':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'rejected':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
+      default:
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
+  // Filter reviews
+  const filteredReviews = reviews.filter(review => {
+    if (activeFilter === 'all') return true;
+    return review.status === activeFilter;
+  });
+
+  // Group reviews by status
+  const pendingReviews = reviews.filter(r => r.status === 'pending');
+  const approvedReviews = reviews.filter(r => r.status === 'approved');
+  const rejectedReviews = reviews.filter(r => r.status === 'rejected');
+
+  const canDeleteReviews = userRole === 'superadmin';
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-xl font-semibold text-white mb-1">Client Reviews</h3>
+          <p className="text-sm text-gray-400">
+            Moderate and manage client-submitted reviews
+          </p>
+        </div>
+        <div className="flex items-center gap-2 bg-gray-800/50 p-1 rounded-lg">
+          <button
+            onClick={() => setActiveFilter('all')}
+            className={`px-3 py-1 rounded text-sm transition-colors ${
+              activeFilter === 'all' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            All ({reviews.length})
+          </button>
+          <button
+            onClick={() => setActiveFilter('pending')}
+            className={`px-3 py-1 rounded text-sm transition-colors ${
+              activeFilter === 'pending' ? 'bg-yellow-500 text-white' : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            Pending ({pendingReviews.length})
+          </button>
+          <button
+            onClick={() => setActiveFilter('approved')}
+            className={`px-3 py-1 rounded text-sm transition-colors ${
+              activeFilter === 'approved' ? 'bg-green-500 text-white' : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            Approved ({approvedReviews.length})
+          </button>
+          <button
+            onClick={() => setActiveFilter('rejected')}
+            className={`px-3 py-1 rounded text-sm transition-colors ${
+              activeFilter === 'rejected' ? 'bg-red-500 text-white' : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            Rejected ({rejectedReviews.length})
+          </button>
+        </div>
+      </div>
+
+      {/* Messages */}
+      {message.text && (
+        <div className={`p-4 rounded-lg border ${
+          message.type === 'success' 
+            ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+            : 'bg-red-500/10 border-red-500/30 text-red-400'
+        }`}>
+          {message.text}
+        </div>
+      )}
+
+      {/* Edit Form */}
+      {editingReview && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          className="bg-gray-800/50 border border-gray-700 rounded-lg p-6"
+        >
+          <h4 className="text-lg font-semibold text-white mb-4">Edit Review</h4>
+          <form onSubmit={handleUpdate} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Client Name *</label>
+                <input
+                  type="text"
+                  value={formData.clientName}
+                  onChange={(e) => setFormData({...formData, clientName: e.target.value})}
+                  required
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Role</label>
+                <input
+                  type="text"
+                  value={formData.clientRole}
+                  onChange={(e) => setFormData({...formData, clientRole: e.target.value})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Company</label>
+                <input
+                  type="text"
+                  value={formData.clientCompany}
+                  onChange={(e) => setFormData({...formData, clientCompany: e.target.value})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Review Content *</label>
+              <textarea
+                value={formData.content}
+                onChange={(e) => setFormData({...formData, content: e.target.value})}
+                required
+                rows="4"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Rating *</label>
+                <select
+                  value={formData.rating}
+                  onChange={(e) => setFormData({...formData, rating: parseInt(e.target.value)})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                >
+                  {[5, 4, 3, 2, 1].map(num => (
+                    <option key={num} value={num}>{num} Star{num > 1 ? 's' : ''}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({...formData, status: e.target.value})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Order</label>
+                <input
+                  type="number"
+                  value={formData.order}
+                  onChange={(e) => setFormData({...formData, order: parseInt(e.target.value) || 0})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  min="0"
+                />
+              </div>
+              <div className="flex items-end">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.featured}
+                    onChange={(e) => setFormData({...formData, featured: e.target.checked})}
+                    className="w-4 h-4 text-primary bg-gray-900 border-gray-700 rounded focus:ring-primary"
+                  />
+                  <span className="text-sm text-gray-300">Featured</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                type="submit"
+                className="flex-1 px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                Update Review
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditingReview(null)}
+                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      )}
+
+      {/* Reviews List */}
+      <div className="space-y-4">
+        {reviewsLoading ? (
+          <div className="text-center py-12">
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading reviews...</p>
+          </div>
+        ) : filteredReviews.length === 0 ? (
+          <div className="text-center py-12 bg-gray-800/50 rounded-lg border border-gray-700">
+            <MessageSquare className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+            <p className="text-gray-400 mb-2">No {activeFilter !== 'all' ? activeFilter : ''} reviews</p>
+            <p className="text-sm text-gray-500">Client reviews will appear here once submitted</p>
+          </div>
+        ) : (
+          filteredReviews.map((review) => (
+            <div
+              key={review.id}
+              className={`bg-gray-800/50 border rounded-lg p-6 hover:border-gray-600 transition-colors ${
+                review.status === 'pending' ? 'border-yellow-500/30' :
+                review.status === 'approved' ? 'border-green-500/30' :
+                'border-gray-700'
+              }`}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h4 className="text-lg font-semibold text-white">{review.clientName}</h4>
+                    <span className={`px-2 py-1 rounded text-xs font-medium border ${getStatusBadgeColor(review.status)}`}>
+                      {review.status === 'pending' && '⏳ Pending'}
+                      {review.status === 'approved' && '✅ Approved'}
+                      {review.status === 'rejected' && '❌ Rejected'}
+                    </span>
+                    {review.featured && (
+                      <span className="px-2 py-1 rounded text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                        ⭐ Featured
+                      </span>
+                    )}
+                    <div className="flex">
+                      {[...Array(review.rating)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      ))}
+                    </div>
+                  </div>
+                  {(review.clientRole || review.clientCompany) && (
+                    <p className="text-sm text-gray-400">
+                      {review.clientRole}{review.clientRole && review.clientCompany && ' at '}{review.clientCompany}
+                    </p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  {review.status === 'pending' && (
+                    <>
+                      <button
+                        onClick={() => handleApprove(review.id)}
+                        className="p-2 text-green-400 hover:bg-green-500/10 rounded-lg transition-colors"
+                        title="Approve"
+                      >
+                        <ThumbsUp className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleReject(review.id)}
+                        className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        title="Reject"
+                      >
+                        <ThumbsDown className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={() => handleEdit(review)}
+                    className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                    title="Edit"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  {canDeleteReviews && (
+                    <button
+                      onClick={() => handleDelete(review.id, review.clientName)}
+                      className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-gray-900/50 rounded-lg p-4 mb-3">
+                <p className="text-gray-300 italic">"{review.content}"</p>
+              </div>
+
+              <div className="text-xs text-gray-500 flex justify-between">
+                <span>Submitted by: {review.submittedByEmail || 'N/A'}</span>
+                {review.approvedByEmail && <span>Approved by: {review.approvedByEmail}</span>}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Blog Tab
+const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, setBlogPostsLoading }) => {
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [isCreating, setIsCreating] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    excerpt: '',
+    content: '',
+    category: 'Industry News',
+    tags: '',
+    featuredImage: '',
+    featured: false
+  });
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  const categories = ['Industry News', 'Case Studies', 'Security Alerts', 'Company Updates'];
+
+  // Fetch blog posts
+  const fetchPosts = useCallback(async () => {
+    if (!user) return;
+    
+    setBlogPostsLoading(true);
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/getBlogPosts', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch blog posts');
+
+      const data = await response.json();
+      setBlogPosts(data.posts || []);
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+      setError('Failed to load blog posts');
+    } finally {
+      setBlogPostsLoading(false);
+    }
+  }, [user, setBlogPostsLoading, setBlogPosts, setError]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
+
+  // Create or update blog post
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitLoading(true);
+    setError(null);
+
+    try {
+      const token = await user.getIdToken();
+      const endpoint = editingPost 
+        ? 'https://us-central1-xsavlab.cloudfunctions.net/updateBlogPost'
+        : 'https://us-central1-xsavlab.cloudfunctions.net/createBlogPost';
+
+      const payload = {
+        ...formData,
+        tags: formData.tags.split(',').map(t => t.trim()).filter(t => t)
+      };
+
+      if (editingPost) {
+        payload.postId = editingPost.id;
+      }
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save blog post');
+      }
+
+      setSuccess(editingPost ? 'Blog post updated successfully!' : 'Blog post created successfully!');
+      setIsCreating(false);
+      setEditingPost(null);
+      setFormData({
+        title: '',
+        excerpt: '',
+        content: '',
+        category: 'Industry News',
+        tags: '',
+        featuredImage: '',
+        featured: false
+      });
+      fetchPosts();
+
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  // Submit for approval
+  const handleSubmitForApproval = async (postId) => {
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/submitBlogPostForApproval', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ postId })
+      });
+
+      if (!response.ok) throw new Error('Failed to submit for approval');
+
+      setSuccess('Post submitted for approval!');
+      fetchPosts();
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Approve post
+  const handleApprove = async (postId) => {
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/approveBlogPost', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ postId })
+      });
+
+      if (!response.ok) throw new Error('Failed to approve post');
+
+      setSuccess('Post approved and published!');
+      fetchPosts();
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Reject post
+  const handleReject = async (postId, feedback = '') => {
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/rejectBlogPost', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ postId, feedback })
+      });
+
+      if (!response.ok) throw new Error('Failed to reject post');
+
+      setSuccess('Post rejected and returned to draft');
+      fetchPosts();
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Delete post
+  const handleDelete = async (postId) => {
+    if (!window.confirm('Are you sure you want to delete this blog post?')) return;
+
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/deleteBlogPost', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ postId })
+      });
+
+      if (!response.ok) throw new Error('Failed to delete post');
+
+      setSuccess('Post deleted successfully');
+      fetchPosts();
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Edit post
+  const handleEdit = (post) => {
+    setEditingPost(post);
+    setFormData({
+      title: post.title,
+      excerpt: post.excerpt,
+      content: post.content,
+      category: post.category,
+      tags: Array.isArray(post.tags) ? post.tags.join(', ') : '',
+      featuredImage: post.featuredImage || '',
+      featured: post.featured || false
+    });
+    setIsCreating(true);
+  };
+
+  // Filter posts
+  const filteredPosts = blogPosts.filter(post => {
+    const statusMatch = filterStatus === 'all' || post.status === filterStatus;
+    const categoryMatch = filterCategory === 'all' || post.category === filterCategory;
+    return statusMatch && categoryMatch;
+  });
+
+  const statusCounts = {
+    all: blogPosts.length,
+    draft: blogPosts.filter(p => p.status === 'draft').length,
+    pending: blogPosts.filter(p => p.status === 'pending').length,
+    published: blogPosts.filter(p => p.status === 'published').length
+  };
+
+  // Status badge component
+  const StatusBadge = ({ status }) => {
+    const colors = {
+      draft: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+      pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+      published: 'bg-green-500/20 text-green-400 border-green-500/30'
+    };
+
+    return (
+      <span className={`px-2 py-1 rounded text-xs font-medium border ${colors[status] || colors.draft}`}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </span>
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-xl font-semibold text-white mb-1">Blog Management</h3>
+          <p className="text-sm text-gray-400">Create and manage blog posts</p>
+        </div>
+        <button
+          onClick={() => {
+            setIsCreating(!isCreating);
+            setEditingPost(null);
+            setFormData({
+              title: '',
+              excerpt: '',
+              content: '',
+              category: 'Industry News',
+              tags: '',
+              featuredImage: '',
+              featured: false
+            });
+          }}
+          className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          <span>{isCreating ? 'Cancel' : 'New Post'}</span>
+        </button>
+      </div>
+
+      {/* Success/Error Messages */}
+      {success && (
+        <div className="bg-green-500/20 border border-green-500/30 text-green-400 px-4 py-3 rounded-lg flex items-center space-x-2">
+          <CheckCircle className="w-5 h-5" />
+          <span>{success}</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg flex items-center space-x-2">
+          <AlertCircle className="w-5 h-5" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* Create/Edit Form */}
+      {isCreating && (
+        <form onSubmit={handleSubmit} className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 space-y-4">
+          <h4 className="text-lg font-semibold text-white">
+            {editingPost ? 'Edit Blog Post' : 'Create New Blog Post'}
+          </h4>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">Title *</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Category *</label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                required
+              >
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Tags (comma-separated)</label>
+              <input
+                type="text"
+                value={formData.tags}
+                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                placeholder="cybersecurity, cloud, devops"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">Featured Image URL</label>
+              <input
+                type="text"
+                value={formData.featuredImage}
+                onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">Excerpt</label>
+              <textarea
+                value={formData.excerpt}
+                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                rows={2}
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                placeholder="Brief summary of the post..."
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">Content *</label>
+              <textarea
+                value={formData.content}
+                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                rows={10}
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                required
+                placeholder="Write your blog post content..."
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.featured}
+                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  className="w-4 h-4"
+                />
+                <span className="text-sm text-gray-300">Feature this post</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="flex space-x-3 pt-4">
+            <button
+              type="submit"
+              disabled={submitLoading}
+              className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+            >
+              {submitLoading ? 'Saving...' : (editingPost ? 'Update Post' : 'Save as Draft')}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsCreating(false);
+                setEditingPost(null);
+              }}
+              className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* Filter Tabs */}
+      <div className="flex flex-wrap gap-2">
+        {['all', 'draft', 'pending', 'published'].map(status => (
+          <button
+            key={status}
+            onClick={() => setFilterStatus(status)}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              filterStatus === status
+                ? 'bg-primary text-white'
+                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+            }`}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)} ({statusCounts[status]})
+          </button>
+        ))}
+      </div>
+
+      {/* Category Filter */}
+      <div className="flex items-center space-x-2">
+        <Filter className="w-4 h-4 text-gray-400" />
+        <select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          className="bg-gray-800/50 border border-gray-700 text-white px-3 py-1 rounded-lg text-sm focus:outline-none focus:border-primary"
+        >
+          <option value="all">All Categories</option>
+          {categories.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Blog Posts List */}
+      {blogPostsLoading ? (
+        <div className="flex justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      ) : filteredPosts.length === 0 ? (
+        <div className="text-center py-12 bg-gray-800/30 rounded-lg border border-gray-700/50">
+          <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+          <p className="text-gray-400">No blog posts found</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filteredPosts.map((post) => (
+            <div
+              key={post.id}
+              className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 hover:border-gray-600 transition-colors"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <h4 className="text-lg font-semibold text-white">{post.title}</h4>
+                    <StatusBadge status={post.status} />
+                    {post.featured && (
+                      <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded text-xs font-medium">
+                        Featured
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-400 mb-2">{post.excerpt || 'No excerpt'}</p>
+                  <div className="flex items-center space-x-4 text-xs text-gray-500">
+                    <span className="flex items-center space-x-1">
+                      <span className="font-medium">{post.category}</span>
+                    </span>
+                    <span>By {post.author?.name || 'Unknown'}</span>
+                    <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                    {post.views > 0 && (
+                      <span className="flex items-center space-x-1">
+                        <Eye className="w-3 h-3" />
+                        <span>{post.views} views</span>
+                      </span>
+                    )}
+                  </div>
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {post.tags.map((tag, idx) => (
+                        <span key={idx} className="px-2 py-0.5 bg-gray-700/50 text-gray-400 text-xs rounded">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col space-y-2 ml-4">
+                  {/* Author can submit draft for approval */}
+                  {post.status === 'draft' && post.author?.uid === user.uid && (
+                    <button
+                      onClick={() => handleSubmitForApproval(post.id)}
+                      className="flex items-center space-x-1 text-sm text-blue-400 hover:text-blue-300"
+                      title="Submit for approval"
+                    >
+                      <Send className="w-4 h-4" />
+                      <span>Submit</span>
+                    </button>
+                  )}
+
+                  {/* Admin can approve pending posts */}
+                  {post.status === 'pending' && userRole === 'admin' && (
+                    <>
+                      <button
+                        onClick={() => handleApprove(post.id)}
+                        className="flex items-center space-x-1 text-sm text-green-400 hover:text-green-300"
+                        title="Approve post"
+                      >
+                        <ThumbsUp className="w-4 h-4" />
+                        <span>Approve</span>
+                      </button>
+                      <button
+                        onClick={() => handleReject(post.id)}
+                        className="flex items-center space-x-1 text-sm text-red-400 hover:text-red-300"
+                        title="Reject post"
+                      >
+                        <ThumbsDown className="w-4 h-4" />
+                        <span>Reject</span>
+                      </button>
+                    </>
+                  )}
+
+                  {/* Edit and Delete buttons */}
+                  {(post.author?.uid === user.uid || userRole === 'admin') && (
+                    <>
+                      <button
+                        onClick={() => handleEdit(post)}
+                        className="flex items-center space-x-1 text-sm text-blue-400 hover:text-blue-300"
+                        title="Edit post"
+                      >
+                        <Edit className="w-4 h-4" />
+                        <span>Edit</span>
+                      </button>
+                      {userRole === 'admin' && (
+                        <button
+                          onClick={() => handleDelete(post.id)}
+                          className="flex items-center space-x-1 text-sm text-red-400 hover:text-red-300"
+                          title="Delete post"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          <span>Delete</span>
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {post.rejectionFeedback && (
+                <div className="mt-3 p-3 bg-red-500/10 border border-red-500/20 rounded text-sm text-red-400">
+                  <strong>Rejection Feedback:</strong> {post.rejectionFeedback}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

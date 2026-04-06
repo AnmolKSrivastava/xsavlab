@@ -84,11 +84,11 @@ const Contact = ({ preSelectedService = 'cybersecurity' }) => {
 
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Let's Discuss Your
-            <span className="text-primary"> Security Needs</span>
+            <span className="text-primary"> Security/Technology Needs</span>
           </h2>
 
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Schedule a consultation with our security experts and discover how we can protect and optimize your infrastructure
+            Schedule a consultation with our security and technology experts and discover how we can protect and optimize your infrastructure
           </p>
         </motion.div>
 

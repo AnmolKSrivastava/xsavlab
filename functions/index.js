@@ -1439,3 +1439,834 @@ exports.deleteSuccessStory = onRequest((req, res) => {
   });
 });
 
+// ============ CLIENT REVIEWS MANAGEMENT ============
+
+/**
+ * Submit a client review (public endpoint - requires authentication)
+ */
+exports.submitReview = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify user is authenticated
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Authentication required to submit a review' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      const {
+        clientName,
+        clientRole,
+        clientCompany,
+        content,
+        rating,
+      } = req.body;
+
+      // Validate required fields
+      if (!clientName || !content || !rating) {
+        return res.status(400).json({ error: 'Missing required fields: clientName, content, rating' });
+      }
+
+      // Validate rating is between 1-5
+      if (rating < 1 || rating > 5) {
+        return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+      }
+
+      // Create review data
+      const reviewData = {
+        clientName: escapeHtml(clientName),
+        clientRole: clientRole ? escapeHtml(clientRole) : '',
+        clientCompany: clientCompany ? escapeHtml(clientCompany) : '',
+        content: escapeHtml(content),
+        rating: parseInt(rating),
+        status: 'pending', // All submissions start as pending
+        featured: false,
+        order: 0,
+        submittedAt: admin.firestore.FieldValue.serverTimestamp(),
+        submittedBy: decodedToken.uid,
+        submittedByEmail: decodedToken.email,
+        approvedAt: null,
+        approvedBy: null,
+        approvedByEmail: null,
+      };
+
+      const docRef = await admin.firestore()
+        .collection('reviews')
+        .add(reviewData);
+
+      console.log(`Review submitted by ${decodedToken.email}: ${docRef.id}`);
+      return res.status(201).json({ 
+        message: 'Review submitted successfully and is pending approval',
+        id: docRef.id,
+      });
+
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      return res.status(500).json({ error: 'Failed to submit review' });
+    }
+  });
+});
+
+/**
+ * Get reviews (public for approved, all for admins)
+ */
+exports.getReviews = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      let isAdmin = false;
+      
+      // Check if user is authenticated and is admin
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split('Bearer ')[1];
+          const decodedToken = await admin.auth().verifyIdToken(token);
+          isAdmin = decodedToken.admin && ['admin', 'superadmin'].includes(decodedToken.role);
+        } catch (authError) {
+          // Not authenticated, continue as public user
+          console.log('Auth verification failed, treating as public user');
+        }
+      }
+
+      // Build query
+      let query = admin.firestore().collection('reviews');
+      
+      // Public users only see approved reviews
+      if (!isAdmin) {
+        query = query.where('status', '==', 'approved');
+      }
+      
+      const snapshot = await query.get();
+      const reviews = [];
+      
+      snapshot.forEach(doc => {
+        reviews.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+
+      // Sort in-memory by featured (desc), then order (asc), then rating (desc)
+      reviews.sort((a, b) => {
+        if (a.featured !== b.featured) {
+          return b.featured ? 1 : -1;
+        }
+        if ((a.order || 0) !== (b.order || 0)) {
+          return (a.order || 0) - (b.order || 0);
+        }
+        return (b.rating || 0) - (a.rating || 0);
+      });
+
+      return res.status(200).json({ reviews });
+
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      return res.status(500).json({ error: 'Failed to fetch reviews' });
+    }
+  });
+});
+
+/**
+ * Approve a review (admin only)
+ */
+exports.approveReview = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST' && req.method !== 'PUT') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify requesting user is an admin
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin || !['admin', 'superadmin'].includes(decodedToken.role)) {
+        return res.status(403).json({ error: 'Only admins can approve reviews' });
+      }
+
+      const { reviewId } = req.body;
+
+      if (!reviewId) {
+        return res.status(400).json({ error: 'Review ID is required' });
+      }
+
+      const reviewRef = admin.firestore()
+        .collection('reviews')
+        .doc(reviewId);
+      
+      const reviewDoc = await reviewRef.get();
+      if (!reviewDoc.exists) {
+        return res.status(404).json({ error: 'Review not found' });
+      }
+
+      await reviewRef.update({
+        status: 'approved',
+        approvedAt: admin.firestore.FieldValue.serverTimestamp(),
+        approvedBy: decodedToken.uid,
+        approvedByEmail: decodedToken.email,
+      });
+
+      console.log(`Review approved by ${decodedToken.email}: ${reviewId}`);
+      return res.status(200).json({ message: 'Review approved successfully' });
+
+    } catch (error) {
+      console.error('Error approving review:', error);
+      return res.status(500).json({ error: 'Failed to approve review' });
+    }
+  });
+});
+
+/**
+ * Update a review (admin only)
+ */
+exports.updateReview = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'PUT' && req.method !== 'PATCH') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify requesting user is an admin
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin || !['admin', 'superadmin'].includes(decodedToken.role)) {
+        return res.status(403).json({ error: 'Only admins can update reviews' });
+      }
+
+      const { reviewId, updates } = req.body;
+
+      if (!reviewId) {
+        return res.status(400).json({ error: 'Review ID is required' });
+      }
+
+      const reviewRef = admin.firestore()
+        .collection('reviews')
+        .doc(reviewId);
+      
+      const reviewDoc = await reviewRef.get();
+      if (!reviewDoc.exists) {
+        return res.status(404).json({ error: 'Review not found' });
+      }
+
+      // Sanitize text fields if present
+      const updateData = { ...updates };
+      if (updateData.clientName) updateData.clientName = escapeHtml(updateData.clientName);
+      if (updateData.clientRole) updateData.clientRole = escapeHtml(updateData.clientRole);
+      if (updateData.clientCompany) updateData.clientCompany = escapeHtml(updateData.clientCompany);
+      if (updateData.content) updateData.content = escapeHtml(updateData.content);
+      
+      // Validate rating if present
+      if (updateData.rating && (updateData.rating < 1 || updateData.rating > 5)) {
+        return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+      }
+
+      // Add update metadata
+      updateData.lastUpdatedAt = admin.firestore.FieldValue.serverTimestamp();
+      updateData.lastUpdatedBy = decodedToken.uid;
+      updateData.lastUpdatedByEmail = decodedToken.email;
+
+      await reviewRef.update(updateData);
+
+      console.log(`Review updated by ${decodedToken.email}: ${reviewId}`);
+      return res.status(200).json({ message: 'Review updated successfully' });
+
+    } catch (error) {
+      console.error('Error updating review:', error);
+      return res.status(500).json({ error: 'Failed to update review' });
+    }
+  });
+});
+
+/**
+ * Delete a review (superadmin only)
+ */
+exports.deleteReview = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'DELETE' && req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify requesting user is a superadmin
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin || decodedToken.role !== 'superadmin') {
+        return res.status(403).json({ error: 'Only superadmins can delete reviews' });
+      }
+
+      const reviewId = req.body.reviewId || req.query.reviewId;
+
+      if (!reviewId) {
+        return res.status(400).json({ error: 'Review ID is required' });
+      }
+
+      const reviewRef = admin.firestore()
+        .collection('reviews')
+        .doc(reviewId);
+      
+      const reviewDoc = await reviewRef.get();
+      if (!reviewDoc.exists) {
+        return res.status(404).json({ error: 'Review not found' });
+      }
+
+      await reviewRef.delete();
+
+      console.log(`Review deleted by ${decodedToken.email}: ${reviewId}`);
+      return res.status(200).json({ message: 'Review deleted successfully' });
+
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      return res.status(500).json({ error: 'Failed to delete review' });
+    }
+  });
+});
+
+// ============================================
+// BLOG FUNCTIONS
+// ============================================
+
+// Helper function to create URL-friendly slug
+const createSlug = (title) => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
+// Create a new blog post (draft)
+exports.createBlogPost = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      const { title, excerpt, content, category, tags, featuredImage, featured } = req.body;
+
+      // Validation
+      if (!title || !content || !category) {
+        return res.status(400).json({ error: 'Title, content, and category are required' });
+      }
+
+      // Create slug from title
+      let slug = createSlug(title);
+      
+      // Ensure slug is unique
+      const existingPost = await admin.firestore()
+        .collection('blogPosts')
+        .where('slug', '==', slug)
+        .limit(1)
+        .get();
+      
+      if (!existingPost.empty) {
+        slug = `${slug}-${Date.now()}`;
+      }
+
+      // Sanitize text inputs
+      const sanitizedData = {
+        title: escapeHtml(title),
+        slug,
+        excerpt: excerpt ? escapeHtml(excerpt) : '',
+        content: escapeHtml(content),
+        category: escapeHtml(category),
+        tags: Array.isArray(tags) ? tags.map(tag => escapeHtml(tag)) : [],
+        featuredImage: featuredImage || '',
+        featured: featured === true,
+        author: {
+          uid: decodedToken.uid,
+          name: decodedToken.name || decodedToken.email || 'Anonymous',
+          email: decodedToken.email
+        },
+        status: 'draft',
+        views: 0,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        publishedAt: null,
+        approvedBy: null
+      };
+
+      const docRef = await admin.firestore()
+        .collection('blogPosts')
+        .add(sanitizedData);
+
+      return res.status(201).json({
+        message: 'Blog post created successfully',
+        postId: docRef.id,
+        slug
+      });
+
+    } catch (error) {
+      console.error('Error creating blog post:', error);
+      return res.status(500).json({ error: 'Failed to create blog post' });
+    }
+  });
+});
+
+// Get blog posts (with filters)
+exports.getBlogPosts = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Check if user is admin
+      let isAdmin = false;
+      const authHeader = req.headers.authorization;
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split('Bearer ')[1];
+          const decodedToken = await admin.auth().verifyIdToken(token);
+          isAdmin = decodedToken.admin === true;
+        } catch (error) {
+          // Non-admin or invalid token, continue as public
+        }
+      }
+
+      const { category, status, featured, authorUid } = req.query;
+
+      let query = admin.firestore().collection('blogPosts');
+
+      // Public users only see published posts
+      if (!isAdmin) {
+        query = query.where('status', '==', 'published');
+      } else if (status) {
+        // Admins can filter by status
+        query = query.where('status', '==', status);
+      }
+
+      // Apply filters
+      if (category) {
+        query = query.where('category', '==', category);
+      }
+
+      if (featured === 'true') {
+        query = query.where('featured', '==', true);
+      }
+
+      if (authorUid) {
+        query = query.where('author.uid', '==', authorUid);
+      }
+
+      const snapshot = await query.get();
+
+      const posts = [];
+      snapshot.forEach(doc => {
+        posts.push({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate?.().toISOString() || null,
+          updatedAt: doc.data().updatedAt?.toDate?.().toISOString() || null,
+          publishedAt: doc.data().publishedAt?.toDate?.().toISOString() || null
+        });
+      });
+
+      // Sort in-memory (featured first, then by publishedAt/createdAt desc)
+      posts.sort((a, b) => {
+        if (a.featured && !b.featured) return -1;
+        if (!a.featured && b.featured) return 1;
+        
+        const dateA = new Date(a.publishedAt || a.createdAt);
+        const dateB = new Date(b.publishedAt || b.createdAt);
+        return dateB - dateA;
+      });
+
+      return res.status(200).json({ posts, count: posts.length });
+
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+      return res.status(500).json({ error: 'Failed to fetch blog posts' });
+    }
+  });
+});
+
+// Get single blog post by slug
+exports.getBlogPost = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const { slug } = req.query;
+
+      if (!slug) {
+        return res.status(400).json({ error: 'Slug is required' });
+      }
+
+      // Check if user is admin
+      let isAdmin = false;
+      const authHeader = req.headers.authorization;
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split('Bearer ')[1];
+          const decodedToken = await admin.auth().verifyIdToken(token);
+          isAdmin = decodedToken.admin === true;
+        } catch (error) {
+          // Continue as public
+        }
+      }
+
+      const snapshot = await admin.firestore()
+        .collection('blogPosts')
+        .where('slug', '==', slug)
+        .limit(1)
+        .get();
+
+      if (snapshot.empty) {
+        return res.status(404).json({ error: 'Blog post not found' });
+      }
+
+      const doc = snapshot.docs[0];
+      const post = {
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate?.().toISOString() || null,
+        updatedAt: doc.data().updatedAt?.toDate?.().toISOString() || null,
+        publishedAt: doc.data().publishedAt?.toDate?.().toISOString() || null
+      };
+
+      // Only allow published posts for public, admins see all
+      if (!isAdmin && post.status !== 'published') {
+        return res.status(404).json({ error: 'Blog post not found' });
+      }
+
+      // Increment view count (only for published posts viewed by public)
+      if (!isAdmin && post.status === 'published') {
+        await doc.ref.update({
+          views: admin.firestore.FieldValue.increment(1)
+        });
+        post.views = (post.views || 0) + 1;
+      }
+
+      return res.status(200).json({ post });
+
+    } catch (error) {
+      console.error('Error fetching blog post:', error);
+      return res.status(500).json({ error: 'Failed to fetch blog post' });
+    }
+  });
+});
+
+// Update blog post
+exports.updateBlogPost = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'PUT' && req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      const { postId, title, excerpt, content, category, tags, featuredImage, featured, status } = req.body;
+
+      if (!postId) {
+        return res.status(400).json({ error: 'Post ID is required' });
+      }
+
+      const postRef = admin.firestore().collection('blogPosts').doc(postId);
+      const postDoc = await postRef.get();
+
+      if (!postDoc.exists) {
+        return res.status(404).json({ error: 'Blog post not found' });
+      }
+
+      const existingPost = postDoc.data();
+
+      // Check permissions: author can update own drafts, admin can update any
+      const isAdmin = decodedToken.admin === true;
+      const isAuthor = existingPost.author.uid === decodedToken.uid;
+
+      if (!isAdmin && (!isAuthor || existingPost.status !== 'draft')) {
+        return res.status(403).json({ error: 'You can only update your own draft posts' });
+      }
+
+      // Prepare update data
+      const updateData = {
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      };
+
+      if (title) {
+        updateData.title = escapeHtml(title);
+        // Update slug if title changed
+        updateData.slug = createSlug(title);
+      }
+      if (excerpt !== undefined) updateData.excerpt = escapeHtml(excerpt);
+      if (content) updateData.content = escapeHtml(content);
+      if (category) updateData.category = escapeHtml(category);
+      if (tags) updateData.tags = Array.isArray(tags) ? tags.map(tag => escapeHtml(tag)) : [];
+      if (featuredImage !== undefined) updateData.featuredImage = featuredImage;
+      if (featured !== undefined) updateData.featured = featured === true;
+      
+      // Only admins can change status (except submitting for approval)
+      if (status && isAdmin) {
+        updateData.status = status;
+      }
+
+      await postRef.update(updateData);
+
+      return res.status(200).json({ message: 'Blog post updated successfully' });
+
+    } catch (error) {
+      console.error('Error updating blog post:', error);
+      return res.status(500).json({ error: 'Failed to update blog post' });
+    }
+  });
+});
+
+// Submit post for approval (author changes status to 'pending')
+exports.submitBlogPostForApproval = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      const { postId } = req.body;
+
+      if (!postId) {
+        return res.status(400).json({ error: 'Post ID is required' });
+      }
+
+      const postRef = admin.firestore().collection('blogPosts').doc(postId);
+      const postDoc = await postRef.get();
+
+      if (!postDoc.exists) {
+        return res.status(404).json({ error: 'Blog post not found' });
+      }
+
+      const existingPost = postDoc.data();
+
+      // Only the author can submit their own post
+      if (existingPost.author.uid !== decodedToken.uid) {
+        return res.status(403).json({ error: 'You can only submit your own posts' });
+      }
+
+      // Can only submit drafts
+      if (existingPost.status !== 'draft') {
+        return res.status(400).json({ error: 'Only draft posts can be submitted for approval' });
+      }
+
+      await postRef.update({
+        status: 'pending',
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      return res.status(200).json({ message: 'Blog post submitted for approval' });
+
+    } catch (error) {
+      console.error('Error submitting blog post:', error);
+      return res.status(500).json({ error: 'Failed to submit blog post' });
+    }
+  });
+});
+
+// Approve blog post (admin only)
+exports.approveBlogPost = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify admin authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin) {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      const { postId } = req.body;
+
+      if (!postId) {
+        return res.status(400).json({ error: 'Post ID is required' });
+      }
+
+      const postRef = admin.firestore().collection('blogPosts').doc(postId);
+      const postDoc = await postRef.get();
+
+      if (!postDoc.exists) {
+        return res.status(404).json({ error: 'Blog post not found' });
+      }
+
+      await postRef.update({
+        status: 'published',
+        publishedAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        approvedBy: {
+          uid: decodedToken.uid,
+          name: decodedToken.name || decodedToken.email || 'Admin',
+          email: decodedToken.email,
+          approvedAt: admin.firestore.FieldValue.serverTimestamp()
+        }
+      });
+
+      return res.status(200).json({ message: 'Blog post approved and published' });
+
+    } catch (error) {
+      console.error('Error approving blog post:', error);
+      return res.status(500).json({ error: 'Failed to approve blog post' });
+    }
+  });
+});
+
+// Reject blog post (admin only - returns to draft)
+exports.rejectBlogPost = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify admin authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin) {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      const { postId, feedback } = req.body;
+
+      if (!postId) {
+        return res.status(400).json({ error: 'Post ID is required' });
+      }
+
+      const postRef = admin.firestore().collection('blogPosts').doc(postId);
+      const postDoc = await postRef.get();
+
+      if (!postDoc.exists) {
+        return res.status(404).json({ error: 'Blog post not found' });
+      }
+
+      await postRef.update({
+        status: 'draft',
+        rejectionFeedback: feedback ? escapeHtml(feedback) : '',
+        rejectedBy: {
+          uid: decodedToken.uid,
+          name: decodedToken.name || decodedToken.email || 'Admin',
+          rejectedAt: admin.firestore.FieldValue.serverTimestamp()
+        },
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      return res.status(200).json({ message: 'Blog post rejected and returned to draft' });
+
+    } catch (error) {
+      console.error('Error rejecting blog post:', error);
+      return res.status(500).json({ error: 'Failed to reject blog post' });
+    }
+  });
+});
+
+// Delete blog post (admin only)
+exports.deleteBlogPost = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'DELETE' && req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify admin authentication
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin) {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      const postId = req.body.postId || req.query.postId;
+
+      if (!postId) {
+        return res.status(400).json({ error: 'Post ID is required' });
+      }
+
+      const postRef = admin.firestore().collection('blogPosts').doc(postId);
+      const postDoc = await postRef.get();
+
+      if (!postDoc.exists) {
+        return res.status(404).json({ error: 'Blog post not found' });
+      }
+
+      await postRef.delete();
+
+      console.log(`Blog post deleted by ${decodedToken.email}: ${postId}`);
+      return res.status(200).json({ message: 'Blog post deleted successfully' });
+
+    } catch (error) {
+      console.error('Error deleting blog post:', error);
+      return res.status(500).json({ error: 'Failed to delete blog post' });
+    }
+  });
+});
+

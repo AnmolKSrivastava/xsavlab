@@ -105,6 +105,39 @@ service cloud.firestore {
       allow delete: if isSuperAdmin();
     }
     
+    // Client Reviews collection
+    match /reviews/{reviewId} {
+      // Everyone can read approved reviews
+      allow read: if resource.data.status == 'approved' || isAdmin();
+      
+      // Anyone can create a review (client submission)
+      allow create: if request.auth != null;
+      
+      // Only admins can update reviews (moderation/editing)
+      allow update: if hasRole('admin');
+      
+      // Only super admins can delete reviews
+      allow delete: if isSuperAdmin();
+    }
+
+    // Blog Posts Collection
+    match /blogPosts/{postId} {
+      // Public can read published posts
+      allow read: if resource.data.status == 'published' || isAdmin();
+      
+      // Authenticated users can create posts (as drafts)
+      allow create: if isAuthenticated() 
+        && request.resource.data.status == 'draft'
+        && request.resource.data.author.uid == request.auth.uid;
+      
+      // Authors can update their own drafts, admins can update any post
+      allow update: if (isAdmin() || 
+        (resource.data.author.uid == request.auth.uid && resource.data.status == 'draft'));
+      
+      // Only admins can delete posts
+      allow delete: if isAdmin();
+    }
+    
     // By default, deny all access to any other collections
     match /{document=**} {
       allow read, write: if false;
