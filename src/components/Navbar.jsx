@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import companyLogo from '../assets/images/logo/xsav_lab_logo.jpeg';
 
 const Navbar = ({ onScheduleClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,7 +18,37 @@ const Navbar = ({ onScheduleClick }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const menuItems = ['About', 'Services', 'Process', 'Case Studies', 'Contact'];
+  const menuItems = [
+    { label: 'About', href: '#about', type: 'hash' },
+    { label: 'Services', href: '#services', type: 'hash' },
+    { label: 'Ventures', href: '/ventures', type: 'route' },
+    { label: 'Process', href: '#process', type: 'hash' },
+    { label: 'Case Studies', href: '#case-studies', type: 'hash' },
+    { label: 'Contact', href: '#contact', type: 'hash' },
+  ];
+
+  const handleNavClick = (item) => {
+    if (item.type === 'route') {
+      navigate(item.href);
+    } else {
+      // If we're not on home page, navigate there first
+      if (location.pathname !== '/') {
+        navigate('/');
+        setTimeout(() => {
+          const element = document.querySelector(item.href);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      } else {
+        const element = document.querySelector(item.href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
+    setIsOpen(false);
+  };
 
   return (
     <motion.nav
@@ -49,14 +82,14 @@ const Navbar = ({ onScheduleClick }) => {
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center space-x-1">
             {menuItems.map((item) => (
-              <motion.a
-                key={item}
-                href={`#${item.toLowerCase().replace(' ', '-')}`}
+              <motion.button
+                key={item.label}
+                onClick={() => handleNavClick(item)}
                 className="text-gray-300 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg transition-all font-medium"
                 whileHover={{ y: -1 }}
               >
-                {item}
-              </motion.a>
+                {item.label}
+              </motion.button>
             ))}
           </div>
 
@@ -91,14 +124,13 @@ const Navbar = ({ onScheduleClick }) => {
         >
           <div className="px-4 py-6 space-y-1">
             {menuItems.map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase().replace(' ', '-')}`}
-                className="block text-gray-300 hover:text-white hover:bg-white/5 px-4 py-3 rounded-lg transition-all font-medium"
-                onClick={() => setIsOpen(false)}
+              <button
+                key={item.label}
+                onClick={() => handleNavClick(item)}
+                className="block w-full text-left text-gray-300 hover:text-white hover:bg-white/5 px-4 py-3 rounded-lg transition-all font-medium"
               >
-                {item}
-              </a>
+                {item.label}
+              </button>
             ))}
             <div className="pt-4">
               <button 

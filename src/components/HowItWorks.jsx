@@ -1,8 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FileSearch, Settings, Rocket, Shield } from 'lucide-react';
+import useSiteSettings from '../hooks/useSiteSettings';
 
 const HowItWorks = () => {
+  const { settings } = useSiteSettings();
+  const stats = settings.statistics;
+
   const steps = [
     {
       icon: FileSearch,
@@ -156,19 +160,19 @@ const HowItWorks = () => {
         >
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">2-4</div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stats.deploymentWeeks}</div>
               <div className="text-gray-400">Weeks Typical Deployment</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">98%</div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stats.projectSuccessRate}%</div>
               <div className="text-gray-400">Project Success Rate</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">24/7</div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stats.supportCoverage}</div>
               <div className="text-gray-400">Support Coverage</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">500+</div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stats.successfulProjects}+</div>
               <div className="text-gray-400">Successful Projects</div>
             </div>
           </div>

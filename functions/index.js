@@ -775,3 +775,404 @@ exports.deleteAdminUser = onRequest((req, res) => {
   });
 });
 
+/**
+ * Create Venture
+ * Creates a new venture/product entry
+ * Admins and Super Admins can create ventures
+ */
+exports.createVenture = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const ventureData = req.body;
+
+      // Verify requesting user is an admin
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      // Only admins and super admins can create ventures
+      if (!decodedToken.admin || !['admin', 'superadmin'].includes(decodedToken.role)) {
+        return res.status(403).json({ error: 'Only admins can create ventures' });
+      }
+
+      // Validate required fields
+      if (!ventureData.name || !ventureData.slug) {
+        return res.status(400).json({ error: 'Name and slug are required' });
+      }
+
+      // Check if slug already exists
+      const existingVenture = await admin.firestore()
+        .collection('ventures')
+        .where('slug', '==', ventureData.slug)
+        .get();
+
+      if (!existingVenture.empty) {
+        return res.status(400).json({ error: 'A venture with this slug already exists' });
+      }
+
+      // Create venture document
+      const ventureRef = await admin.firestore().collection('ventures').add({
+        ...ventureData,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdBy: decodedToken.uid,
+        createdByEmail: decodedToken.email,
+        views: 0,
+        clicks: 0,
+      });
+
+      console.log(`Venture created: ${ventureData.name} by ${decodedToken.email}`);
+      return res.status(200).json({ 
+        message: 'Venture created successfully',
+        ventureId: ventureRef.id 
+      });
+
+    } catch (error) {
+      console.error('Error creating venture:', error);
+      return res.status(500).json({ error: 'Failed to create venture' });
+    }
+  });
+});
+
+/**
+ * Update Venture
+ * Updates an existing venture
+ * Admins and Super Admins can update ventures
+ */
+exports.updateVenture = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const { ventureId, ...updateData } = req.body;
+
+      if (!ventureId) {
+        return res.status(400).json({ error: 'Venture ID is required' });
+      }
+
+      // Verify requesting user
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      // Only admins and super admins can update ventures
+      if (!decodedToken.admin || !['admin', 'superadmin'].includes(decodedToken.role)) {
+        return res.status(403).json({ error: 'Only admins can update ventures' });
+      }
+
+      // Update venture
+      await admin.firestore().collection('ventures').doc(ventureId).update({
+        ...updateData,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        lastEditedBy: decodedToken.uid,
+      });
+
+      console.log(`Venture ${ventureId} updated by ${decodedToken.email}`);
+      return res.status(200).json({ message: 'Venture updated successfully' });
+
+    } catch (error) {
+      console.error('Error updating venture:', error);
+      return res.status(500).json({ error: 'Failed to update venture' });
+    }
+  });
+});
+
+/**
+ * Delete Venture
+ * Deletes a venture (Super Admin only)
+ */
+exports.deleteVenture = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'DELETE') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const { ventureId } = req.body;
+
+      if (!ventureId) {
+        return res.status(400).json({ error: 'Venture ID is required' });
+      }
+
+      // Verify requesting user
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      // Only super admins can delete ventures
+      if (decodedToken.role !== 'superadmin') {
+        return res.status(403).json({ error: 'Only super admins can delete ventures' });
+      }
+
+      // Delete venture
+      await admin.firestore().collection('ventures').doc(ventureId).delete();
+
+      console.log(`Venture ${ventureId} deleted by ${decodedToken.email}`);
+      return res.status(200).json({ message: 'Venture deleted successfully' });
+
+    } catch (error) {
+      console.error('Error deleting venture:', error);
+      return res.status(500).json({ error: 'Failed to delete venture' });
+    }
+  });
+});
+
+/**
+ * Get Ventures
+ * Public function to retrieve ventures
+ * Filters based on status for non-admin users
+ */
+exports.getVentures = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      let venturesQuery = admin.firestore().collection('ventures');
+
+      // Check if user is admin
+      let isAdmin = false;
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split('Bearer ')[1];
+          const decodedToken = await admin.auth().verifyIdToken(token);
+          isAdmin = decodedToken.admin === true;
+        } catch (error) {
+          // Invalid token, continue as non-admin
+        }
+      }
+
+      // Non-admins only see live ventures
+      if (!isAdmin) {
+        venturesQuery = venturesQuery.where('status', '==', 'live');
+      }
+
+      // Order by display order
+      venturesQuery = venturesQuery.orderBy('order', 'asc');
+
+      const snapshot = await venturesQuery.get();
+      
+      const ventures = [];
+      snapshot.forEach(doc => {
+        ventures.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+
+      return res.status(200).json({ ventures });
+
+    } catch (error) {
+      console.error('Error getting ventures:', error);
+      return res.status(500).json({ error: 'Failed to get ventures' });
+    }
+  });
+});
+
+/**
+ * Track Venture View
+ * Increments view count when someone visits a venture page
+ */
+exports.trackVentureView = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const { ventureId } = req.body;
+
+      if (!ventureId) {
+        return res.status(400).json({ error: 'Venture ID is required' });
+      }
+
+      // Increment view count
+      await admin.firestore().collection('ventures').doc(ventureId).update({
+        views: admin.firestore.FieldValue.increment(1),
+      });
+
+      return res.status(200).json({ message: 'View tracked' });
+
+    } catch (error) {
+      console.error('Error tracking view:', error);
+      // Don't fail the request if tracking fails
+      return res.status(200).json({ message: 'View tracking failed silently' });
+    }
+  });
+});
+
+/**
+ * Track Venture Click
+ * Increments click count when someone clicks "Visit" link
+ */
+exports.trackVentureClick = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const { ventureId } = req.body;
+
+      if (!ventureId) {
+        return res.status(400).json({ error: 'Venture ID is required' });
+      }
+
+      // Increment click count
+      await admin.firestore().collection('ventures').doc(ventureId).update({
+        clicks: admin.firestore.FieldValue.increment(1),
+      });
+
+      return res.status(200).json({ message: 'Click tracked' });
+
+    } catch (error) {
+      console.error('Error tracking click:', error);
+      // Don't fail the request if tracking fails
+      return res.status(200).json({ message: 'Click tracking failed silently' });
+    }
+  });
+});
+
+/**
+ * Get Site Settings
+ * Returns all site statistics and configurable content
+ * Public endpoint - no authentication required
+ */
+exports.getSiteSettings = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const settingsDoc = await admin.firestore()
+        .collection('siteSettings')
+        .doc('statistics')
+        .get();
+
+      if (!settingsDoc.exists) {
+        // Return default values if not yet configured
+        return res.status(200).json({
+          statistics: {
+            // About Section
+            foundedYear: 2018,
+            clientsServed: 500,
+            industries: 25,
+            clientSatisfaction: 99.9,
+            
+            // Services/Trust Sections
+            successRate: 99.8,
+            organizations: 500,
+            
+            // Hero Section
+            threatDetection: 99.9,
+            yearsExperience: 15,
+            
+            // How It Works Section
+            deploymentWeeks: '2-4',
+            projectSuccessRate: 98,
+            supportCoverage: '24/7',
+            successfulProjects: 500,
+            
+            // AI Demo Section
+            cloudCostReduction: 40,
+          },
+          caseStudies: {
+            finserve: {
+              threatReduction: 92,
+              fasterResponse: 65,
+              complianceAchieved: 100,
+            },
+            retailmax: {
+              costSavings: 42,
+              uptimeSLA: 99.9,
+              performanceBoost: 3,
+            },
+            healthtech: {
+              queriesAutomated: 80,
+              responseTimeCut: 50,
+              patientSatisfaction: 4.8,
+            },
+          },
+        });
+      }
+
+      return res.status(200).json(settingsDoc.data());
+
+    } catch (error) {
+      console.error('Error getting site settings:', error);
+      return res.status(500).json({ error: 'Failed to get site settings' });
+    }
+  });
+});
+
+/**
+ * Update Site Settings
+ * Updates site statistics and configurable content
+ * Only admins can update
+ */
+exports.updateSiteSettings = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'PUT' && req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const updates = req.body;
+
+      // Verify requesting user is an admin
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin || !['admin', 'superadmin'].includes(decodedToken.role)) {
+        return res.status(403).json({ error: 'Only admins can update site settings' });
+      }
+
+      // Update settings with metadata
+      const settingsData = {
+        ...updates,
+        lastUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        lastUpdatedBy: decodedToken.uid,
+        lastUpdatedByEmail: decodedToken.email,
+      };
+
+      await admin.firestore()
+        .collection('siteSettings')
+        .doc('statistics')
+        .set(settingsData, { merge: true });
+
+      console.log(`Site settings updated by ${decodedToken.email}`);
+      return res.status(200).json({ message: 'Site settings updated successfully' });
+
+    } catch (error) {
+      console.error('Error updating site settings:', error);
+      return res.status(500).json({ error: 'Failed to update site settings' });
+    }
+  });
+});
+

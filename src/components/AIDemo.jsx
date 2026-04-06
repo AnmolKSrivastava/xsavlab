@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, User, Sparkles } from 'lucide-react';
+import useSiteSettings from '../hooks/useSiteSettings';
 
 const AIDemo = () => {
+  const { settings } = useSiteSettings();
+  const stats = settings.statistics;
+
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
@@ -23,7 +27,7 @@ const AIDemo = () => {
 
   const predefinedResponses = {
     security: 'Great question! Our cybersecurity services include VAPT, 24/7 SOC monitoring, and AI-powered threat detection. We\'ve helped over 500 enterprises secure their infrastructure. Would you like to schedule a free security audit?',
-    cloud: 'Our cloud solutions cover AWS, Azure, and GCP. We specialize in cloud migration, DevOps automation, and cost optimization. On average, our clients reduce cloud costs by 40% while improving performance. Interested in a cloud assessment?',
+    cloud: `Our cloud solutions cover AWS, Azure, and GCP. We specialize in cloud migration, DevOps automation, and cost optimization. On average, our clients reduce cloud costs by ${stats.cloudCostReduction}% while improving performance. Interested in a cloud assessment?`,
     ai: 'We build custom AI agents for process automation, customer service, and data analysis. Our AI agents integrate seamlessly with your existing systems and can be deployed in weeks, not months. Want to see a demo?',
     pricing: 'Our pricing is tailored to your specific needs. We offer flexible packages starting from enterprise plans. Should I connect you with our sales team for a custom quote?',
     demo: 'Absolutely! I can schedule a personalized demo with our solutions architect. They\'ll walk you through live examples and answer all your technical questions. What day works best for you?',

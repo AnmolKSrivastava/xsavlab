@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Cloud, Bot, ArrowRight, Lock, CheckCircle2, Users, TrendingUp, Globe, Package } from 'lucide-react';
 import CountUpNumber from './CountUpNumber';
+import useSiteSettings from '../hooks/useSiteSettings';
 
 const ServiceCard = ({ icon: Icon, title, description, features, index, onScheduleClick, serviceId }) => {
   return (
@@ -49,6 +50,9 @@ const ServiceCard = ({ icon: Icon, title, description, features, index, onSchedu
 };
 
 const Services = ({ onScheduleClick }) => {
+  const { settings } = useSiteSettings();
+  const stats = settings.statistics;
+
   const services = [
     {
       icon: Shield,
@@ -121,8 +125,8 @@ const Services = ({ onScheduleClick }) => {
 
   const trustMetrics = [
     { icon: Lock, text: 'Enterprise-Grade Security', subtext: 'Bank-level encryption' },
-    { icon: Users, value: 500, suffix: '+', label: 'Clients', subtext: 'Across 25 industries' },
-    { icon: TrendingUp, value: 99.8, decimals: 1, suffix: '%', label: 'Success Rate', subtext: 'Client satisfaction' },
+    { icon: Users, value: stats.clientsServed, suffix: '+', label: 'Clients', subtext: `Across ${stats.industries} industries` },
+    { icon: TrendingUp, value: stats.successRate, decimals: 1, suffix: '%', label: 'Success Rate', subtext: 'Client satisfaction' },
     { icon: CheckCircle2, text: 'Certified Experts', subtext: 'ISO 27001 & SOC 2' },
   ];
 

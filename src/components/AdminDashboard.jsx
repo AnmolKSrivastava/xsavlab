@@ -20,7 +20,14 @@ import {
   Trash2,
   Crown,
   ShieldAlert,
-  UserCheck
+  UserCheck,
+  Package,
+  Edit,
+  Plus,
+  TrendingUp,
+  Globe,
+  Settings,
+  Save
 } from 'lucide-react';
 import { auth } from '../config/firebase';
 import app from '../config/firebase';
@@ -37,6 +44,8 @@ const AdminDashboard = () => {
   const [enquiriesLoading, setEnquiriesLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
+  const [ventures, setVentures] = useState([]);
+  const [venturesLoading, setVenturesLoading] = useState(false);
 
   useEffect(() => {
     // Check authentication and admin status
@@ -189,6 +198,24 @@ const AdminDashboard = () => {
               icon={<Mail className="w-4 h-4" />}
               label="Enquiries"
             />
+            {/* All admins can manage ventures */}
+            {(userRole === 'admin' || userRole === 'superadmin' || userRole === 'moderator') && (
+              <TabButton
+                active={activeTab === 'ventures'}
+                onClick={() => setActiveTab('ventures')}
+                icon={<Package className="w-4 h-4" />}
+                label="Ventures"
+              />
+            )}
+            {/* All admins can manage site settings */}
+            {(userRole === 'admin' || userRole === 'superadmin' || userRole === 'moderator') && (
+              <TabButton
+                active={activeTab === 'siteSettings'}
+                onClick={() => setActiveTab('siteSettings')}
+                icon={<Settings className="w-4 h-4" />}
+                label="Site Settings"
+              />
+            )}
             {/* Only admins and super admins can see users tab */}
             {(userRole === 'admin' || userRole === 'superadmin') && (
               <TabButton
@@ -212,6 +239,8 @@ const AdminDashboard = () => {
           {/* Tab Content */}
           <div className="p-6">
             {activeTab === 'enquiries' && <EnquiriesTab enquiries={enquiries} loading={enquiriesLoading} />}
+            {activeTab === 'ventures' && <VenturesTab user={user} userRole={userRole} ventures={ventures} setVentures={setVentures} venturesLoading={venturesLoading} setVenturesLoading={setVenturesLoading} />}
+            {activeTab === 'siteSettings' && <SiteSettingsTab user={user} userRole={userRole} />}
             {activeTab === 'users' && <UsersTab user={user} userRole={userRole} users={users} setUsers={setUsers} usersLoading={usersLoading} setUsersLoading={setUsersLoading} />}
             {activeTab === 'settings' && <SettingsTab />}
           </div>
@@ -1045,6 +1074,1065 @@ const UsersTab = ({ user, userRole, users, setUsers, usersLoading, setUsersLoadi
           ))}
         </div>
       )}
+    </div>
+  );
+};
+
+// Ventures Tab
+const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, setVenturesLoading }) => {
+  const [showAddVenture, setShowAddVenture] = useState(false);
+  const [editingVenture, setEditingVenture] = useState(null);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    slug: '',
+    tagline: '',
+    category: 'saas',
+    industry: '',
+    shortDescription: '',
+    fullDescription: '',
+    logo: '',
+    featuredImage: '',
+    website: '',
+    status: 'live',
+    featured: false,
+    order: 1,
+  });
+
+  // Fetch ventures
+  useEffect(() => {
+    fetchVentures();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchVentures = async () => {
+    setVenturesLoading(true);
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/getVentures', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch ventures');
+      }
+
+      const data = await response.json();
+      setVentures(data.ventures || []);
+    } catch (error) {
+      console.error('Error fetching ventures:', error);
+      setMessage({ type: 'error', text: 'Failed to load ventures' });
+    } finally {
+      setVenturesLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      slug: '',
+      tagline: '',
+      category: 'saas',
+      industry: '',
+      shortDescription: '',
+      fullDescription: '',
+      logo: '',
+      featuredImage: '',
+      website: '',
+      status: 'live',
+      featured: false,
+      order: 1,
+    });
+    setEditingVenture(null);
+    setShowAddVenture(false);
+  };
+
+  const handleEdit = (venture) => {
+    setFormData({
+      name: venture.name || '',
+      slug: venture.slug || '',
+      tagline: venture.tagline || '',
+      category: venture.category || 'saas',
+      industry: venture.industry || '',
+      shortDescription: venture.shortDescription || '',
+      fullDescription: venture.fullDescription || '',
+      logo: venture.logo || '',
+      featuredImage: venture.featuredImage || '',
+      website: venture.website || '',
+      status: venture.status || 'live',
+      featured: venture.featured || false,
+      order: venture.order || 1,
+    });
+    setEditingVenture(venture);
+    setShowAddVenture(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage({ type: '', text: '' });
+
+    try {
+      const token = await auth.currentUser.getIdToken();
+      
+      if (editingVenture) {
+        // Update existing venture
+        const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/updateVenture', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            ventureId: editingVenture.id,
+            ...formData,
+          }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to update venture');
+        
+        setMessage({ type: 'success', text: 'Venture updated successfully!' });
+      } else {
+        // Create new venture
+        const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/createVenture', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to create venture');
+        
+        setMessage({ type: 'success', text: 'Venture created successfully!' });
+      }
+
+      resetForm();
+      fetchVentures();
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message });
+    }
+  };
+
+  const handleDelete = async (ventureId, ventureName) => {
+    if (!window.confirm(`Are you sure you want to delete "${ventureName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/deleteVenture', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ventureId }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to delete venture');
+
+      setMessage({ type: 'success', text: `"${ventureName}" deleted successfully!` });
+      fetchVentures();
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message });
+    }
+  };
+
+  const getCategoryBadgeColor = (category) => {
+    switch (category) {
+      case 'saas':
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'ecommerce':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'mobile-app':
+        return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+      case 'web-platform':
+        return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+      case 'custom-solution':
+        return 'bg-pink-500/20 text-pink-400 border-pink-500/30';
+      default:
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
+  const getStatusBadgeColor = (status) => {
+    switch (status) {
+      case 'live':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'in-development':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'coming-soon':
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'archived':
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+      default:
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
+  // Check permissions
+  const canCreateVentures = userRole === 'admin' || userRole === 'superadmin';
+  const canDeleteVentures = userRole === 'superadmin';
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-xl font-semibold text-white mb-1">Our Ventures</h3>
+          <p className="text-sm text-gray-400">
+            Manage your products and business ventures
+          </p>
+        </div>
+        {canCreateVentures && (
+          <button
+            onClick={() => {
+              resetForm();
+              setShowAddVenture(!showAddVenture);
+            }}
+            className="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Add Venture
+          </button>
+        )}
+      </div>
+
+      {/* Messages */}
+      {message.text && (
+        <div className={`p-4 rounded-lg border ${
+          message.type === 'success' 
+            ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+            : 'bg-red-500/10 border-red-500/30 text-red-400'
+        }`}>
+          {message.text}
+        </div>
+      )}
+
+      {/* Add/Edit Venture Form */}
+      {showAddVenture && canCreateVentures && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          className="bg-gray-800/50 border border-gray-700 rounded-lg p-6"
+        >
+          <h4 className="text-lg font-semibold text-white mb-4">
+            {editingVenture ? 'Edit Venture' : 'Add New Venture'}
+          </h4>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Venture Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  required
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  placeholder="TheWedHaven"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  URL Slug *
+                </label>
+                <input
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})}
+                  required
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  placeholder="thewedhaven"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Tagline
+              </label>
+              <input
+                type="text"
+                value={formData.tagline}
+                onChange={(e) => setFormData({...formData, tagline: e.target.value})}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                placeholder="Making Wedding Planning Effortless"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Category *
+                </label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                >
+                  <option value="saas">SaaS Platform</option>
+                  <option value="ecommerce">E-Commerce</option>
+                  <option value="mobile-app">Mobile App</option>
+                  <option value="web-platform">Web Platform</option>
+                  <option value="custom-solution">Custom Solution</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Industry
+                </label>
+                <input
+                  type="text"
+                  value={formData.industry}
+                  onChange={(e) => setFormData({...formData, industry: e.target.value})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  placeholder="Wedding Planning"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Status *
+                </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({...formData, status: e.target.value})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                >
+                  <option value="live">Live</option>
+                  <option value="in-development">In Development</option>
+                  <option value="coming-soon">Coming Soon</option>
+                  <option value="archived">Archived</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Short Description
+              </label>
+              <textarea
+                value={formData.shortDescription}
+                onChange={(e) => setFormData({...formData, shortDescription: e.target.value})}
+                rows={2}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                placeholder="Brief one-liner about the venture"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Full Description
+              </label>
+              <textarea
+                value={formData.fullDescription}
+                onChange={(e) => setFormData({...formData, fullDescription: e.target.value})}
+                rows={4}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                placeholder="Detailed description of the venture, its features, and benefits"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Logo URL
+                </label>
+                <input
+                  type="url"
+                  value={formData.logo}
+                  onChange={(e) => setFormData({...formData, logo: e.target.value})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  placeholder="https://..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Featured Image URL
+                </label>
+                <input
+                  type="url"
+                  value={formData.featuredImage}
+                  onChange={(e) => setFormData({...formData, featuredImage: e.target.value})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Website URL
+                </label>
+                <input
+                  type="url"
+                  value={formData.website}
+                  onChange={(e) => setFormData({...formData, website: e.target.value})}
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  placeholder="https://thewedhaven.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Display Order
+                </label>
+                <input
+                  type="number"
+                  value={formData.order}
+                  onChange={(e) => setFormData({...formData, order: parseInt(e.target.value) || 1})}
+                  min="1"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="featured"
+                checked={formData.featured}
+                onChange={(e) => setFormData({...formData, featured: e.target.checked})}
+                className="w-4 h-4 rounded border-gray-700 bg-gray-900 text-primary focus:ring-primary"
+              />
+              <label htmlFor="featured" className="text-sm text-gray-300">
+                Feature on homepage
+              </label>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="submit"
+                className="px-6 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors"
+              >
+                {editingVenture ? 'Update Venture' : 'Create Venture'}
+              </button>
+              <button
+                type="button"
+                onClick={resetForm}
+                className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      )}
+
+      {/* Ventures List */}
+      {venturesLoading ? (
+        <div className="text-center py-12">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading ventures...</p>
+        </div>
+      ) : ventures.length === 0 ? (
+        <div className="text-center py-12">
+          <Package className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-white mb-2">No Ventures Yet</h3>
+          <p className="text-gray-400 mb-6">
+            {canCreateVentures ? 'Start by adding your first venture!' : 'No ventures to display.'}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {ventures.map((venture) => (
+            <div
+              key={venture.id}
+              className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 hover:border-primary/50 transition-all"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h4 className="text-lg font-semibold text-white">{venture.name}</h4>
+                    {venture.featured && (
+                      <span className="px-2 py-0.5 rounded text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+                        Featured
+                      </span>
+                    )}
+                  </div>
+                  {venture.tagline && (
+                    <p className="text-sm text-gray-400 mb-3">{venture.tagline}</p>
+                  )}
+                  <div className="flex items-center gap-2 mb-3 flex-wrap">
+                    <span className={`px-2 py-1 rounded-md text-xs font-medium border ${getCategoryBadgeColor(venture.category)}`}>
+                      {venture.category?.replace('-', ' ')}
+                    </span>
+                    <span className={`px-2 py-1 rounded-md text-xs font-medium border ${getStatusBadgeColor(venture.status)}`}>
+                      {venture.status?.replace('-', ' ')}
+                    </span>
+                    {venture.industry && (
+                      <span className="px-2 py-1 rounded-md text-xs font-medium bg-gray-700 text-gray-300">
+                        {venture.industry}
+                      </span>
+                    )}
+                  </div>
+                  {venture.shortDescription && (
+                    <p className="text-sm text-gray-300 mb-3">{venture.shortDescription}</p>
+                  )}
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                    {venture.views !== undefined && (
+                      <span className="flex items-center gap-1">
+                        <Eye className="w-3 h-3" />
+                        {venture.views} views
+                      </span>
+                    )}
+                    {venture.clicks !== undefined && (
+                      <span className="flex items-center gap-1">
+                        <TrendingUp className="w-3 h-3" />
+                        {venture.clicks} clicks
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-3 border-t border-gray-700">
+                {venture.website && (
+                  <a
+                    href={venture.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 px-3 py-2 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 text-sm rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Globe className="w-4 h-4" />
+                    Visit Site
+                  </a>
+                )}
+                {canCreateVentures && (
+                  <button
+                    onClick={() => handleEdit(venture)}
+                    className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors flex items-center gap-2"
+                    title="Edit venture"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </button>
+                )}
+                {canDeleteVentures && (
+                  <button
+                    onClick={() => handleDelete(venture.id, venture.name)}
+                    className="px-3 py-2 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors flex items-center gap-2"
+                    title="Delete venture"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Site Settings Tab
+const SiteSettingsTab = ({ user, userRole }) => {
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  
+  const [statistics, setStatistics] = useState({
+    // About Section
+    foundedYear: 2018,
+    clientsServed: 500,
+    industries: 25,
+    clientSatisfaction: 99.9,
+    // Services/Trust
+    successRate: 99.8,
+    organizations: 500,
+    // Hero Section
+    threatDetection: 99.9,
+    yearsExperience: 15,
+    // How It Works
+    deploymentWeeks: '2-4',
+    projectSuccessRate: 98,
+    supportCoverage: '24/7',
+    successfulProjects: 500,
+    // AI Demo
+    cloudCostReduction: 40,
+  });
+
+  const [caseStudies, setCaseStudies] = useState({
+    finserve: { threatReduction: 92, fasterResponse: 65, complianceAchieved: 100 },
+    retailmax: { costSavings: 42, uptimeSLA: 99.9, performanceBoost: 3 },
+    healthtech: { queriesAutomated: 80, responseTimeCut: 50, patientSatisfaction: 4.8 },
+  });
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/getSiteSettings');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch site settings');
+      }
+
+      const data = await response.json();
+      if (data.statistics) {
+        setStatistics(data.statistics);
+      }
+      if (data.caseStudies) {
+        setCaseStudies(data.caseStudies);
+      }
+    } catch (error) {
+      console.error('Error fetching site settings:', error);
+      setMessage({ type: 'error', text: 'Failed to load settings' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setMessage({ type: '', text: '' });
+    
+    try {
+      const token = await user.getIdToken();
+      
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/updateSiteSettings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ statistics, caseStudies }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update settings');
+      }
+
+      setMessage({ type: 'success', text: 'Settings saved successfully!' });
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      setMessage({ type: 'error', text: error.message });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleChange = (field, value) => {
+    setStatistics(prev => ({
+      ...prev,
+      [field]: field === 'deploymentWeeks' || field === 'supportCoverage' ? value : (parseFloat(value) || 0),
+    }));
+  };
+
+  const handleCaseStudyChange = (company, field, value) => {
+    setCaseStudies(prev => ({
+      ...prev,
+      [company]: {
+        ...prev[company],
+        [field]: parseFloat(value) || 0,
+      },
+    }));
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+          <p className="text-gray-400">Loading settings...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-2">Site Statistics</h3>
+          <p className="text-gray-400">Manage numbers displayed across your website</p>
+        </div>
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="px-6 py-3 bg-primary hover:bg-primary/80 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          <Save className="w-4 h-4" />
+          {saving ? 'Saving...' : 'Save Changes'}
+        </button>
+      </div>
+
+      {/* Message */}
+      {message.text && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`p-4 rounded-lg ${
+            message.type === 'success' 
+              ? 'bg-green-500/10 border border-green-500/30 text-green-400' 
+              : 'bg-red-500/10 border border-red-500/30 text-red-400'
+          }`}
+        >
+          {message.text}
+        </motion.div>
+      )}
+
+      {/* Statistics Form */}
+      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-primary" />
+          Main Statistics (About Section)
+        </h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Founded Year
+            </label>
+            <input
+              type="number"
+              value={statistics.foundedYear}
+              onChange={(e) => handleChange('foundedYear', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="2018"
+            />
+            <p className="text-xs text-gray-500 mt-1">Shown in About section</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Clients Served
+            </label>
+            <input
+              type="number"
+              value={statistics.clientsServed}
+              onChange={(e) => handleChange('clientsServed', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="500"
+            />
+            <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.clientsServed}+"</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Industries
+            </label>
+            <input
+              type="number"
+              value={statistics.industries}
+              onChange={(e) => handleChange('industries', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="25"
+            />
+            <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.industries}+"</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Client Satisfaction (%)
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              value={statistics.clientSatisfaction}
+              onChange={(e) => handleChange('clientSatisfaction', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="99.9"
+            />
+            <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.clientSatisfaction}%"</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Success Rate (%)
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              value={statistics.successRate}
+              onChange={(e) => handleChange('successRate', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="99.8"
+            />
+            <p className="text-xs text-gray-500 mt-1">Shown in Services section</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Organizations
+            </label>
+            <input
+              type="number"
+              value={statistics.organizations}
+              onChange={(e) => handleChange('organizations', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="500"
+            />
+            <p className="text-xs text-gray-500 mt-1">Trust section count, displays as "{statistics.organizations}+"</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Hero Section Stats */}
+      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-primary" />
+          Hero Section Metrics
+        </h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Threat Detection Rate (%)
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              value={statistics.threatDetection}
+              onChange={(e) => handleChange('threatDetection', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="99.9"
+            />
+            <p className="text-xs text-gray-500 mt-1">Hero section: "Threat Detection"</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Years of Experience
+            </label>
+            <input
+              type="number"
+              value={statistics.yearsExperience}
+              onChange={(e) => handleChange('yearsExperience', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="15"
+            />
+            <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.yearsExperience}+ Years Experience"</p>
+          </div>
+        </div>
+      </div>
+
+      {/* How It Works Section */}
+      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-primary" />
+          How It Works Section - Key Metrics
+        </h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Typical Deployment
+            </label>
+            <input
+              type="text"
+              value={statistics.deploymentWeeks}
+              onChange={(e) => handleChange('deploymentWeeks', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="2-4"
+            />
+            <p className="text-xs text-gray-500 mt-1">e.g., "2-4" (shows "2-4 Weeks")</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Project Success Rate (%)
+            </label>
+            <input
+              type="number"
+              value={statistics.projectSuccessRate}
+              onChange={(e) => handleChange('projectSuccessRate', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="98"
+            />
+            <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.projectSuccessRate}%"</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Support Coverage
+            </label>
+            <input
+              type="text"
+              value={statistics.supportCoverage}
+              onChange={(e) => handleChange('supportCoverage', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="24/7"
+            />
+            <p className="text-xs text-gray-500 mt-1">e.g., "24/7"</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Successful Projects
+            </label>
+            <input
+              type="number"
+              value={statistics.successfulProjects}
+              onChange={(e) => handleChange('successfulProjects', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="500"
+            />
+            <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.successfulProjects}+"</p>
+          </div>
+        </div>
+      </div>
+
+      {/* AI Demo Section */}
+      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+          <Globe className="w-5 h-5 text-primary" />
+          AI Demo Section
+        </h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Cloud Cost Reduction (%)
+            </label>
+            <input
+              type="number"
+              value={statistics.cloudCostReduction}
+              onChange={(e) => handleChange('cloudCostReduction', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              placeholder="40"
+            />
+            <p className="text-xs text-gray-500 mt-1">Used in AI chatbot demo responses</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Case Studies Results */}
+      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-6">
+          Case Studies - Results Metrics
+        </h4>
+        
+        {/* FinServe Global */}
+        <div className="mb-8">
+          <h5 className="text-md font-semibold text-primary mb-4">FinServe Global (Financial Services)</h5>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Threat Reduction (%)</label>
+              <input
+                type="number"
+                value={caseStudies.finserve.threatReduction}
+                onChange={(e) => handleCaseStudyChange('finserve', 'threatReduction', e.target.value)}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Faster Response (%)</label>
+              <input
+                type="number"
+                value={caseStudies.finserve.fasterResponse}
+                onChange={(e) => handleCaseStudyChange('finserve', 'fasterResponse', e.target.value)}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Compliance Achieved (%)</label>
+              <input
+                type="number"
+                value={caseStudies.finserve.complianceAchieved}
+                onChange={(e) => handleCaseStudyChange('finserve', 'complianceAchieved', e.target.value)}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* RetailMax Corp */}
+        <div className="mb-8">
+          <h5 className="text-md font-semibold text-primary mb-4">RetailMax Corp (E-Commerce)</h5>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Cost Savings (%)</label>
+              <input
+                type="number"
+                value={caseStudies.retailmax.costSavings}
+                onChange={(e) => handleCaseStudyChange('retailmax', 'costSavings', e.target.value)}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Uptime SLA (%)</label>
+              <input
+                type="number"
+                step="0.1"
+                value={caseStudies.retailmax.uptimeSLA}
+                onChange={(e) => handleCaseStudyChange('retailmax', 'uptimeSLA', e.target.value)}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Performance Boost (x)</label>
+              <input
+                type="number"
+                value={caseStudies.retailmax.performanceBoost}
+                onChange={(e) => handleCaseStudyChange('retailmax', 'performanceBoost', e.target.value)}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* HealthTech Solutions */}
+        <div>
+          <h5 className="text-md font-semibold text-primary mb-4">HealthTech Solutions (Healthcare)</h5>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Queries Automated (%)</label>
+              <input
+                type="number"
+                value={caseStudies.healthtech.queriesAutomated}
+                onChange={(e) => handleCaseStudyChange('healthtech', 'queriesAutomated', e.target.value)}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Response Time Cut (%)</label>
+              <input
+                type="number"
+                value={caseStudies.healthtech.responseTimeCut}
+                onChange={(e) => handleCaseStudyChange('healthtech', 'responseTimeCut', e.target.value)}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Patient Satisfaction (/5)</label>
+              <input
+                type="number"
+                step="0.1"
+                value={caseStudies.healthtech.patientSatisfaction}
+                onChange={(e) => handleCaseStudyChange('healthtech', 'patientSatisfaction', e.target.value)}
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+        <p className="text-blue-400 text-sm">
+          <strong>Note:</strong> After saving, changes will be visible immediately across your entire website: Hero, About, Services, Trust, How It Works, Case Studies, and AI Demo sections.
+        </p>
+      </div>
     </div>
   );
 };

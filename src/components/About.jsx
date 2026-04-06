@@ -5,6 +5,7 @@ import amitKumarImg from '../assets/images/team/amitKumarImg.png';
 import shivAryanImg from '../assets/images/team/Shiv Aryan.png';
 import sumitKumarImg from '../assets/images/team/sumitKumarImg.jpg';
 import CountUpNumber from './CountUpNumber';
+import useSiteSettings from '../hooks/useSiteSettings';
 
 const TeamMember = ({ name, role, bio, image, linkedin, email, index }) => {
   return (
@@ -63,6 +64,9 @@ const TeamMember = ({ name, role, bio, image, linkedin, email, index }) => {
 };
 
 const About = () => {
+  const { settings } = useSiteSettings();
+  const stats = settings.statistics;
+
   const values = [
     {
       icon: Shield,
@@ -192,19 +196,19 @@ const About = () => {
         >
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={2018} /></div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={stats.foundedYear} /></div>
               <div className="text-gray-400">Founded</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={500} suffix="+" /></div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={stats.clientsServed} suffix="+" /></div>
               <div className="text-gray-400">Clients Served</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={25} suffix="+" /></div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={stats.industries} suffix="+" /></div>
               <div className="text-gray-400">Industries</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={99.9} decimals={1} suffix="%" /></div>
+              <div className="text-4xl md:text-5xl font-bold text-white mb-2"><CountUpNumber end={stats.clientSatisfaction} decimals={1} suffix="%" /></div>
               <div className="text-gray-400">Client Satisfaction</div>
             </div>
           </div>

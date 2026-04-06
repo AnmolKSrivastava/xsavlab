@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Shield, Cloud, ArrowRight, Award } from 'lucide-react';
 import CountUpNumber from './CountUpNumber';
+import useSiteSettings from '../hooks/useSiteSettings';
 
 const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: Icon, index }) => {
   return (
@@ -76,6 +77,9 @@ const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: 
 };
 
 const CaseStudies = () => {
+  const { settings } = useSiteSettings();
+  const cs = settings.caseStudies;
+
   const cases = [
     {
       company: 'FinServe Global',
@@ -83,9 +87,9 @@ const CaseStudies = () => {
       challenge: 'Legacy security systems unable to detect sophisticated threats, resulting in compliance risks and potential data breaches.',
       solution: 'Deployed AI-powered Security Operations Center with 24/7 threat monitoring, automated incident response, and comprehensive security audits.',
       results: [
-        { end: 92, suffix: '%', label: 'Threat Reduction' },
-        { end: 65, suffix: '%', label: 'Faster Response' },
-        { end: 100, suffix: '%', label: 'Compliance Achieved' },
+        { end: cs.finserve.threatReduction, suffix: '%', label: 'Threat Reduction' },
+        { end: cs.finserve.fasterResponse, suffix: '%', label: 'Faster Response' },
+        { end: cs.finserve.complianceAchieved, suffix: '%', label: 'Compliance Achieved' },
       ],
       icon: Shield,
     },
@@ -95,9 +99,9 @@ const CaseStudies = () => {
       challenge: 'On-premise infrastructure with high operational costs, limited scalability, and frequent downtime affecting customer experience.',
       solution: 'Complete cloud migration to AWS with automated DevOps pipelines, Infrastructure as Code, and intelligent cost optimization strategies.',
       results: [
-        { end: 42, suffix: '%', label: 'Cost Savings' },
-        { end: 99.9, decimals: 1, suffix: '%', label: 'Uptime SLA' },
-        { end: 3, suffix: 'x', label: 'Performance Boost' },
+        { end: cs.retailmax.costSavings, suffix: '%', label: 'Cost Savings' },
+        { end: cs.retailmax.uptimeSLA, decimals: 1, suffix: '%', label: 'Uptime SLA' },
+        { end: cs.retailmax.performanceBoost, suffix: 'x', label: 'Performance Boost' },
       ],
       icon: Cloud,
     },
@@ -107,9 +111,9 @@ const CaseStudies = () => {
       challenge: 'Manual patient support processes overwhelming staff, leading to long wait times and decreased patient satisfaction scores.',
       solution: 'Implemented custom AI chatbot with HIPAA-compliant infrastructure, integrated with existing EMR systems for seamless patient interactions.',
       results: [
-        { end: 80, suffix: '%', label: 'Queries Automated' },
-        { end: 50, suffix: '%', label: 'Response Time Cut' },
-        { end: 4.8, decimals: 1, suffix: '/5', label: 'Patient Satisfaction' },
+        { end: cs.healthtech.queriesAutomated, suffix: '%', label: 'Queries Automated' },
+        { end: cs.healthtech.responseTimeCut, suffix: '%', label: 'Response Time Cut' },
+        { end: cs.healthtech.patientSatisfaction, decimals: 1, suffix: '/5', label: 'Patient Satisfaction' },
       ],
       icon: TrendingUp,
     },

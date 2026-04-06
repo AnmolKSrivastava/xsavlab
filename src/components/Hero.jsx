@@ -2,8 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, CheckCircle2, Award } from 'lucide-react';
 import CountUpNumber from './CountUpNumber';
+import useSiteSettings from '../hooks/useSiteSettings';
 
 const Hero = ({ onScheduleClick }) => {
+  const { settings } = useSiteSettings();
+  const stats = settings.statistics;
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-16">
       {/* Subtle Background Elements */}
@@ -107,15 +111,15 @@ const Hero = ({ onScheduleClick }) => {
               className="mt-12 grid grid-cols-3 gap-8"
             >
               <div>
-                <div className="text-4xl font-bold text-white mb-1"><CountUpNumber end={500} suffix="+" /></div>
+                <div className="text-4xl font-bold text-white mb-1"><CountUpNumber end={stats.clientsServed} suffix="+" /></div>
                 <div className="text-sm text-gray-400">Enterprise Clients</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-1"><CountUpNumber end={99.9} decimals={1} suffix="%" /></div>
+                <div className="text-4xl font-bold text-white mb-1"><CountUpNumber end={stats.threatDetection} decimals={1} suffix="%" /></div>
                 <div className="text-sm text-gray-400">Threat Detection</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-1"><CountUpNumber end={15} suffix="+" /></div>
+                <div className="text-4xl font-bold text-white mb-1"><CountUpNumber end={stats.yearsExperience} suffix="+" /></div>
                 <div className="text-sm text-gray-400">Years Experience</div>
               </div>
             </motion.div>

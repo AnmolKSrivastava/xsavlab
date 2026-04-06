@@ -13,6 +13,7 @@ import QuantumBackground from './components/QuantumBackground';
 import ScrollToTop from './components/ScrollToTop';
 import AdminLogin from './components/AdminLogin';
 import AdminDashboard from './components/AdminDashboard';
+import VenturesPage from './components/VenturesPage';
 
 // Home Page Component
 function HomePage({ selectedService, handleScheduleConsultation }) {
@@ -66,6 +67,8 @@ function App() {
                 />
               } 
             />
+            <Route path="/ventures" element={<VenturesPage />} />
+            <Route path="/ventures/:category" element={<VenturesPage />} />
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
           </Routes>

@@ -2,8 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Star, Quote, Award, Building2, Shield } from 'lucide-react';
 import CountUpNumber from './CountUpNumber';
+import useSiteSettings from '../hooks/useSiteSettings';
 
 const TrustSection = () => {
+  const { settings } = useSiteSettings();
+  const stats = settings.statistics;
+
   const testimonials = [
     {
       name: 'Sarah Chen',
@@ -64,7 +68,7 @@ const TrustSection = () => {
               Trusted By Industry Leaders
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Join <CountUpNumber end={500} suffix="+" className="text-white" /> organizations who rely on our security expertise to protect their digital assets
+              Join <CountUpNumber end={stats.organizations} suffix="+" className="text-white" /> organizations who rely on our security expertise to protect their digital assets
             </p>
           </div>
 
