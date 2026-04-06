@@ -1176,3 +1176,266 @@ exports.updateSiteSettings = onRequest((req, res) => {
   });
 });
 
+// ============ SUCCESS STORIES / CASE STUDIES MANAGEMENT ============
+
+/**
+ * Get all success stories (public for published stories, all for admins)
+ */
+exports.getSuccessStories = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      let isAdmin = false;
+      
+      // Check if user is authenticated and is admin
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.split('Bearer ')[1];
+          const decodedToken = await admin.auth().verifyIdToken(token);
+          isAdmin = decodedToken.admin && ['admin', 'superadmin'].includes(decodedToken.role);
+        } catch (authError) {
+          // Not authenticated, continue as public user
+          console.log('Auth verification failed, treating as public user');
+        }
+      }
+
+      // Build query - if admin, get all stories; if public, only published ones
+      let query = admin.firestore().collection('successStories');
+      
+      if (!isAdmin) {
+        query = query.where('status', '==', 'live');
+      }
+      
+      const snapshot = await query.get();
+      const stories = [];
+      
+      snapshot.forEach(doc => {
+        stories.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+
+      // Sort in-memory by featured (desc) then order (asc)
+      stories.sort((a, b) => {
+        // First sort by featured (true comes before false)
+        if (a.featured !== b.featured) {
+          return b.featured ? 1 : -1;
+        }
+        // Then sort by order (ascending)
+        return (a.order || 0) - (b.order || 0);
+      });
+
+      return res.status(200).json({ stories });
+
+    } catch (error) {
+      console.error('Error fetching success stories:', error);
+      return res.status(500).json({ error: 'Failed to fetch success stories' });
+    }
+  });
+});
+
+/**
+ * Create a new success story (admin only)
+ */
+exports.createSuccessStory = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify requesting user is an admin
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin || !['admin', 'superadmin'].includes(decodedToken.role)) {
+        return res.status(403).json({ error: 'Only admins can create success stories' });
+      }
+
+      const {
+        company,
+        industry,
+        challenge,
+        solution,
+        results,
+        clientName,
+        clientRole,
+        clientCompany,
+        testimonial,
+        status,
+        order,
+        featured,
+      } = req.body;
+
+      // Validate required fields
+      if (!company || !industry || !challenge || !solution) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      // Create story data
+      const storyData = {
+        company: escapeHtml(company),
+        industry: escapeHtml(industry),
+        challenge: escapeHtml(challenge),
+        solution: escapeHtml(solution),
+        results: results || [],
+        clientName: clientName ? escapeHtml(clientName) : '',
+        clientRole: clientRole ? escapeHtml(clientRole) : '',
+        clientCompany: clientCompany ? escapeHtml(clientCompany) : '',
+        testimonial: testimonial ? escapeHtml(testimonial) : '',
+        status: status || 'draft',
+        order: order || 0,
+        featured: featured || false,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdBy: decodedToken.uid,
+        createdByEmail: decodedToken.email,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedBy: decodedToken.uid,
+        updatedByEmail: decodedToken.email,
+      };
+
+      const docRef = await admin.firestore()
+        .collection('successStories')
+        .add(storyData);
+
+      console.log(`Success story created by ${decodedToken.email}: ${docRef.id}`);
+      return res.status(201).json({ 
+        message: 'Success story created successfully',
+        id: docRef.id,
+      });
+
+    } catch (error) {
+      console.error('Error creating success story:', error);
+      return res.status(500).json({ error: 'Failed to create success story' });
+    }
+  });
+});
+
+/**
+ * Update an existing success story (admin only)
+ */
+exports.updateSuccessStory = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'PUT' && req.method !== 'PATCH') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify requesting user is an admin
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin || !['admin', 'superadmin'].includes(decodedToken.role)) {
+        return res.status(403).json({ error: 'Only admins can update success stories' });
+      }
+
+      const { storyId, updates } = req.body;
+
+      if (!storyId) {
+        return res.status(400).json({ error: 'Story ID is required' });
+      }
+
+      // Check if story exists
+      const storyRef = admin.firestore()
+        .collection('successStories')
+        .doc(storyId);
+      
+      const storyDoc = await storyRef.get();
+      if (!storyDoc.exists) {
+        return res.status(404).json({ error: 'Success story not found' });
+      }
+
+      // Sanitize text fields if present
+      const updateData = { ...updates };
+      if (updateData.company) updateData.company = escapeHtml(updateData.company);
+      if (updateData.industry) updateData.industry = escapeHtml(updateData.industry);
+      if (updateData.challenge) updateData.challenge = escapeHtml(updateData.challenge);
+      if (updateData.solution) updateData.solution = escapeHtml(updateData.solution);
+      if (updateData.clientName) updateData.clientName = escapeHtml(updateData.clientName);
+      if (updateData.clientRole) updateData.clientRole = escapeHtml(updateData.clientRole);
+      if (updateData.clientCompany) updateData.clientCompany = escapeHtml(updateData.clientCompany);
+      if (updateData.testimonial) updateData.testimonial = escapeHtml(updateData.testimonial);
+
+      // Add update metadata
+      updateData.updatedAt = admin.firestore.FieldValue.serverTimestamp();
+      updateData.updatedBy = decodedToken.uid;
+      updateData.updatedByEmail = decodedToken.email;
+
+      await storyRef.update(updateData);
+
+      console.log(`Success story updated by ${decodedToken.email}: ${storyId}`);
+      return res.status(200).json({ message: 'Success story updated successfully' });
+
+    } catch (error) {
+      console.error('Error updating success story:', error);
+      return res.status(500).json({ error: 'Failed to update success story' });
+    }
+  });
+});
+
+/**
+ * Delete a success story (superadmin only)
+ */
+exports.deleteSuccessStory = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'DELETE' && req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify requesting user is a superadmin
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (!decodedToken.admin || decodedToken.role !== 'superadmin') {
+        return res.status(403).json({ error: 'Only superadmins can delete success stories' });
+      }
+
+      const storyId = req.body.storyId || req.query.storyId;
+
+      if (!storyId) {
+        return res.status(400).json({ error: 'Story ID is required' });
+      }
+
+      // Check if story exists
+      const storyRef = admin.firestore()
+        .collection('successStories')
+        .doc(storyId);
+      
+      const storyDoc = await storyRef.get();
+      if (!storyDoc.exists) {
+        return res.status(404).json({ error: 'Success story not found' });
+      }
+
+      await storyRef.delete();
+
+      console.log(`Success story deleted by ${decodedToken.email}: ${storyId}`);
+      return res.status(200).json({ message: 'Success story deleted successfully' });
+
+    } catch (error) {
+      console.error('Error deleting success story:', error);
+      return res.status(500).json({ error: 'Failed to delete success story' });
+    }
+  });
+});
+

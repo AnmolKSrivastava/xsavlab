@@ -93,6 +93,18 @@ service cloud.firestore {
       allow create, delete: if false;
     }
     
+    // Success Stories / Case Studies collection
+    match /successStories/{storyId} {
+      // Everyone can read published stories
+      allow read: if resource.data.status == 'live' || isAdmin();
+      
+      // Only admins can create/update stories
+      allow create, update: if hasRole('admin');
+      
+      // Only super admins can delete stories
+      allow delete: if isSuperAdmin();
+    }
+    
     // By default, deny all access to any other collections
     match /{document=**} {
       allow read, write: if false;

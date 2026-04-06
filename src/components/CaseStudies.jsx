@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Shield, Cloud, ArrowRight, Award } from 'lucide-react';
 import CountUpNumber from './CountUpNumber';
-import useSiteSettings from '../hooks/useSiteSettings';
 
-const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: Icon, index }) => {
+const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: Icon, index, testimonial, clientName, clientRole, clientCompany }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -39,30 +38,50 @@ const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: 
       </div>
 
       {/* Results */}
-      <div className="border-t border-gray-700 pt-6">
-        <div className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Results</div>
-        <div className="grid grid-cols-3 gap-4">
-          {results.map((result, idx) => (
-            <div key={idx} className="text-center">
-              <motion.div
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 + idx * 0.1 }}
-                className="text-3xl font-bold text-primary mb-1"
-              >
-                <CountUpNumber
-                  end={result.end}
-                  decimals={result.decimals || 0}
-                  suffix={result.suffix || ''}
-                  prefix={result.prefix || ''}
-                />
-              </motion.div>
-              <div className="text-xs text-gray-400">{result.label}</div>
-            </div>
-          ))}
+      {results && results.length > 0 && (
+        <div className="border-t border-gray-700 pt-6">
+          <div className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Results</div>
+          <div className="grid grid-cols-3 gap-4">
+            {results.map((result, idx) => (
+              <div key={idx} className="text-center">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 + idx * 0.1 }}
+                  className="text-3xl font-bold text-primary mb-1"
+                >
+                  {result.value && (
+                    <CountUpNumber
+                      end={parseFloat(result.value) || 0}
+                      decimals={result.value.includes('.') ? 1 : 0}
+                      suffix={result.suffix || ''}
+                      prefix={result.prefix || ''}
+                    />
+                  )}
+                </motion.div>
+                <div className="text-xs text-gray-400">{result.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Client Testimonial */}
+      {testimonial && (
+        <div className="mt-6 pt-6 border-t border-gray-700">
+          <div className="bg-gray-900/50 rounded-lg p-4 border-l-4 border-primary">
+            <p className="text-sm text-gray-300 italic mb-3">"{testimonial}"</p>
+            {(clientName || clientRole) && (
+              <p className="text-xs text-gray-400">
+                — {clientName}
+                {clientRole && <span className="text-gray-500">, {clientRole}</span>}
+                {clientCompany && <span className="text-gray-500"> at {clientCompany}</span>}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* CTA */}
       <motion.button
@@ -77,51 +96,59 @@ const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: 
 };
 
 const CaseStudies = () => {
-  const { settings } = useSiteSettings();
-  const cs = settings.caseStudies || {
-    finserve: { threatReduction: 92, fasterResponse: 65, complianceAchieved: 100 },
-    retailmax: { costSavings: 42, uptimeSLA: 99.9, performanceBoost: 3 },
-    healthtech: { queriesAutomated: 80, responseTimeCut: 50, patientSatisfaction: 4.8 },
+  const [successStories, setSuccessStories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSuccessStories();
+  }, []);
+
+  const fetchSuccessStories = async () => {
+    try {
+      const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/getSuccessStories');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch success stories');
+      }
+
+      const data = await response.json();
+      setSuccessStories(data.stories || []);
+    } catch (error) {
+      console.error('Error fetching success stories:', error);
+      // Fallback to empty array if fetch fails
+      setSuccessStories([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const cases = [
-    {
-      company: 'FinServe Global',
-      industry: 'Financial Services',
-      challenge: 'Legacy security systems unable to detect sophisticated threats, resulting in compliance risks and potential data breaches.',
-      solution: 'Deployed AI-powered Security Operations Center with 24/7 threat monitoring, automated incident response, and comprehensive security audits.',
-      results: [
-        { end: cs.finserve.threatReduction, suffix: '%', label: 'Threat Reduction' },
-        { end: cs.finserve.fasterResponse, suffix: '%', label: 'Faster Response' },
-        { end: cs.finserve.complianceAchieved, suffix: '%', label: 'Compliance Achieved' },
-      ],
-      icon: Shield,
-    },
-    {
-      company: 'RetailMax Corp',
-      industry: 'E-Commerce',
-      challenge: 'On-premise infrastructure with high operational costs, limited scalability, and frequent downtime affecting customer experience.',
-      solution: 'Complete cloud migration to AWS with automated DevOps pipelines, Infrastructure as Code, and intelligent cost optimization strategies.',
-      results: [
-        { end: cs.retailmax.costSavings, suffix: '%', label: 'Cost Savings' },
-        { end: cs.retailmax.uptimeSLA, decimals: 1, suffix: '%', label: 'Uptime SLA' },
-        { end: cs.retailmax.performanceBoost, suffix: 'x', label: 'Performance Boost' },
-      ],
-      icon: Cloud,
-    },
-    {
-      company: 'HealthTech Solutions',
-      industry: 'Healthcare',
-      challenge: 'Manual patient support processes overwhelming staff, leading to long wait times and decreased patient satisfaction scores.',
-      solution: 'Implemented custom AI chatbot with HIPAA-compliant infrastructure, integrated with existing EMR systems for seamless patient interactions.',
-      results: [
-        { end: cs.healthtech.queriesAutomated, suffix: '%', label: 'Queries Automated' },
-        { end: cs.healthtech.responseTimeCut, suffix: '%', label: 'Response Time Cut' },
-        { end: cs.healthtech.patientSatisfaction, decimals: 1, suffix: '/5', label: 'Patient Satisfaction' },
-      ],
-      icon: TrendingUp,
-    },
-  ];
+  // Map industry to icon
+  const getIconForIndustry = (industry) => {
+    const lowerIndustry = (industry || '').toLowerCase();
+    if (lowerIndustry.includes('finance') || lowerIndustry.includes('banking')) {
+      return Shield;
+    } else if (lowerIndustry.includes('retail') || lowerIndustry.includes('commerce')) {
+      return Cloud;
+    } else if (lowerIndustry.includes('health')) {
+      return TrendingUp;
+    } else {
+      return Award;
+    }
+  };
+
+  // Transform success stories to case format
+  const cases = successStories.map((story) => ({
+    company: story.company,
+    industry: story.industry,
+    challenge: story.challenge,
+    solution: story.solution,
+    results: story.results || [],
+    testimonial: story.testimonial,
+    clientName: story.clientName,
+    clientRole: story.clientRole,
+    clientCompany: story.clientCompany,
+    icon: getIconForIndustry(story.industry),
+  }));
 
   return (
     <section id="case-studies" className="py-24 relative">
@@ -156,11 +183,24 @@ const CaseStudies = () => {
         </motion.div>
 
         {/* Case Studies Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {cases.map((caseStudy, index) => (
-            <CaseStudyCard key={caseStudy.company} {...caseStudy} index={index} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-16">
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading success stories...</p>
+          </div>
+        ) : cases.length === 0 ? (
+          <div className="text-center py-16 bg-gray-800/50 rounded-xl border border-gray-700">
+            <Award className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <p className="text-gray-400 mb-2">No success stories available yet</p>
+            <p className="text-sm text-gray-500">Check back soon for client success stories</p>
+          </div>
+        ) : (
+          <div className="grid lg:grid-cols-3 gap-8">
+            {cases.map((caseStudy, index) => (
+              <CaseStudyCard key={caseStudy.company} {...caseStudy} index={index} />
+            ))}
+          </div>
+        )}
 
         {/* CTA Section */}
         <motion.div
