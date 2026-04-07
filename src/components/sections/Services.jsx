@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Cloud, Bot, ArrowRight, Lock, CheckCircle2, Users, TrendingUp, Globe, Package } from 'lucide-react';
-import CountUpNumber from '../ui/CountUpNumber';
-import useSiteSettings from '../../hooks/useSiteSettings';
+import { Shield, Cloud, Bot, ArrowRight, CheckCircle2, Globe, Package } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ServiceCard = ({ icon: Icon, title, description, features, index, onScheduleClick, serviceId }) => {
   return (
@@ -50,33 +49,28 @@ const ServiceCard = ({ icon: Icon, title, description, features, index, onSchedu
 };
 
 const Services = ({ onScheduleClick }) => {
-  const { settings } = useSiteSettings();
-  const stats = settings.statistics;
+  const navigate = useNavigate();
 
   const services = [
     {
       icon: Shield,
       title: 'Cybersecurity Services',
       serviceId: 'cybersecurity',
-      description: 'Comprehensive security solutions to protect your business from evolving cyber threats with 24/7 monitoring and expert response.',
+      description: 'Comprehensive security solutions to protect your business from evolving cyber threats with 24/7 monitoring.',
       features: [
         'Security Assessment & Penetration Testing',
         'Managed Security Operations (SOC)',
-        'Incident Response & Forensics',
         'Compliance Management (ISO, GDPR, SOC 2)',
-        'Security Awareness Training',
       ],
     },
     {
       icon: Cloud,
       title: 'Cloud Infrastructure',
       serviceId: 'cloud',
-      description: 'Scalable and secure cloud solutions with DevOps automation, cost optimization, and enterprise-grade reliability.',
+      description: 'Scalable and secure cloud solutions with DevOps automation and enterprise-grade reliability.',
       features: [
         'Cloud Migration & Strategy (AWS, Azure, GCP)',
         'DevOps & CI/CD Implementation',
-        'Infrastructure as Code (IaC)',
-        'Cloud Security & Governance',
         'Disaster Recovery & Business Continuity',
       ],
     },
@@ -84,50 +78,35 @@ const Services = ({ onScheduleClick }) => {
       icon: Bot,
       title: 'AI Integration Services',
       serviceId: 'ai',
-      description: 'Strategic AI implementation and custom automation solutions to enhance efficiency and drive business innovation.',
+      description: 'Strategic AI implementation and custom automation solutions to enhance efficiency.',
       features: [
         'AI Strategy & Consulting',
         'Custom AI Agent Development',
         'Intelligent Process Automation',
-        'Machine Learning Implementation',
-        'AI Security & Risk Management',
       ],
     },
     {
       icon: Globe,
       title: 'Custom Website Development',
       serviceId: 'website',
-      description: 'Professional web solutions tailored to your business needs, from corporate websites to complex web applications.',
+      description: 'Professional web solutions from corporate websites to complex web applications.',
       features: [
         'Custom Website Design & Development',
         'E-commerce & Booking Systems',
-        'Progressive Web Apps (PWA)',
-        'Responsive & Mobile-First Design',
         'SEO Optimization & Performance',
-        'Content Management Systems (CMS)',
       ],
     },
     {
       icon: Package,
       title: 'Enterprise Software Solutions',
       serviceId: 'software',
-      description: 'Scalable, secure custom software solutions built to streamline operations and drive business growth.',
+      description: 'Scalable, secure custom software solutions built to streamline operations.',
       features: [
         'Custom Business Applications',
         'ERP & CRM System Integration',
-        'Workflow Automation Tools',
-        'Database Design & Management',
         'API Development & Integration',
-        'Legacy System Modernization',
       ],
     },
-  ];
-
-  const trustMetrics = [
-    { icon: Lock, text: 'Enterprise-Grade Security', subtext: 'Bank-level encryption' },
-    { icon: Users, value: stats.clientsServed, suffix: '+', label: 'Clients', subtext: `Across ${stats.industries} industries` },
-    { icon: TrendingUp, value: stats.successRate, decimals: 1, suffix: '%', label: 'Success Rate', subtext: 'Client satisfaction' },
-    { icon: CheckCircle2, text: 'Certified Experts', subtext: 'ISO 27001 & SOC 2' },
   ];
 
   return (
@@ -162,44 +141,29 @@ const Services = ({ onScheduleClick }) => {
           </p>
         </motion.div>
 
-        {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {services.map((service, index) => (
+        {/* Services Grid - Preview (3 services) */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {services.slice(0, 3).map((service, index) => (
             <ServiceCard key={service.title} {...service} index={index} onScheduleClick={onScheduleClick} />
           ))}
         </div>
 
-        {/* Trust Metrics */}
+        {/* View All Services CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-2xl p-8 md:p-12"
+          className="text-center"
         >
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {trustMetrics.map((metric, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center"
-              >
-                <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mx-auto mb-4">
-                  <metric.icon className="w-6 h-6 text-primary" />
-                </div>
-                <div className="text-lg font-semibold text-white mb-1">
-                  {metric.value !== undefined ? (
-                    <>
-                      <CountUpNumber end={metric.value} decimals={metric.decimals || 0} suffix={metric.suffix || ''} /> {metric.label}
-                    </>
-                  ) : metric.text}
-                </div>
-                <div className="text-sm text-gray-400">{metric.subtext}</div>
-              </motion.div>
-            ))}
-          </div>
+          <motion.button
+            onClick={() => navigate('/services')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 hover:bg-primary/20 text-primary px-6 py-3 rounded-lg font-semibold transition-all"
+          >
+            <span>View All Services & Details</span>
+            <ArrowRight className="w-4 h-4" />
+          </motion.button>
         </motion.div>
       </div>
     </section>

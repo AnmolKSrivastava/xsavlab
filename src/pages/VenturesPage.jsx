@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ExternalLink, 
   ArrowRight, 
@@ -131,6 +131,7 @@ const VenturesPage = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const { category } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchVentures();
@@ -286,7 +287,7 @@ const VenturesPage = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => window.location.href = '/#contact'}
+                onClick={() => navigate('/contact')}
                 className="px-8 py-4 bg-primary hover:bg-primary/80 text-white font-semibold rounded-lg transition-all flex items-center gap-2"
               >
                 <span>Start Your Project</span>

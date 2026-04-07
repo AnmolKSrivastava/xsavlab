@@ -19,14 +19,14 @@ const Navbar = ({ onScheduleClick }) => {
   }, []);
 
   const menuItems = [
-    { label: 'About', href: '#about', type: 'hash' },
-    { label: 'Services', href: '#services', type: 'hash' },
+    { label: 'About', href: '/about', type: 'route' },
+    { label: 'Services', href: '/services', type: 'route' },
     { label: 'Ventures', href: '/ventures', type: 'route' },
     { label: 'Blog', href: '/blog', type: 'route' },
     { label: 'Careers', href: '/careers', type: 'route' },
-    { label: 'Process', href: '#process', type: 'hash' },
-    { label: 'Case Studies', href: '#case-studies', type: 'hash' },
-    { label: 'Contact', href: '#contact', type: 'hash' },
+    { label: 'Process', href: '/process', type: 'route' },
+    { label: 'Case Studies', href: '/case-studies', type: 'route' },
+    { label: 'Contact', href: '/contact', type: 'route' },
   ];
 
   const handleNavClick = (item) => {
@@ -39,13 +39,27 @@ const Navbar = ({ onScheduleClick }) => {
         setTimeout(() => {
           const element = document.querySelector(item.href);
           if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+            const navbarHeight = 80; // Height of fixed navbar
+            const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = elementPosition - navbarHeight;
+            
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
           }
-        }, 100);
+        }, 300);
       } else {
         const element = document.querySelector(item.href);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          const navbarHeight = 80; // Height of fixed navbar
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - navbarHeight;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
         }
       }
     }
@@ -66,7 +80,7 @@ const Navbar = ({ onScheduleClick }) => {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <motion.div
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => navigate('/')}
             className="flex items-center space-x-3 cursor-pointer"
             whileHover={{ scale: 1.02 }}
           >
