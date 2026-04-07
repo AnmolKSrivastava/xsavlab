@@ -7,6 +7,8 @@ const nodemailer = require('nodemailer');
 const allowedOrigins = [
   'https://xsavlab.web.app',
   'https://xsavlab.firebaseapp.com',
+  'https://xsavlab.com',
+  'https://www.xsavlab.com',
   'http://localhost:3000',
   'http://localhost:5000',
 ];
