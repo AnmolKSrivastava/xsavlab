@@ -1,11 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Award, Target, Zap, Shield, Link2, Mail } from 'lucide-react';
-import amitKumarImg from '../assets/images/team/amitKumarImg.png';
-import shivAryanImg from '../assets/images/team/Shiv Aryan.png';
-import sumitKumarImg from '../assets/images/team/sumitKumarImg.jpg';
-import CountUpNumber from './CountUpNumber';
-import useSiteSettings from '../hooks/useSiteSettings';
+import amitKumarImg from '../../assets/images/team/amitKumarImg.png';
+import shivAryanImg from '../../assets/images/team/Shiv Aryan.png';
+import sumitKumarImg from '../../assets/images/team/sumitKumarImg.jpg';
+import CountUpNumber from '../ui/CountUpNumber';
+import useSiteSettings from '../../hooks/useSiteSettings';
 
 const TeamMember = ({ name, role, bio, image, linkedin, email, index }) => {
   return (

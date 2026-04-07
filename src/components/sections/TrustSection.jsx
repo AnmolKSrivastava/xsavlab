@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Quote, Award, Building2, Shield } from 'lucide-react';
-import CountUpNumber from './CountUpNumber';
-import useSiteSettings from '../hooks/useSiteSettings';
+import CountUpNumber from '../ui/CountUpNumber';
+import useSiteSettings from '../../hooks/useSiteSettings';
 
 const TrustSection = () => {
   const { settings } = useSiteSettings();

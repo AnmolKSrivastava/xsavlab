@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Shield, Cloud, ArrowRight, Award } from 'lucide-react';
-import CountUpNumber from './CountUpNumber';
+import CountUpNumber from '../ui/CountUpNumber';
 
 const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: Icon, index, testimonial, clientName, clientRole, clientCompany }) => {
   return (

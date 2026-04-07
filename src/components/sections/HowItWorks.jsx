@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FileSearch, Settings, Rocket, Shield } from 'lucide-react';
-import useSiteSettings from '../hooks/useSiteSettings';
+import useSiteSettings from '../../hooks/useSiteSettings';
 
 const HowItWorks = () => {
   const { settings } = useSiteSettings();

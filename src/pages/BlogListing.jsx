@@ -12,8 +12,8 @@ import {
   Eye,
   Star
 } from 'lucide-react';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 
 const BlogListing = () => {
   const navigate = useNavigate();

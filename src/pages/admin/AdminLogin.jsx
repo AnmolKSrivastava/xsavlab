@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Shield, Lock, Mail, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { auth } from '../../config/firebase';
 
 const AdminLogin = () => {
   const navigate = useNavigate();

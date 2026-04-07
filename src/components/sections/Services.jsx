@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Cloud, Bot, ArrowRight, Lock, CheckCircle2, Users, TrendingUp, Globe, Package } from 'lucide-react';
-import CountUpNumber from './CountUpNumber';
-import useSiteSettings from '../hooks/useSiteSettings';
+import CountUpNumber from '../ui/CountUpNumber';
+import useSiteSettings from '../../hooks/useSiteSettings';
 
 const ServiceCard = ({ icon: Icon, title, description, features, index, onScheduleClick, serviceId }) => {
   return (

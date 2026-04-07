@@ -10,7 +10,7 @@ import {
   Globe,
   Sparkles
 } from 'lucide-react';
-import QuantumBackground from './QuantumBackground';
+import QuantumBackground from '../components/ui/QuantumBackground';
 
 const VentureCard = ({ venture, index }) => {
   const getCategoryColor = (category) => {

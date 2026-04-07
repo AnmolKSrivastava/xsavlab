@@ -1,26 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import Services from './components/Services';
-import HowItWorks from './components/HowItWorks';
-import CaseStudies from './components/CaseStudies';
-import TrustSection from './components/TrustSection';
-import ReviewSubmissionForm from './components/ReviewSubmissionForm';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
-import QuantumBackground from './components/QuantumBackground';
-import ScrollToTop from './components/ScrollToTop';
-import AdminLogin from './components/AdminLogin';
-import AdminDashboard from './components/AdminDashboard';
-import VenturesPage from './components/VenturesPage';
-import BlogListing from './components/BlogListing';
-import BlogPost from './components/BlogPost';
-import FeaturedVentures from './components/FeaturedVentures';
-import LatestBlogPosts from './components/LatestBlogPosts';
-import CareersPage from './components/CareersPage';
-import JobDetailPage from './components/JobDetailPage';
+
+// Layout Components
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+
+// Section Components
+import Hero from './components/sections/Hero';
+import About from './components/sections/About';
+import Services from './components/sections/Services';
+import HowItWorks from './components/sections/HowItWorks';
+import CaseStudies from './components/sections/CaseStudies';
+import TrustSection from './components/sections/TrustSection';
+import ReviewSubmissionForm from './components/sections/ReviewSubmissionForm';
+import Contact from './components/sections/Contact';
+import FeaturedVentures from './components/sections/FeaturedVentures';
+import LatestBlogPosts from './components/sections/LatestBlogPosts';
+
+// UI Components
+import QuantumBackground from './components/ui/QuantumBackground';
+import ScrollToTop from './components/ui/ScrollToTop';
+
+// Pages
+import VenturesPage from './pages/VenturesPage';
+import BlogListing from './pages/BlogListing';
+import BlogPost from './pages/BlogPost';
+import CareersPage from './pages/CareersPage';
+import JobDetailPage from './pages/JobDetailPage';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 // Home Page Component
 function HomePage({ selectedService, handleScheduleConsultation }) {

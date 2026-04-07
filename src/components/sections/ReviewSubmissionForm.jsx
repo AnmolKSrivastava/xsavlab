@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Send, CheckCircle } from 'lucide-react';
-import { auth } from '../config/firebase';
+import { auth } from '../../config/firebase';
 import { signInAnonymously } from 'firebase/auth';
 
 const ReviewSubmissionForm = () => {

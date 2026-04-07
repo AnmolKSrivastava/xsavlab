@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import companyLogo from '../assets/images/logo/xsav_lab_logo.jpeg';
+import companyLogo from '../../assets/images/logo/xsav_lab_logo.jpeg';
 
 const Navbar = ({ onScheduleClick }) => {
   const [isOpen, setIsOpen] = useState(false);

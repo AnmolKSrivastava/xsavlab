@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, CheckCircle, Clock, Shield, ArrowRight, AlertCircle, Loader } from 'lucide-react';
-import { submitEnquiry } from '../services/enquiry';
+import { submitEnquiry } from '../../services/enquiry';
 
 const Contact = ({ preSelectedService = 'cybersecurity' }) => {
   const [formData, setFormData] = useState({

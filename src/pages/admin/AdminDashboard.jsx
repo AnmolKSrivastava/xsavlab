@@ -40,8 +40,8 @@ import {
   Phone,
   User
 } from 'lucide-react';
-import { auth } from '../config/firebase';
-import app from '../config/firebase';
+import { auth } from '../../config/firebase';
+import app from '../../config/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, query, orderBy, limit, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';

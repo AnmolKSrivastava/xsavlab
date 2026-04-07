@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, CheckCircle2, Award } from 'lucide-react';
-import CountUpNumber from './CountUpNumber';
-import useSiteSettings from '../hooks/useSiteSettings';
+import CountUpNumber from '../ui/CountUpNumber';
+import useSiteSettings from '../../hooks/useSiteSettings';
 
 const Hero = ({ onScheduleClick }) => {
   const { settings } = useSiteSettings();

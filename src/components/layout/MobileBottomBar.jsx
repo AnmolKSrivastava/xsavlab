@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Phone, MessageCircle, Calendar } from 'lucide-react';
-import { theme } from '../config/theme';
+import { theme } from '../../config/theme';
 
 const MobileBottomBar = () => {
   const actions = [

@@ -11,8 +11,8 @@ import {
   Share2,
   CheckCircle
 } from 'lucide-react';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 
 const BlogPost = () => {
   const { slug } = useParams();
