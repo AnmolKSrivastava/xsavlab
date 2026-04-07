@@ -1,11 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FileSearch, Settings, Rocket, Shield } from 'lucide-react';
-import useSiteSettings from '../hooks/useSiteSettings';
+import { FileSearch, Settings, Rocket, Shield, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const HowItWorks = () => {
-  const { settings } = useSiteSettings();
-  const stats = settings.statistics;
+  const navigate = useNavigate();
 
   const steps = [
     {
@@ -70,112 +69,56 @@ const HowItWorks = () => {
           </p>
         </motion.div>
 
-        {/* Desktop: Horizontal Timeline */}
-        <div className="hidden lg:block">
-          <div className="relative mb-28 pb-4">
-            {/* Connecting Line */}
-            <div className="absolute top-20 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent" />
-
-            <div className="grid grid-cols-4 gap-8">
-              {steps.map((step, index) => (
-                <motion.div
-                  key={step.number}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2 }}
-                  className="relative"
-                >
-                  {/* Number Badge */}
-                  <div className="relative z-10 mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-xl mb-8 shadow-lg shadow-primary/30">
-                    {step.number}
-                  </div>
-
-                  {/* Card */}
-                  <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 h-full">
-                    {/* Icon */}
-                    <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mb-4">
-                      <step.icon className="w-6 h-6 text-primary" />
-                    </div>
-
-                    {/* Content */}
-                    <h3 className="text-lg font-bold text-white mb-3">{step.title}</h3>
-                    <p className="text-gray-400 text-sm mb-4 leading-relaxed">{step.description}</p>
-                    
-                    {/* Deliverable */}
-                    <div className="pt-4 border-t border-gray-700">
-                      <div className="text-xs text-gray-500 mb-1">Deliverable</div>
-                      <div className="text-sm font-semibold text-primary">{step.deliverable}</div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile: Vertical Timeline */}
-        <div className="lg:hidden space-y-8 mb-24">
+        {/* Process Cards */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {steps.map((step, index) => (
             <motion.div
               key={step.number}
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.15 }}
-              className="flex items-start space-x-4"
+              transition={{ delay: index * 0.1 }}
+              className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6"
             >
-              {/* Left: Number & Line */}
-              <div className="flex flex-col items-center flex-shrink-0">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-lg shadow-lg shadow-primary/30">
-                  {step.number}
-                </div>
-                {index < steps.length - 1 && (
-                  <div className="w-0.5 h-32 bg-gradient-to-b from-primary/50 to-transparent mt-4" />
-                )}
+              {/* Number Badge */}
+              <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-xl mb-6 shadow-lg shadow-primary/30">
+                {step.number}
               </div>
 
-              {/* Right: Content */}
-              <div className="flex-1 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
-                <div className="bg-primary/10 border border-primary/30 p-2.5 rounded-lg w-fit mb-4">
-                  <step.icon className="w-5 h-5 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
-                <p className="text-gray-400 mb-4 leading-relaxed">{step.description}</p>
-                <div className="pt-4 border-t border-gray-700">
-                  <div className="text-xs text-gray-500 mb-1">Deliverable</div>
-                  <div className="text-sm font-semibold text-primary">{step.deliverable}</div>
-                </div>
+              {/* Icon */}
+              <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mb-4">
+                <step.icon className="w-6 h-6 text-primary" />
+              </div>
+
+              {/* Content */}
+              <h3 className="text-lg font-bold text-white mb-3">{step.title}</h3>
+              <p className="text-gray-400 text-sm mb-4 leading-relaxed">{step.description}</p>
+              
+              {/* Deliverable */}
+              <div className="pt-4 border-t border-gray-700">
+                <div className="text-xs text-gray-500 mb-1">Deliverable</div>
+                <div className="text-sm font-semibold text-primary">{step.deliverable}</div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Key Metrics */}
+        {/* Learn More CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="relative z-20 bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-2xl p-8 md:p-12"
+          className="text-center"
         >
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stats.deploymentWeeks}</div>
-              <div className="text-gray-400">Weeks Typical Deployment</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stats.projectSuccessRate}%</div>
-              <div className="text-gray-400">Project Success Rate</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stats.supportCoverage}</div>
-              <div className="text-gray-400">Support Coverage</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stats.successfulProjects}+</div>
-              <div className="text-gray-400">Successful Projects</div>
-            </div>
-          </div>
+          <motion.button
+            onClick={() => navigate('/process')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 hover:bg-primary/20 text-primary px-6 py-3 rounded-lg font-semibold transition-all"
+          >
+            <span>View Detailed Process</span>
+            <ArrowRight className="w-4 h-4" />
+          </motion.button>
         </motion.div>
       </div>
     </section>

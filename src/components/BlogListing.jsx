@@ -12,8 +12,6 @@ import {
   Eye,
   Star
 } from 'lucide-react';
-import Navbar from './Navbar';
-import Footer from './Footer';
 
 const BlogListing = () => {
   const navigate = useNavigate();
@@ -178,20 +176,18 @@ const BlogListing = () => {
 
   return (
     <div className="min-h-screen bg-dark-navy text-white">
-      <Navbar />
-
       {/* Hero Section */}
-      <section className="pt-32 pb-16 relative overflow-hidden">
+      <section className="pt-24 pb-8 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            className="text-center mb-8"
           >
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-6"
+              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-4"
             >
               <FileText className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold text-primary uppercase tracking-wider">
@@ -199,11 +195,11 @@ const BlogListing = () => {
               </span>
             </motion.div>
 
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Insights & <span className="text-primary">Updates</span>
             </h1>
 
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-300 max-w-3xl mx-auto">
               Stay informed with the latest in cybersecurity, cloud infrastructure, and technology trends
             </p>
           </motion.div>
@@ -300,8 +296,6 @@ const BlogListing = () => {
           )}
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 };

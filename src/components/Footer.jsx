@@ -21,15 +21,15 @@ const Footer = () => {
         <div className="grid lg:grid-cols-6 gap-12 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="bg-primary/20 border border-primary/40 p-1.5 rounded-lg">
+            <Link to="/" className="flex items-center space-x-3 mb-6 group cursor-pointer">
+              <div className="bg-primary/20 border border-primary/40 p-1.5 rounded-lg group-hover:bg-primary/30 transition-all">
                 <img src={companyLogo} alt="XSAV Lab logo" className="w-10 h-10 rounded object-cover" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-white">XSAV Lab</div>
+                <div className="text-2xl font-bold text-white group-hover:text-primary transition-colors">XSAV Lab</div>
                 <div className="text-xs text-gray-400 tracking-wider">CYBERSECURITY SERVICES</div>
               </div>
-            </div>
+            </Link>
 
             <p className="text-gray-400 mb-6 leading-relaxed">
               Enterprise cybersecurity and cloud solutions provider, protecting organizations with cutting-edge technology and expert consulting services.

@@ -43,7 +43,7 @@ const TrustSection = () => {
     { name: 'NIST CSF', desc: 'Cybersecurity Framework' },
   ];
 
-  const industries = ['Financial Services', 'Healthcare', 'Retail & E-Commerce', 'Manufacturing', 'Technology', 'Education', 'Government', 'Energy & Utilities'];
+  const industries = ['Financial Services', 'Healthcare', 'Retail & E-Commerce', 'Manufacturing', 'Media & Entertainment', 'Gaming & Esports', 'Technology', 'Education', 'Government', 'Energy & Utilities', 'Telecommunications', 'Transportation & Logistics'];
 
   return (
     <section id="trust" className="py-24 relative">

@@ -11,8 +11,6 @@ import {
   Share2,
   CheckCircle
 } from 'lucide-react';
-import Navbar from './Navbar';
-import Footer from './Footer';
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -118,7 +116,6 @@ const BlogPost = () => {
   if (error || !post) {
     return (
       <div className="min-h-screen bg-dark-navy text-white">
-        <Navbar />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
           <h1 className="text-4xl font-bold text-white mb-4">Post Not Found</h1>
           <p className="text-gray-400 mb-8">{error || 'The blog post you\'re looking for doesn\'t exist.'}</p>
@@ -130,17 +127,14 @@ const BlogPost = () => {
             <span>Back to Blog</span>
           </button>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-dark-navy text-white">
-      <Navbar />
-
       {/* Hero Section with Featured Image */}
-      <section className="pt-32 pb-8 relative overflow-hidden">
+      <section className="pt-24 pb-8 relative overflow-hidden">
         {post.featuredImage && (
           <div className="absolute inset-0 z-0">
             <img 
@@ -353,8 +347,6 @@ const BlogPost = () => {
           </div>
         </section>
       )}
-
-      <Footer />
     </div>
   );
 };
