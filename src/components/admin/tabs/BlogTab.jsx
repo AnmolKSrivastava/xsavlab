@@ -484,7 +484,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
                     </button>
                   )}
 
-                  {post.status === 'pending' && userRole === 'admin' && (
+                  {post.status === 'pending' && (userRole === 'admin' || userRole === 'superadmin') && (
                     <>
                       <button
                         onClick={() => handleApprove(post.id)}
