@@ -5,7 +5,7 @@ import CountUpNumber from '../ui/CountUpNumber';
 import useSiteSettings from '../../hooks/useSiteSettings';
 
 const TrustSection = () => {
-  const { settings } = useSiteSettings();
+  const { settings } = useSiteSettings({ deferFetch: true });
   const stats = settings.statistics;
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);

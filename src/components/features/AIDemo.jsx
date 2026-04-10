@@ -4,7 +4,7 @@ import { Send, Bot, User, Sparkles } from 'lucide-react';
 import useSiteSettings from '../hooks/useSiteSettings';
 
 const AIDemo = () => {
-  const { settings } = useSiteSettings();
+  const { settings } = useSiteSettings({ deferFetch: true });
   const stats = settings.statistics;
 
   const [messages, setMessages] = useState([

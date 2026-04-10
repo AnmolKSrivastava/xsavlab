@@ -7,7 +7,7 @@ import useSiteSettings from '../../hooks/useSiteSettings';
 
 const About = () => {
   const navigate = useNavigate();
-  const { settings } = useSiteSettings();
+  const { settings } = useSiteSettings({ deferFetch: true });
   const stats = settings.statistics;
 
   const values = [

@@ -26,7 +26,7 @@ const getSuccessStories = onRequest((req, res) => {
         query = query.where('status', '==', 'live');
       }
 
-      const snapshot = await query.get();
+      const snapshot = await query.limit(isAdmin ? 500 : 100).get();
       const stories = [];
 
       snapshot.forEach((doc) => {

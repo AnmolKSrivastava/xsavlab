@@ -4,6 +4,28 @@ const { cors, ensureMethod } = require('../lib/http');
 const { requireAdmin, verifyBearerToken } = require('../lib/auth');
 const { escapeHtml } = require('../lib/content');
 
+const APPLICATION_RATE_LIMIT = 5; // per IP per hour
+const HTTPS_URL_RE = /^https:\/\/.{1,1990}$/;
+
+async function checkApplicationRateLimit(ip) {
+  const safeIp = String(ip).replace(/[^a-zA-Z0-9._:-]/g, '_').slice(0, 64);
+  const ref = admin.firestore().collection('rateLimits').doc(`app_${safeIp}`);
+  const doc = await ref.get();
+  const now = Date.now();
+
+  if (doc.exists) {
+    const { count, windowStart } = doc.data();
+    if (now - windowStart < 3600000) {
+      if (count >= APPLICATION_RATE_LIMIT) return true;
+      await ref.update({ count: admin.firestore.FieldValue.increment(1) });
+      return false;
+    }
+  }
+
+  await ref.set({ count: 1, windowStart: now });
+  return false;
+}
+
 const submitApplication = onRequest((req, res) => {
   cors(req, res, async () => {
     if (!ensureMethod(req, res, 'POST')) {
@@ -35,6 +57,26 @@ const submitApplication = onRequest((req, res) => {
 
       if (!jobId || !applicantName || !applicantEmail || !resumeUrl) {
         return res.status(400).json({ error: 'Required fields missing' });
+      }
+
+      if (!HTTPS_URL_RE.test(resumeUrl)) {
+        return res.status(400).json({ error: 'resumeUrl must be a valid https:// URL' });
+      }
+      if (portfolioUrl && !HTTPS_URL_RE.test(portfolioUrl)) {
+        return res.status(400).json({ error: 'portfolioUrl must be a valid https:// URL' });
+      }
+      if (linkedInUrl && !HTTPS_URL_RE.test(linkedInUrl)) {
+        return res.status(400).json({ error: 'linkedInUrl must be a valid https:// URL' });
+      }
+
+      const clientIp = req.ip || req.headers['x-forwarded-for'] || 'unknown';
+      try {
+        const isRateLimited = await checkApplicationRateLimit(clientIp);
+        if (isRateLimited) {
+          return res.status(429).json({ error: 'Too many submissions. Please try again later.' });
+        }
+      } catch (rateLimitError) {
+        console.error('Application rate limit check failed (continuing):', rateLimitError);
       }
 
       const jobRef = admin.firestore().collection('jobs').doc(jobId);
