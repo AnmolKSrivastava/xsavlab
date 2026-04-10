@@ -35,3 +35,16 @@ ui-debug.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Lighthouse reports and test artifacts (may contain API keys in traced URLs)
+*.lighthouse-*.json
+.lighthouse-*.json
+lighthouse-*.json
+*.report.html
+localhost_*.report.html
+
+# Local environment overrides (keep only .env.example in git)
+.env.production
+
+# Audit output files
+audit-detailed.json
