@@ -1,13 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Award, Target, Zap, Shield, Link2, Mail, Users, Globe, TrendingUp } from 'lucide-react';
-import amitKumarImg from '../assets/images/team/amitKumarImg.png';
-import shivAryanImg from '../assets/images/team/Shiv Aryan.png';
-import sumitKumarImg from '../assets/images/team/sumitKumarImg.jpg';
+import amitKumarImgWebp from '../assets/images/team/amit-kumar-img.webp';
+import shivAryanImgWebp from '../assets/images/team/shiv-aryan-img.webp';
+import sumitKumarImgWebp from '../assets/images/team/sumit-kumar-img.webp';
 import CountUpNumber from '../components/ui/CountUpNumber';
 import useSiteSettings from '../hooks/useSiteSettings';
 
-const TeamMember = ({ name, role, bio, image, linkedin, email, index }) => {
+const TeamMember = ({ name, role, bio, imageSet, linkedin, email, index }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -19,8 +19,16 @@ const TeamMember = ({ name, role, bio, image, linkedin, email, index }) => {
       {/* Profile Image */}
       <div className="relative mb-6">
         <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-primary/30 flex items-center justify-center overflow-hidden">
-          {image ? (
-            <img src={image} alt={name} className="w-full h-full object-cover" />
+          {imageSet ? (
+            <img
+              src={imageSet.webp}
+              alt={name}
+              loading="lazy"
+              decoding="async"
+              width="128"
+              height="128"
+              className="w-full h-full object-cover"
+            />
           ) : (
             <Shield className="w-16 h-16 text-primary" />
           )}
@@ -105,7 +113,9 @@ const AboutPage = () => {
       name: 'Amit Kumar',
       role: 'Founder and CEO',
       bio: 'As Founder and CEO, Amit leads XSAV Lab\'s vision and strategic direction, helping organizations strengthen cybersecurity posture while accelerating secure digital transformation.',
-      image: amitKumarImg,
+      imageSet: {
+        webp: amitKumarImgWebp,
+      },
       linkedin: 'https://www.linkedin.com/in/amit-kumar-03084a19/',
       email: 'amit.tiwary@xsavlab.com',
     },
@@ -113,7 +123,9 @@ const AboutPage = () => {
       name: 'Shiv Aryan',
       role: 'Business Director',
       bio: 'Shiv leads business strategy, partnerships, and client success at XSAV Lab, aligning technology solutions with measurable business outcomes and long-term growth goals.',
-      image: shivAryanImg,
+      imageSet: {
+        webp: shivAryanImgWebp,
+      },
       linkedin: 'https://linkedin.com',
       email: 'sarah@xsavlab.com',
     },
@@ -121,7 +133,9 @@ const AboutPage = () => {
       name: 'Sumit Kumar',
       role: 'CTO',
       bio: 'As CTO, Sumit architects secure, scalable platforms and drives innovation across cloud, AI, and cybersecurity initiatives to deliver enterprise-grade performance.',
-      image: sumitKumarImg,
+      imageSet: {
+        webp: sumitKumarImgWebp,
+      },
       linkedin: 'https://www.linkedin.com/in/sumit-tiwary-38343b202/',
       email: 'michael@xsavlab.com',
     },

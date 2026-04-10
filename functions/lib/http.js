@@ -9,6 +9,15 @@ const allowedOrigins = [
   'http://localhost:5000',
 ];
 
+const localOriginPatterns = [
+  /^http:\/\/localhost:\d+$/,
+  /^http:\/\/127\.0\.0\.1:\d+$/,
+];
+
+function isAllowedLocalOrigin(origin) {
+  return localOriginPatterns.some((pattern) => pattern.test(origin));
+}
+
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) {
@@ -16,7 +25,7 @@ const corsOptions = {
       return callback(new Error('Not allowed by CORS'));
     }
 
-    if (allowedOrigins.includes(origin)) {
+    if (allowedOrigins.includes(origin) || isAllowedLocalOrigin(origin)) {
       return callback(null, true);
     }
 

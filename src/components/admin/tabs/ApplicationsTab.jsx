@@ -480,7 +480,7 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
                     <button
                       onClick={() => handleAddNote(viewingApplication.id)}
                       disabled={!newNote.trim()}
-                      className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Send className="w-4 h-4" />
                     </button>
@@ -503,3 +503,4 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
 };
 
 export default ApplicationsTab;
+

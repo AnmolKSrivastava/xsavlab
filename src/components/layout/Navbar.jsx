@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import companyLogo from '../../assets/images/logo/xsav_lab_logo.jpeg';
+import companyLogo from '../../assets/images/logo/xsav_lab_logo.webp';
 
 const Navbar = ({ onScheduleClick }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -114,7 +114,8 @@ const Navbar = ({ onScheduleClick }) => {
               onClick={() => onScheduleClick && onScheduleClick()}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
+              aria-label="Schedule consultation"
+              className="bg-primary hover:bg-primary/90 text-dark-navy px-6 py-2.5 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
             >
               Schedule Consultation
             </motion.button>
@@ -124,6 +125,9 @@ const Navbar = ({ onScheduleClick }) => {
           <button
             className="lg:hidden text-white p-2 hover:bg-white/5 rounded-lg transition-colors"
             onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -136,6 +140,7 @@ const Navbar = ({ onScheduleClick }) => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
+          id="mobile-navigation"
           className="lg:hidden bg-dark-navy/98 backdrop-blur-md border-b border-primary/20"
         >
           <div className="px-4 py-6 space-y-1">
@@ -154,7 +159,8 @@ const Navbar = ({ onScheduleClick }) => {
                   onScheduleClick && onScheduleClick();
                   setIsOpen(false);
                 }}
-                className="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
+                aria-label="Schedule consultation"
+                className="w-full bg-primary hover:bg-primary/90 text-dark-navy px-6 py-3 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
               >
                 Schedule Consultation
               </button>

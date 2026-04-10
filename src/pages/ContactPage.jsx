@@ -296,7 +296,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                     disabled={loading}
                     whileHover={!loading ? { scale: 1.02 } : {}}
                     whileTap={!loading ? { scale: 0.98 } : {}}
-                    className="w-full bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <>
@@ -321,3 +321,4 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
 };
 
 export default ContactPage;
+

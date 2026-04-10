@@ -5,7 +5,7 @@ import CountUpNumber from '../ui/CountUpNumber';
 import useSiteSettings from '../../hooks/useSiteSettings';
 
 const Hero = ({ onScheduleClick }) => {
-  const { settings } = useSiteSettings();
+  const { settings } = useSiteSettings({ deferFetch: true });
   const stats = settings.statistics;
 
   return (
@@ -19,11 +19,7 @@ const Hero = ({ onScheduleClick }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -34,25 +30,15 @@ const Hero = ({ onScheduleClick }) => {
               <span className="text-sm font-semibold text-primary">Trusted Security Partner</span>
             </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white"
-            >
+            <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
               Enterprise
               <span className="text-primary"> Cybersecurity </span>
               Services That Protect Your Business
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-xl text-gray-300 mb-8 max-w-xl leading-relaxed"
-            >
+            <p className="text-xl text-gray-300 mb-8 max-w-xl leading-relaxed">
               Comprehensive security solutions, cloud infrastructure management, and expert consulting to safeguard your digital assets and ensure business continuity.
-            </motion.p>
+            </p>
 
             {/* Trust Indicators */}
             <motion.div
@@ -83,7 +69,8 @@ const Hero = ({ onScheduleClick }) => {
                 onClick={() => onScheduleClick && onScheduleClick('cybersecurity')}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 shadow-xl shadow-primary/25 transition-all"
+                aria-label="Request security assessment"
+                className="bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 shadow-xl shadow-primary/25 transition-all"
               >
                 <span>Request Security Assessment</span>
                 <ArrowRight className="w-5 h-5" />
@@ -123,7 +110,7 @@ const Hero = ({ onScheduleClick }) => {
                 <div className="text-sm text-gray-400">Years Experience</div>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
 
           {/* Right Content - Professional Dashboard */}
           <motion.div

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 
 // Layout Components
@@ -7,48 +7,69 @@ import Footer from './components/layout/Footer';
 
 // Section Components
 import Hero from './components/sections/Hero';
-import About from './components/sections/About';
-import Services from './components/sections/Services';
-import HowItWorks from './components/sections/HowItWorks';
-import CaseStudies from './components/sections/CaseStudies';
-import TrustSection from './components/sections/TrustSection';
-import ReviewSubmissionForm from './components/sections/ReviewSubmissionForm';
-import Contact from './components/sections/Contact';
-import FeaturedVentures from './components/sections/FeaturedVentures';
-import LatestBlogPosts from './components/sections/LatestBlogPosts';
 
 // UI Components
 import QuantumBackground from './components/ui/QuantumBackground';
 import ScrollToTop from './components/ui/ScrollToTop';
 
-// Pages
-import AboutPage from './pages/AboutPage';
-import ServicesPage from './pages/ServicesPage';
-import ProcessPage from './pages/ProcessPage';
-import CaseStudiesPage from './pages/CaseStudiesPage';
-import ContactPage from './pages/ContactPage';
-import VenturesPage from './pages/VenturesPage';
-import BlogListing from './pages/BlogListing';
-import BlogPost from './pages/BlogPost';
-import CareersPage from './pages/CareersPage';
-import JobDetailPage from './pages/JobDetailPage';
-import AdminLogin from './pages/admin/AdminLogin';
-import AdminDashboard from './pages/admin/AdminDashboard';
+const About = lazy(() => import('./components/sections/About'));
+const Services = lazy(() => import('./components/sections/Services'));
+const HowItWorks = lazy(() => import('./components/sections/HowItWorks'));
+const CaseStudies = lazy(() => import('./components/sections/CaseStudies'));
+const TrustSection = lazy(() => import('./components/sections/TrustSection'));
+const ReviewSubmissionForm = lazy(() => import('./components/sections/ReviewSubmissionForm'));
+const Contact = lazy(() => import('./components/sections/Contact'));
+const FeaturedVentures = lazy(() => import('./components/sections/FeaturedVentures'));
+const LatestBlogPosts = lazy(() => import('./components/sections/LatestBlogPosts'));
+
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const ProcessPage = lazy(() => import('./pages/ProcessPage'));
+const CaseStudiesPage = lazy(() => import('./pages/CaseStudiesPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const VenturesPage = lazy(() => import('./pages/VenturesPage'));
+const BlogListing = lazy(() => import('./pages/BlogListing'));
+const BlogPost = lazy(() => import('./pages/BlogPost'));
+const CareersPage = lazy(() => import('./pages/CareersPage'));
+const JobDetailPage = lazy(() => import('./pages/JobDetailPage'));
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+
+const SectionLoader = () => <div className="h-16" aria-hidden="true" />;
+const PageLoader = () => <div className="min-h-[40vh]" aria-hidden="true" />;
 
 // Home Page Component
 function HomePage({ handleScheduleClick }) {
   return (
     <>
       <Hero onScheduleClick={handleScheduleClick} />
-      <About />
-      <Services onScheduleClick={handleScheduleClick} />
-      <FeaturedVentures />
-      <LatestBlogPosts />
-      <HowItWorks />
-      <CaseStudies />
-      <TrustSection />
-      <ReviewSubmissionForm />
-      <Contact />
+      <Suspense fallback={<SectionLoader />}>
+        <About />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <Services onScheduleClick={handleScheduleClick} />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <FeaturedVentures />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <LatestBlogPosts />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <HowItWorks />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <CaseStudies />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <TrustSection />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <ReviewSubmissionForm />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <Contact />
+      </Suspense>
     </>
   );
 }
@@ -60,7 +81,7 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AppContent />
     </Router>
   );
@@ -79,6 +100,31 @@ function AppContent() {
     navigate('/contact');
   };
 
+  const routeContent = (
+    <Routes>
+      <Route path="/" 
+        element={
+          <HomePage 
+            handleScheduleClick={handleScheduleClick} 
+          />
+        } 
+      />
+      <Route path="/about" element={<Suspense fallback={<PageLoader />}><AboutPage /></Suspense>} />
+      <Route path="/services" element={<Suspense fallback={<PageLoader />}><ServicesPage /></Suspense>} />
+      <Route path="/process" element={<Suspense fallback={<PageLoader />}><ProcessPage /></Suspense>} />
+      <Route path="/case-studies" element={<Suspense fallback={<PageLoader />}><CaseStudiesPage /></Suspense>} />
+      <Route path="/contact" element={<Suspense fallback={<PageLoader />}><ContactPage /></Suspense>} />
+      <Route path="/blog" element={<Suspense fallback={<PageLoader />}><BlogListing /></Suspense>} />
+      <Route path="/blog/:slug" element={<Suspense fallback={<PageLoader />}><BlogPost /></Suspense>} />
+      <Route path="/careers" element={<Suspense fallback={<PageLoader />}><CareersPage /></Suspense>} />
+      <Route path="/careers/:jobId" element={<Suspense fallback={<PageLoader />}><JobDetailPage /></Suspense>} />
+      <Route path="/ventures" element={<Suspense fallback={<PageLoader />}><VenturesPage /></Suspense>} />
+      <Route path="/ventures/:category" element={<Suspense fallback={<PageLoader />}><VenturesPage /></Suspense>} />
+      <Route path="/admin-login" element={<Suspense fallback={<PageLoader />}><AdminLogin /></Suspense>} />
+      <Route path="/admin/dashboard" element={<Suspense fallback={<PageLoader />}><AdminDashboard /></Suspense>} />
+    </Routes>
+  );
+
   return (
     <div className="min-h-screen bg-dark-navy text-white overflow-x-hidden relative">
       {/* Quantum animated background */}
@@ -89,28 +135,7 @@ function AppContent() {
       
       {/* Main content - positioned above background with padding for fixed navbar */}
       <div className={`relative z-10 ${!isAdminPage ? 'pt-20' : ''}`}>
-        <Routes>
-          <Route path="/" 
-            element={
-              <HomePage 
-                handleScheduleClick={handleScheduleClick} 
-              />
-            } 
-          />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/process" element={<ProcessPage />} />
-          <Route path="/case-studies" element={<CaseStudiesPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/blog" element={<BlogListing />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/careers" element={<CareersPage />} />
-          <Route path="/careers/:jobId" element={<JobDetailPage />} />
-          <Route path="/ventures" element={<VenturesPage />} />
-          <Route path="/ventures/:category" element={<VenturesPage />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        </Routes>
+        {isAdminPage ? routeContent : <main id="main-content">{routeContent}</main>}
         
         {/* Footer - hidden on admin pages */}
         {!isAdminPage && <Footer />}

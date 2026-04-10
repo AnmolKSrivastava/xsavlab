@@ -257,7 +257,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
               featured: false
             });
           }}
-          className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-4 py-2 rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>{isCreating ? 'Cancel' : 'New Post'}</span>
@@ -372,7 +372,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
             <button
               type="submit"
               disabled={submitLoading}
-              className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+              className="bg-primary hover:bg-primary/90 text-dark-navy px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
             >
               {submitLoading ? 'Saving...' : (editingPost ? 'Update Post' : 'Save as Draft')}
             </button>
@@ -544,3 +544,4 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
 };
 
 export default BlogTab;
+
