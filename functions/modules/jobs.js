@@ -104,7 +104,7 @@ const getJobs = onRequest((req, res) => {
         query = query.where('jobType', '==', jobType);
       }
 
-      const snapshot = await query.get();
+      const snapshot = await query.limit(isAdmin ? 500 : 100).get();
       const jobs = [];
 
       snapshot.forEach((doc) => {

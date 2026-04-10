@@ -2,6 +2,22 @@ const { onRequest } = require('firebase-functions/v2/https');
 const { admin } = require('../lib/firebase');
 const { cors, ensureMethod } = require('../lib/http');
 const { requireAdmin, verifyBearerToken } = require('../lib/auth');
+const { escapeHtml } = require('../lib/content');
+
+const VENTURE_ID_RE = /^[a-zA-Z0-9_-]{1,50}$/;
+
+async function resolveVentureId(ventureId, res) {
+  if (!VENTURE_ID_RE.test(ventureId)) {
+    res.status(400).json({ error: 'Invalid venture ID format' });
+    return false;
+  }
+  const doc = await admin.firestore().collection('ventures').doc(ventureId).get();
+  if (!doc.exists) {
+    res.status(404).json({ error: 'Venture not found' });
+    return false;
+  }
+  return true;
+}
 
 const createVenture = onRequest((req, res) => {
   cors(req, res, async () => {
@@ -30,8 +46,22 @@ const createVenture = onRequest((req, res) => {
         return res.status(400).json({ error: 'A venture with this slug already exists' });
       }
 
+      const safeData = {
+        name: escapeHtml(String(ventureData.name)),
+        slug: String(ventureData.slug).toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 100),
+        tagline: ventureData.tagline ? escapeHtml(String(ventureData.tagline)) : '',
+        description: ventureData.description ? escapeHtml(String(ventureData.description)) : '',
+        category: ventureData.category ? escapeHtml(String(ventureData.category)) : '',
+        status: ['live', 'draft', 'archived'].includes(ventureData.status) ? ventureData.status : 'draft',
+        order: Number.isFinite(Number(ventureData.order)) ? Number(ventureData.order) : 0,
+        featured: ventureData.featured === true,
+        logoUrl: ventureData.logoUrl ? String(ventureData.logoUrl).slice(0, 2000) : '',
+        websiteUrl: ventureData.websiteUrl ? String(ventureData.websiteUrl).slice(0, 2000) : '',
+        tags: Array.isArray(ventureData.tags) ? ventureData.tags.map((t) => escapeHtml(String(t))).slice(0, 20) : [],
+      };
+
       const ventureRef = await admin.firestore().collection('ventures').add({
-        ...ventureData,
+        ...safeData,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         createdBy: decodedToken.uid,
@@ -70,8 +100,20 @@ const updateVenture = onRequest((req, res) => {
         return res.status(400).json({ error: 'Venture ID is required' });
       }
 
+      const safeUpdates = {};
+      if (updateData.name !== undefined) safeUpdates.name = escapeHtml(String(updateData.name));
+      if (updateData.tagline !== undefined) safeUpdates.tagline = escapeHtml(String(updateData.tagline));
+      if (updateData.description !== undefined) safeUpdates.description = escapeHtml(String(updateData.description));
+      if (updateData.category !== undefined) safeUpdates.category = escapeHtml(String(updateData.category));
+      if (updateData.status !== undefined && ['live', 'draft', 'archived'].includes(updateData.status)) safeUpdates.status = updateData.status;
+      if (updateData.order !== undefined && Number.isFinite(Number(updateData.order))) safeUpdates.order = Number(updateData.order);
+      if (updateData.featured !== undefined) safeUpdates.featured = updateData.featured === true;
+      if (updateData.logoUrl !== undefined) safeUpdates.logoUrl = String(updateData.logoUrl).slice(0, 2000);
+      if (updateData.websiteUrl !== undefined) safeUpdates.websiteUrl = String(updateData.websiteUrl).slice(0, 2000);
+      if (updateData.tags !== undefined) safeUpdates.tags = Array.isArray(updateData.tags) ? updateData.tags.map((t) => escapeHtml(String(t))).slice(0, 20) : [];
+
       await admin.firestore().collection('ventures').doc(ventureId).update({
-        ...updateData,
+        ...safeUpdates,
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         lastEditedBy: decodedToken.uid,
       });
@@ -135,7 +177,7 @@ const getVentures = onRequest((req, res) => {
         venturesQuery = venturesQuery.where('status', '==', 'live');
       }
 
-      venturesQuery = venturesQuery.orderBy('order', 'asc');
+      venturesQuery = venturesQuery.orderBy('order', 'asc').limit(isAdmin ? 500 : 100);
 
       const snapshot = await venturesQuery.get();
       const ventures = [];
@@ -168,6 +210,9 @@ const trackVentureView = onRequest((req, res) => {
         return res.status(400).json({ error: 'Venture ID is required' });
       }
 
+      const exists = await resolveVentureId(ventureId, res);
+      if (!exists) return;
+
       await admin.firestore().collection('ventures').doc(ventureId).update({
         views: admin.firestore.FieldValue.increment(1),
       });
@@ -192,6 +237,9 @@ const trackVentureClick = onRequest((req, res) => {
       if (!ventureId) {
         return res.status(400).json({ error: 'Venture ID is required' });
       }
+
+      const exists = await resolveVentureId(ventureId, res);
+      if (!exists) return;
 
       await admin.firestore().collection('ventures').doc(ventureId).update({
         clicks: admin.firestore.FieldValue.increment(1),

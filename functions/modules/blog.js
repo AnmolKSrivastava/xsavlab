@@ -22,6 +22,12 @@ const createBlogPost = onRequest((req, res) => {
         return res.status(400).json({ error: 'Title, content, and category are required' });
       }
 
+      if (title.length > 300) return res.status(400).json({ error: 'Title must be under 300 characters' });
+      if (content.length > 200000) return res.status(400).json({ error: 'Content must be under 200,000 characters' });
+      if (excerpt && excerpt.length > 1000) return res.status(400).json({ error: 'Excerpt must be under 1,000 characters' });
+      if (category.length > 100) return res.status(400).json({ error: 'Category must be under 100 characters' });
+      if (Array.isArray(tags) && tags.length > 20) return res.status(400).json({ error: 'Maximum 20 tags allowed' });
+
       let slug = createSlug(title);
 
       const existingPost = await admin.firestore()
@@ -107,7 +113,7 @@ const getBlogPosts = onRequest((req, res) => {
         query = query.where('author.uid', '==', authorUid);
       }
 
-      const snapshot = await query.get();
+      const snapshot = await query.limit(isAdmin ? 500 : 100).get();
       const posts = [];
 
       snapshot.forEach((doc) => {
