@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Briefcase, Save, CheckCircle, AlertCircle } from 'lucide-react';
 
+const WEBSITE_BASE_URL = 'https://xsavlab.com';
+
 const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading }) => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterDepartment, setFilterDepartment] = useState('all');
@@ -175,6 +177,32 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
     'on-hold': jobs.filter(j => j.status === 'on-hold').length,
     closed: jobs.filter(j => j.status === 'closed').length,
     filled: jobs.filter(j => j.status === 'filled').length
+  };
+
+  const getApplyUrl = (job) => job.applyUrl || `${WEBSITE_BASE_URL}/careers/${job.id}`;
+
+  const buildLinkedInCaption = (job) => {
+    const applyUrl = getApplyUrl(job);
+    return [
+      `We're hiring: ${job.title}`,
+      `${job.department} • ${job.location} • ${job.jobType}`,
+      '',
+      `Apply on our website: ${applyUrl}`,
+      '',
+      '#Hiring #Careers #Cybersecurity #Cloud',
+    ].join('\n');
+  };
+
+  const copyText = async (text, label) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setSuccess(`${label} copied to clipboard`);
+      setTimeout(() => setSuccess(null), 2500);
+    } catch (copyError) {
+      console.error('Clipboard copy failed:', copyError);
+      setError(`Failed to copy ${label.toLowerCase()}`);
+      setTimeout(() => setError(null), 2500);
+    }
   };
 
   const StatusBadge = ({ status }) => {
@@ -392,6 +420,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
                 <span className="text-sm text-gray-300">Feature this job posting</span>
               </label>
             </div>
+
           </div>
 
           <div className="flex space-x-3 pt-4">
@@ -472,6 +501,11 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
                         Featured
                       </span>
                     )}
+                    {job.linkedin?.status === 'published' && (
+                      <span className="px-2 py-1 bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded text-xs font-medium">
+                        LinkedIn Posted
+                      </span>
+                    )}
                   </div>
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-400 mb-3">
                     <span className="flex items-center space-x-1">
@@ -489,6 +523,20 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
                       {job.applications} {job.applications === 1 ? 'application' : 'applications'}
                     </div>
                   )}
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => copyText(getApplyUrl(job), 'Apply URL')}
+                      className="text-xs bg-slate-700/60 hover:bg-slate-700 text-gray-200 px-3 py-1 rounded"
+                    >
+                      Copy Apply URL
+                    </button>
+                    <button
+                      onClick={() => copyText(buildLinkedInCaption(job), 'LinkedIn caption')}
+                      className="text-xs bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 px-3 py-1 rounded border border-blue-500/30"
+                    >
+                      Copy LinkedIn Caption
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex space-x-2 ml-4">

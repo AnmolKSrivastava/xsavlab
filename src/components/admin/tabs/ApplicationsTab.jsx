@@ -103,8 +103,13 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
       // Decode URL if it contains HTML entities
       const decodedUrl = decodeHtmlEntities(resumeUrl);
 
-      // If it's a Firebase Storage URL
-      if (decodedUrl.includes('firebasestorage.googleapis.com') || decodedUrl.startsWith('gs://')) {
+      // If it's a Firebase Storage URL or storage path
+      if (decodedUrl.startsWith('resumes/')) {
+        const storage = getStorage();
+        const storageRef = ref(storage, decodedUrl);
+        const downloadUrl = await getDownloadURL(storageRef);
+        window.open(downloadUrl, '_blank');
+      } else if (decodedUrl.includes('firebasestorage.googleapis.com') || decodedUrl.startsWith('gs://')) {
         const storage = getStorage();
         let storageRef;
 
@@ -265,6 +270,61 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
                         <span>{application.applicantPhone}</span>
                       </div>
                     )}
+                    {application.currentRole && (
+                      <div className="flex items-center space-x-2">
+                        <User className="w-4 h-4" />
+                        <span>{application.currentRole}</span>
+                        {application.currentCompany && (
+                          <span className="text-gray-500">@ {application.currentCompany}</span>
+                        )}
+                      </div>
+                    )}
+                    {(application.yearsOfExperience !== null && application.yearsOfExperience !== undefined) && (
+                      <div className="flex items-center space-x-2">
+                        <Clock className="w-4 h-4" />
+                        <span>{application.yearsOfExperience} years experience</span>
+                      </div>
+                    )}
+                    {application.currentLocation && (
+                      <div className="flex items-center space-x-2">
+                        <Globe className="w-4 h-4" />
+                        <span>{application.currentLocation}</span>
+                        {application.preferredWorkMode && (
+                          <span className="text-gray-500">• {application.preferredWorkMode}</span>
+                        )}
+                      </div>
+                    )}
+                    {application.educationLevel && (
+                      <div className="flex items-center space-x-2">
+                        <FileText className="w-4 h-4" />
+                        <span>{application.educationLevel}</span>
+                        {application.degreeName && (
+                          <span className="text-gray-500">• {application.degreeName}</span>
+                        )}
+                        {application.specialization && (
+                          <span className="text-gray-500">• {application.specialization}</span>
+                        )}
+                      </div>
+                    )}
+                    {(application.universityName || application.graduationYear || application.academicScore) && (
+                      <div className="flex items-center space-x-2">
+                        <Briefcase className="w-4 h-4" />
+                        <span>
+                          {application.universityName || 'Institution'}
+                          {application.graduationYear ? ` • ${application.graduationYear}` : ''}
+                          {application.academicScore ? ` • ${application.academicScore}` : ''}
+                        </span>
+                      </div>
+                    )}
+                    {(application.twelfthBoard || application.twelfthStream) && (
+                      <div className="flex items-center space-x-2">
+                        <Clock className="w-4 h-4" />
+                        <span>
+                          12th: {application.twelfthBoard || 'Board not provided'}
+                          {application.twelfthStream ? ` • ${application.twelfthStream}` : ''}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-3">
@@ -275,6 +335,15 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
                       >
                         <FileText className="w-3 h-3" />
                         <span>Resume</span>
+                      </button>
+                    )}
+                    {application.coverLetterFileUrl && (
+                      <button
+                        onClick={() => handleDownloadResume(application.coverLetterFileUrl)}
+                        className="flex items-center space-x-1 text-xs bg-teal-500/20 text-teal-300 px-3 py-1 rounded hover:bg-teal-500/30 transition-colors"
+                      >
+                        <FileText className="w-3 h-3" />
+                        <span>Cover Letter PDF</span>
                       </button>
                     )}
                     {application.portfolioUrl && (
@@ -298,6 +367,37 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
                         <User className="w-3 h-3" />
                         <span>LinkedIn</span>
                       </a>
+                    )}
+                    {application.githubUrl && (
+                      <a
+                        href={application.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center space-x-1 text-xs bg-gray-500/20 text-gray-300 px-3 py-1 rounded hover:bg-gray-500/30 transition-colors"
+                      >
+                        <Globe className="w-3 h-3" />
+                        <span>GitHub</span>
+                      </a>
+                    )}
+                    {application.highestQualification && (
+                      <span className="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded border border-indigo-500/30">
+                        {application.highestQualification}
+                      </span>
+                    )}
+                    {application.noticePeriodDays !== null && application.noticePeriodDays !== undefined && (
+                      <span className="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded border border-amber-500/30">
+                        Notice: {application.noticePeriodDays} days
+                      </span>
+                    )}
+                    {application.expectedSalary && (
+                      <span className="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded border border-emerald-500/30">
+                        Expected: {application.expectedSalary}
+                      </span>
+                    )}
+                    {application.workAuthorization && (
+                      <span className="text-xs bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded border border-cyan-500/30">
+                        {application.workAuthorization}
+                      </span>
                     )}
                   </div>
 

@@ -29,15 +29,34 @@ const JobDetailPage = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [resumeFile, setResumeFile] = useState(null);
+  const [coverLetterFile, setCoverLetterFile] = useState(null);
   const [resumeUploading, setResumeUploading] = useState(false);
 
   const [formData, setFormData] = useState({
     applicantName: '',
     applicantEmail: '',
     applicantPhone: '',
+    currentCompany: '',
+    currentRole: '',
+    yearsOfExperience: '',
+    highestQualification: '',
+    currentLocation: '',
+    preferredWorkMode: 'Remote',
+    noticePeriodDays: '',
+    expectedSalary: '',
+    workAuthorization: '',
+    educationLevel: 'Undergraduate',
+    degreeName: '',
+    specialization: '',
+    universityName: '',
+    graduationYear: '',
+    academicScore: '',
+    twelfthBoard: '',
+    twelfthStream: '',
     coverLetter: '',
     portfolioUrl: '',
-    linkedInUrl: ''
+    linkedInUrl: '',
+    githubUrl: ''
   });
 
   // Fetch job details
@@ -90,6 +109,25 @@ const JobDetailPage = () => {
     setError(null);
   };
 
+  // Handle optional cover letter PDF upload
+  const handleCoverLetterFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      setError('Cover letter file must be a PDF');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Cover letter file size must be less than 5MB');
+      return;
+    }
+
+    setCoverLetterFile(file);
+    setError(null);
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -113,6 +151,15 @@ const JobDetailPage = () => {
       // Just pass the storage path, admin will generate URL when viewing
       setResumeUploading(false);
 
+      let coverLetterFileUrl = '';
+      if (coverLetterFile) {
+        const storage = getStorage();
+        const coverLetterPath = `coverLetters/${jobId}/${Date.now()}_${coverLetterFile.name}`;
+        const coverLetterRef = ref(storage, coverLetterPath);
+        await uploadBytes(coverLetterRef, coverLetterFile);
+        coverLetterFileUrl = coverLetterPath;
+      }
+
       // Submit application (no auth required for public applications)
       const response = await fetch('https://us-central1-xsavlab.cloudfunctions.net/submitApplication', {
         method: 'POST',
@@ -122,7 +169,8 @@ const JobDetailPage = () => {
         body: JSON.stringify({
           jobId,
           ...formData,
-          resumeUrl: resumePath  // Store path instead of URL
+          resumeUrl: resumePath,  // Store path instead of URL
+          coverLetterFileUrl
         })
       });
 
@@ -138,11 +186,30 @@ const JobDetailPage = () => {
         applicantName: '',
         applicantEmail: '',
         applicantPhone: '',
+        currentCompany: '',
+        currentRole: '',
+        yearsOfExperience: '',
+        highestQualification: '',
+        currentLocation: '',
+        preferredWorkMode: 'Remote',
+        noticePeriodDays: '',
+        expectedSalary: '',
+        workAuthorization: '',
+        educationLevel: 'Undergraduate',
+        degreeName: '',
+        specialization: '',
+        universityName: '',
+        graduationYear: '',
+        academicScore: '',
+        twelfthBoard: '',
+        twelfthStream: '',
         coverLetter: '',
         portfolioUrl: '',
-        linkedInUrl: ''
+        linkedInUrl: '',
+        githubUrl: ''
       });
       setResumeFile(null);
+      setCoverLetterFile(null);
 
       // Scroll to success message
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -400,6 +467,275 @@ const JobDetailPage = () => {
                   </div>
                 </div>
 
+                {/* GitHub */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    GitHub Profile
+                  </label>
+                  <div className="relative">
+                    <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="url"
+                      value={formData.githubUrl}
+                      onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
+                      placeholder="https://github.com/johndoe"
+                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                </div>
+
+                {/* Current Company */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Current Company
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.currentCompany}
+                    onChange={(e) => setFormData({ ...formData, currentCompany: e.target.value })}
+                    placeholder="ABC Technologies"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                {/* Current Role */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Current Role
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.currentRole}
+                    onChange={(e) => setFormData({ ...formData, currentRole: e.target.value })}
+                    placeholder="Security Analyst"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                {/* Years of Experience */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Total Years of Experience
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="50"
+                    step="0.5"
+                    value={formData.yearsOfExperience}
+                    onChange={(e) => setFormData({ ...formData, yearsOfExperience: e.target.value })}
+                    placeholder="4"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                {/* Highest Qualification */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Highest Qualification
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.highestQualification}
+                    onChange={(e) => setFormData({ ...formData, highestQualification: e.target.value })}
+                    placeholder="B.Tech, MCA, MBA, etc."
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                {/* Current Location */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Current Location
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.currentLocation}
+                    onChange={(e) => setFormData({ ...formData, currentLocation: e.target.value })}
+                    placeholder="Bangalore, India"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                {/* Preferred Work Mode */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Preferred Work Mode
+                  </label>
+                  <select
+                    value={formData.preferredWorkMode}
+                    onChange={(e) => setFormData({ ...formData, preferredWorkMode: e.target.value })}
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                  >
+                    <option value="Remote">Remote</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="Onsite">Onsite</option>
+                    <option value="No Preference">No Preference</option>
+                  </select>
+                </div>
+
+                {/* Notice Period */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Notice Period (days)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="365"
+                    value={formData.noticePeriodDays}
+                    onChange={(e) => setFormData({ ...formData, noticePeriodDays: e.target.value })}
+                    placeholder="30"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                {/* Expected Salary */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Expected Salary
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.expectedSalary}
+                    onChange={(e) => setFormData({ ...formData, expectedSalary: e.target.value })}
+                    placeholder="e.g. 18 LPA / $120,000"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                {/* Work Authorization */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Work Authorization
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.workAuthorization}
+                    onChange={(e) => setFormData({ ...formData, workAuthorization: e.target.value })}
+                    placeholder="Authorized to work in India / Require visa sponsorship"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                {/* India-specific Education Section */}
+                <div className="md:col-span-2 border border-gray-700/70 rounded-lg p-4 bg-gray-900/30">
+                  <h3 className="text-lg font-semibold text-white mb-4">Education Details (India)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Highest Education Level
+                      </label>
+                      <select
+                        value={formData.educationLevel}
+                        onChange={(e) => setFormData({ ...formData, educationLevel: e.target.value })}
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      >
+                        <option value="10th">10th</option>
+                        <option value="12th">12th</option>
+                        <option value="Diploma">Diploma</option>
+                        <option value="ITI">ITI</option>
+                        <option value="Undergraduate">Undergraduate (UG)</option>
+                        <option value="Postgraduate">Postgraduate (PG)</option>
+                        <option value="Doctorate">Doctorate (PhD)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Degree / Course Name
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.degreeName}
+                        onChange={(e) => setFormData({ ...formData, degreeName: e.target.value })}
+                        placeholder="B.Tech, BCA, MBA, MCA, Diploma, etc."
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Specialization / Stream
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.specialization}
+                        onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
+                        placeholder="Computer Science, IT, Commerce, PCM, etc."
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        University / Board
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.universityName}
+                        onChange={(e) => setFormData({ ...formData, universityName: e.target.value })}
+                        placeholder="AKTU / Delhi University / CBSE / ICSE"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Passing Year
+                      </label>
+                      <input
+                        type="number"
+                        min="1980"
+                        max="2100"
+                        value={formData.graduationYear}
+                        onChange={(e) => setFormData({ ...formData, graduationYear: e.target.value })}
+                        placeholder="2024"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Percentage / CGPA
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.academicScore}
+                        onChange={(e) => setFormData({ ...formData, academicScore: e.target.value })}
+                        placeholder="78% / 8.1 CGPA"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        12th Board (optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.twelfthBoard}
+                        onChange={(e) => setFormData({ ...formData, twelfthBoard: e.target.value })}
+                        placeholder="CBSE / ISC / State Board"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        12th Stream (optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.twelfthStream}
+                        onChange={(e) => setFormData({ ...formData, twelfthStream: e.target.value })}
+                        placeholder="Science / Commerce / Arts"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 {/* Portfolio */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -445,6 +781,39 @@ const JobDetailPage = () => {
                         <>
                           <Upload className="w-6 h-6" />
                           <span>Click to upload your resume (PDF)</span>
+                        </>
+                      )}
+                    </label>
+                  </div>
+                </div>
+
+                {/* Cover Letter PDF Upload */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Cover Letter File (Optional, PDF only, max 5MB)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleCoverLetterFileChange}
+                      className="hidden"
+                      id="coverletter-upload"
+                    />
+                    <label
+                      htmlFor="coverletter-upload"
+                      className="flex items-center justify-center gap-3 w-full bg-gray-900/50 border-2 border-dashed border-gray-700 text-gray-400 px-4 py-6 rounded-lg cursor-pointer hover:border-primary hover:bg-gray-900/70 transition-all"
+                    >
+                      {coverLetterFile ? (
+                        <>
+                          <FileText className="w-6 h-6 text-primary" />
+                          <span className="text-white">{coverLetterFile.name}</span>
+                          <span className="text-xs text-gray-500">({(coverLetterFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-6 h-6" />
+                          <span>Click to upload cover letter PDF (optional)</span>
                         </>
                       )}
                     </label>

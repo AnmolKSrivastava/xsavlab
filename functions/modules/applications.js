@@ -6,6 +6,8 @@ const { escapeHtml } = require('../lib/content');
 
 const APPLICATION_RATE_LIMIT = 5; // per IP per hour
 const HTTPS_URL_RE = /^https:\/\/.{1,1990}$/;
+const STORAGE_PATH_RE = /^resumes\/[a-zA-Z0-9_-]{1,100}\/.{1,240}$/;
+const COVER_LETTER_STORAGE_PATH_RE = /^coverLetters\/[a-zA-Z0-9_-]{1,100}\/.{1,240}$/;
 
 async function checkApplicationRateLimit(ip) {
   const safeIp = String(ip).replace(/[^a-zA-Z0-9._:-]/g, '_').slice(0, 64);
@@ -49,24 +51,118 @@ const submitApplication = onRequest((req, res) => {
         applicantName,
         applicantEmail,
         applicantPhone,
+        currentCompany,
+        currentRole,
+        yearsOfExperience,
+        highestQualification,
+        currentLocation,
+        preferredWorkMode,
+        noticePeriodDays,
+        expectedSalary,
+        workAuthorization,
+        educationLevel,
+        degreeName,
+        specialization,
+        universityName,
+        graduationYear,
+        academicScore,
+        twelfthBoard,
+        twelfthStream,
         coverLetter,
         portfolioUrl,
         linkedInUrl,
+        githubUrl,
         resumeUrl,
+        coverLetterFileUrl,
       } = req.body;
 
       if (!jobId || !applicantName || !applicantEmail || !resumeUrl) {
         return res.status(400).json({ error: 'Required fields missing' });
       }
 
-      if (!HTTPS_URL_RE.test(resumeUrl)) {
-        return res.status(400).json({ error: 'resumeUrl must be a valid https:// URL' });
+      const isHttpsResume = HTTPS_URL_RE.test(resumeUrl);
+      const isStoragePathResume = STORAGE_PATH_RE.test(resumeUrl);
+      if (!isHttpsResume && !isStoragePathResume) {
+        return res.status(400).json({ error: 'resumeUrl must be a valid Firebase Storage path or https:// URL' });
       }
       if (portfolioUrl && !HTTPS_URL_RE.test(portfolioUrl)) {
         return res.status(400).json({ error: 'portfolioUrl must be a valid https:// URL' });
       }
       if (linkedInUrl && !HTTPS_URL_RE.test(linkedInUrl)) {
         return res.status(400).json({ error: 'linkedInUrl must be a valid https:// URL' });
+      }
+      if (githubUrl && !HTTPS_URL_RE.test(githubUrl)) {
+        return res.status(400).json({ error: 'githubUrl must be a valid https:// URL' });
+      }
+      if (coverLetterFileUrl && !COVER_LETTER_STORAGE_PATH_RE.test(coverLetterFileUrl)) {
+        return res.status(400).json({ error: 'coverLetterFileUrl must be a valid cover letter storage path' });
+      }
+
+      if (currentCompany && String(currentCompany).length > 200) {
+        return res.status(400).json({ error: 'currentCompany exceeds max length' });
+      }
+      if (currentRole && String(currentRole).length > 200) {
+        return res.status(400).json({ error: 'currentRole exceeds max length' });
+      }
+      if (highestQualification && String(highestQualification).length > 200) {
+        return res.status(400).json({ error: 'highestQualification exceeds max length' });
+      }
+      if (currentLocation && String(currentLocation).length > 200) {
+        return res.status(400).json({ error: 'currentLocation exceeds max length' });
+      }
+      if (expectedSalary && String(expectedSalary).length > 120) {
+        return res.status(400).json({ error: 'expectedSalary exceeds max length' });
+      }
+      if (workAuthorization && String(workAuthorization).length > 300) {
+        return res.status(400).json({ error: 'workAuthorization exceeds max length' });
+      }
+      if (degreeName && String(degreeName).length > 200) {
+        return res.status(400).json({ error: 'degreeName exceeds max length' });
+      }
+      if (specialization && String(specialization).length > 200) {
+        return res.status(400).json({ error: 'specialization exceeds max length' });
+      }
+      if (universityName && String(universityName).length > 220) {
+        return res.status(400).json({ error: 'universityName exceeds max length' });
+      }
+      if (academicScore && String(academicScore).length > 50) {
+        return res.status(400).json({ error: 'academicScore exceeds max length' });
+      }
+      if (twelfthBoard && String(twelfthBoard).length > 120) {
+        return res.status(400).json({ error: 'twelfthBoard exceeds max length' });
+      }
+      if (twelfthStream && String(twelfthStream).length > 120) {
+        return res.status(400).json({ error: 'twelfthStream exceeds max length' });
+      }
+
+      const parsedYears = yearsOfExperience === '' || yearsOfExperience === undefined
+        ? null
+        : Number(yearsOfExperience);
+      if (parsedYears !== null && (!Number.isFinite(parsedYears) || parsedYears < 0 || parsedYears > 60)) {
+        return res.status(400).json({ error: 'yearsOfExperience must be between 0 and 60' });
+      }
+
+      const parsedNotice = noticePeriodDays === '' || noticePeriodDays === undefined
+        ? null
+        : Number(noticePeriodDays);
+      if (parsedNotice !== null && (!Number.isFinite(parsedNotice) || parsedNotice < 0 || parsedNotice > 365)) {
+        return res.status(400).json({ error: 'noticePeriodDays must be between 0 and 365' });
+      }
+
+      const safePreferredWorkMode = ['Remote', 'Hybrid', 'Onsite', 'No Preference'].includes(preferredWorkMode)
+        ? preferredWorkMode
+        : '';
+
+      const safeEducationLevel = ['10th', '12th', 'Diploma', 'ITI', 'Undergraduate', 'Postgraduate', 'Doctorate']
+        .includes(educationLevel)
+        ? educationLevel
+        : '';
+
+      const parsedGraduationYear = graduationYear === '' || graduationYear === undefined
+        ? null
+        : Number(graduationYear);
+      if (parsedGraduationYear !== null && (!Number.isFinite(parsedGraduationYear) || parsedGraduationYear < 1980 || parsedGraduationYear > 2100)) {
+        return res.status(400).json({ error: 'graduationYear must be between 1980 and 2100' });
       }
 
       const clientIp = req.ip || req.headers['x-forwarded-for'] || 'unknown';
@@ -98,10 +194,29 @@ const submitApplication = onRequest((req, res) => {
         applicantName: escapeHtml(applicantName),
         applicantEmail: escapeHtml(applicantEmail),
         applicantPhone: applicantPhone ? escapeHtml(applicantPhone) : '',
+        currentCompany: currentCompany ? escapeHtml(currentCompany) : '',
+        currentRole: currentRole ? escapeHtml(currentRole) : '',
+        yearsOfExperience: parsedYears,
+        highestQualification: highestQualification ? escapeHtml(highestQualification) : '',
+        currentLocation: currentLocation ? escapeHtml(currentLocation) : '',
+        preferredWorkMode: safePreferredWorkMode,
+        noticePeriodDays: parsedNotice,
+        expectedSalary: expectedSalary ? escapeHtml(expectedSalary) : '',
+        workAuthorization: workAuthorization ? escapeHtml(workAuthorization) : '',
+        educationLevel: safeEducationLevel,
+        degreeName: degreeName ? escapeHtml(degreeName) : '',
+        specialization: specialization ? escapeHtml(specialization) : '',
+        universityName: universityName ? escapeHtml(universityName) : '',
+        graduationYear: parsedGraduationYear,
+        academicScore: academicScore ? escapeHtml(academicScore) : '',
+        twelfthBoard: twelfthBoard ? escapeHtml(twelfthBoard) : '',
+        twelfthStream: twelfthStream ? escapeHtml(twelfthStream) : '',
         resumeUrl,
         coverLetter: coverLetter ? escapeHtml(coverLetter) : '',
         portfolioUrl: portfolioUrl || '',
         linkedInUrl: linkedInUrl || '',
+        githubUrl: githubUrl || '',
+        coverLetterFileUrl: coverLetterFileUrl || '',
         status: 'new',
         notes: [],
         submittedBy,

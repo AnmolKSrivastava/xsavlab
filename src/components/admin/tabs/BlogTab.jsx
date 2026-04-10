@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Send, ThumbsUp, ThumbsDown, Filter, FileText, Eye, CheckCircle, AlertCircle } from 'lucide-react';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, setBlogPostsLoading }) => {
   const [filterStatus, setFilterStatus] = useState('all');
@@ -16,6 +17,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
     featured: false
   });
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -48,6 +50,36 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
+
+  const handleFeaturedImageUpload = async (file) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setError('Featured image must be an image file');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Featured image must be under 5MB');
+      return;
+    }
+
+    try {
+      setImageUploading(true);
+      const storage = getStorage();
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const path = `blogImages/${Date.now()}_${safeName}`;
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file);
+      const downloadUrl = await getDownloadURL(storageRef);
+      setFormData((prev) => ({ ...prev, featuredImage: downloadUrl }));
+      setSuccess('Featured image uploaded');
+      setTimeout(() => setSuccess(null), 2000);
+    } catch (uploadError) {
+      console.error('Blog image upload failed:', uploadError);
+      setError('Failed to upload featured image');
+    } finally {
+      setImageUploading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -330,6 +362,18 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
                 className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
                 placeholder="https://example.com/image.jpg"
               />
+              <div className="mt-2 flex items-center gap-3">
+                <label className="inline-flex items-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg cursor-pointer transition-colors">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleFeaturedImageUpload(e.target.files?.[0])}
+                  />
+                  Upload From Device
+                </label>
+                {imageUploading && <span className="text-xs text-gray-400">Uploading...</span>}
+              </div>
             </div>
 
             <div className="md:col-span-2">

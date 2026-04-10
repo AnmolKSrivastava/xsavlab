@@ -17,6 +17,36 @@ service firebase.storage {
       allow delete: if request.auth != null && request.auth.token.admin == true;
     }
 
+    // Cover letters uploaded by applicants (optional)
+    match /coverLetters/{jobId}/{fileName} {
+      // Allow public applicant upload (PDF only)
+      allow create: if request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType == 'application/pdf';
+
+      // Only admins can read/download
+      allow read: if request.auth != null && request.auth.token.admin == true;
+
+      // Only admins can delete
+      allow delete: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Blog and venture images uploaded by admin panel
+    match /blogImages/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.admin == true
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    match /ventureImages/{folder}/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.admin == true
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
     // Default deny for all other paths
     match /{allPaths=**} {
       allow read, write: if false;
