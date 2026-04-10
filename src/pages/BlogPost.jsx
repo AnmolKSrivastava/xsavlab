@@ -121,7 +121,7 @@ const BlogPost = () => {
           <p className="text-gray-400 mb-8">{error || 'The blog post you\'re looking for doesn\'t exist.'}</p>
           <button
             onClick={() => navigate('/blog')}
-            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-colors"
+            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-6 py-3 rounded-lg transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Blog</span>
@@ -352,3 +352,4 @@ const BlogPost = () => {
 };
 
 export default BlogPost;
+

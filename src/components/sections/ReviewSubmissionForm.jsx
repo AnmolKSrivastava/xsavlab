@@ -78,6 +78,8 @@ const ReviewSubmissionForm = () => {
             onMouseEnter={() => setHoveredRating(star)}
             onMouseLeave={() => setHoveredRating(0)}
             className="transition-transform hover:scale-110"
+            aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+            aria-pressed={formData.rating === star}
           >
             <Star
               className={`w-8 h-8 transition-colors ${
@@ -207,7 +209,7 @@ const ReviewSubmissionForm = () => {
                 disabled={submitting}
                 whileHover={{ scale: submitting ? 1 : 1.02 }}
                 whileTap={{ scale: submitting ? 1 : 0.98 }}
-                className="w-full bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all inline-flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all inline-flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <>
@@ -234,3 +236,4 @@ const ReviewSubmissionForm = () => {
 };
 
 export default ReviewSubmissionForm;
+

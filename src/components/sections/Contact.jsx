@@ -48,7 +48,7 @@ const Contact = () => {
             onClick={() => navigate('/contact')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-10 py-5 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all"
+            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-10 py-5 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all"
           >
             <span>Get In Touch</span>
             <ArrowRight className="w-5 h-5" />
@@ -84,3 +84,4 @@ const Contact = () => {
 };
 
 export default Contact;
+

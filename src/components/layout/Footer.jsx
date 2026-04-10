@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, ArrowRight, CheckCircle, Shield, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import companyLogo from '../../assets/images/logo/xsav_lab_logo.jpeg';
+import companyLogo from '../../assets/images/logo/xsav_lab_logo.webp';
 
 const Footer = () => {
   const footerLinks = {
@@ -123,7 +123,8 @@ const Footer = () => {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center space-x-2 whitespace-nowrap"
+                aria-label="Subscribe to security updates"
+                className="bg-primary hover:bg-primary/90 text-dark-navy px-6 py-3 rounded-lg font-semibold transition-all flex items-center space-x-2 whitespace-nowrap"
               >
                 <span>Subscribe</span>
                 <ArrowRight className="w-4 h-4" />

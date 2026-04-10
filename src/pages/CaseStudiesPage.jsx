@@ -276,7 +276,7 @@ const CaseStudiesPage = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate('/contact')}
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all inline-flex items-center space-x-2"
+              className="bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all inline-flex items-center space-x-2"
             >
               <span>Start Your Success Story</span>
               <ArrowRight className="w-5 h-5" />
@@ -289,3 +289,4 @@ const CaseStudiesPage = () => {
 };
 
 export default CaseStudiesPage;
+

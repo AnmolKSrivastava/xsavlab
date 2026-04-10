@@ -122,6 +122,8 @@ const FeaturedVentures = () => {
                   <img 
                     src={venture.logoUrl} 
                     alt={venture.name}
+                    loading="lazy"
+                    decoding="async"
                     className="max-h-full max-w-full object-contain"
                   />
                 </div>
@@ -177,7 +179,7 @@ const FeaturedVentures = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => navigate('/ventures')}
-            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all"
+            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all"
           >
             <span>View All Ventures</span>
             <ArrowRight className="w-5 h-5" />
@@ -191,3 +193,4 @@ const FeaturedVentures = () => {
 };
 
 export default FeaturedVentures;
+

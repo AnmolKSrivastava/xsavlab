@@ -144,6 +144,8 @@ const LatestBlogPosts = () => {
                   <img 
                     src={post.featuredImage} 
                     alt={post.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
@@ -209,7 +211,7 @@ const LatestBlogPosts = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => navigate('/blog')}
-            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all"
+            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all"
           >
             <span>View All Posts</span>
             <ArrowRight className="w-5 h-5" />
@@ -223,3 +225,4 @@ const LatestBlogPosts = () => {
 };
 
 export default LatestBlogPosts;
+

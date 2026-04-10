@@ -298,7 +298,7 @@ const ServicesPage = () => {
               onClick={() => navigate('/contact')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
+              className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
             >
               <span>Schedule Consultation</span>
               <ArrowRight className="w-5 h-5" />
@@ -311,3 +311,4 @@ const ServicesPage = () => {
 };
 
 export default ServicesPage;
+
