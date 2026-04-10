@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Edit, Trash2, Globe, Eye, TrendingUp, Package } from 'lucide-react';
 import { auth } from '../../../config/firebase';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, setVenturesLoading }) => {
   const [showAddVenture, setShowAddVenture] = useState(false);
   const [editingVenture, setEditingVenture] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingFeaturedImage, setUploadingFeaturedImage] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -83,10 +86,10 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
       category: venture.category || 'saas',
       industry: venture.industry || '',
       shortDescription: venture.shortDescription || '',
-      fullDescription: venture.fullDescription || '',
-      logo: venture.logo || '',
-      featuredImage: venture.featuredImage || '',
-      website: venture.website || '',
+      fullDescription: venture.fullDescription || venture.description || '',
+      logo: venture.logo || venture.logoUrl || '',
+      featuredImage: venture.featuredImage || venture.featuredImageUrl || '',
+      website: venture.website || venture.websiteUrl || '',
       status: venture.status || 'live',
       featured: venture.featured || false,
       order: venture.order || 1,
@@ -101,6 +104,19 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
 
     try {
       const token = await auth.currentUser.getIdToken();
+      const payload = {
+        name: formData.name,
+        slug: formData.slug,
+        tagline: formData.tagline,
+        category: formData.category,
+        description: formData.fullDescription || formData.shortDescription,
+        status: formData.status,
+        featured: formData.featured,
+        order: formData.order,
+        logoUrl: formData.logo,
+        featuredImageUrl: formData.featuredImage,
+        websiteUrl: formData.website,
+      };
       
       if (editingVenture) {
         // Update existing venture
@@ -112,7 +128,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
           },
           body: JSON.stringify({
             ventureId: editingVenture.id,
-            ...formData,
+            ...payload,
           }),
         });
 
@@ -128,7 +144,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         });
 
         const data = await response.json();
@@ -167,6 +183,36 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
       fetchVentures();
     } catch (error) {
       setMessage({ type: 'error', text: error.message });
+    }
+  };
+
+  const handleImageUpload = async (file, targetField) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Please upload a valid image file.' });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image size must be under 5MB.' });
+      return;
+    }
+
+    const setUploading = targetField === 'logo' ? setUploadingLogo : setUploadingFeaturedImage;
+    try {
+      setUploading(true);
+      const storage = getStorage();
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const path = `ventureImages/${targetField}/${Date.now()}_${safeName}`;
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file);
+      const downloadUrl = await getDownloadURL(storageRef);
+      setFormData((prev) => ({ ...prev, [targetField]: downloadUrl }));
+      setMessage({ type: 'success', text: `${targetField === 'logo' ? 'Logo' : 'Featured image'} uploaded successfully.` });
+    } catch (uploadError) {
+      console.error('Venture image upload failed:', uploadError);
+      setMessage({ type: 'error', text: 'Image upload failed. Please try again.' });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -378,6 +424,18 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                   className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
                   placeholder="https://..."
                 />
+                <div className="mt-2 flex items-center gap-3">
+                  <label className="inline-flex items-center px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs rounded cursor-pointer transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleImageUpload(e.target.files?.[0], 'logo')}
+                    />
+                    Upload Logo
+                  </label>
+                  {uploadingLogo && <span className="text-xs text-gray-400">Uploading...</span>}
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -390,6 +448,18 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                   className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
                   placeholder="https://..."
                 />
+                <div className="mt-2 flex items-center gap-3">
+                  <label className="inline-flex items-center px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs rounded cursor-pointer transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleImageUpload(e.target.files?.[0], 'featuredImage')}
+                    />
+                    Upload Featured Image
+                  </label>
+                  {uploadingFeaturedImage && <span className="text-xs text-gray-400">Uploading...</span>}
+                </div>
               </div>
             </div>
 
@@ -521,9 +591,9 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
 
               {/* Actions */}
               <div className="flex gap-2 pt-3 border-t border-gray-700">
-                {venture.website && (
+                {(venture.website || venture.websiteUrl) && (
                   <a
-                    href={venture.website}
+                    href={venture.website || venture.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 px-3 py-2 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 text-sm rounded-lg transition-colors flex items-center justify-center gap-2"

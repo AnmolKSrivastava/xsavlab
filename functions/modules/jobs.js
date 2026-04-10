@@ -4,7 +4,19 @@ const { cors, ensureMethod } = require('../lib/http');
 const { requireAdmin, verifyBearerToken } = require('../lib/auth');
 const { escapeHtml } = require('../lib/content');
 
-const createJob = onRequest((req, res) => {
+const createJobOptions = {
+  maxInstances: 10,
+  memory: '256MiB',
+  timeoutSeconds: 60,
+};
+
+function getWebsiteBaseUrl() {
+  const fallback = 'https://xsavlab.com';
+  const raw = process.env.WEBSITE_BASE_URL || fallback;
+  return raw.replace(/\/$/, '');
+}
+
+const createJob = onRequest(createJobOptions, (req, res) => {
   cors(req, res, async () => {
     if (!ensureMethod(req, res, 'POST')) {
       return;
@@ -34,6 +46,8 @@ const createJob = onRequest((req, res) => {
         return res.status(400).json({ error: 'Required fields missing' });
       }
 
+      const applyUrl = `${getWebsiteBaseUrl()}/careers`; 
+
       const jobData = {
         title: escapeHtml(title),
         department: escapeHtml(department),
@@ -48,6 +62,7 @@ const createJob = onRequest((req, res) => {
         featured: featured === true,
         status: 'open',
         applicantCount: 0,
+        applyUrl,
         postedBy: {
           uid: decodedToken.uid,
           name: decodedToken.name || decodedToken.email || 'Admin',
@@ -60,9 +75,13 @@ const createJob = onRequest((req, res) => {
 
       const docRef = await admin.firestore().collection('jobs').add(jobData);
 
+      const canonicalApplyUrl = `${getWebsiteBaseUrl()}/careers/${docRef.id}`;
+      await docRef.update({ applyUrl: canonicalApplyUrl });
+
       return res.status(201).json({
         message: 'Job posted successfully',
         jobId: docRef.id,
+        applyUrl: canonicalApplyUrl,
       });
     } catch (error) {
       console.error('Error creating job:', error);

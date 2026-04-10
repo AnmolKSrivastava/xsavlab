@@ -56,6 +56,7 @@ const createVenture = onRequest((req, res) => {
         order: Number.isFinite(Number(ventureData.order)) ? Number(ventureData.order) : 0,
         featured: ventureData.featured === true,
         logoUrl: ventureData.logoUrl ? String(ventureData.logoUrl).slice(0, 2000) : '',
+        featuredImageUrl: ventureData.featuredImageUrl ? String(ventureData.featuredImageUrl).slice(0, 2000) : '',
         websiteUrl: ventureData.websiteUrl ? String(ventureData.websiteUrl).slice(0, 2000) : '',
         tags: Array.isArray(ventureData.tags) ? ventureData.tags.map((t) => escapeHtml(String(t))).slice(0, 20) : [],
       };
@@ -109,6 +110,7 @@ const updateVenture = onRequest((req, res) => {
       if (updateData.order !== undefined && Number.isFinite(Number(updateData.order))) safeUpdates.order = Number(updateData.order);
       if (updateData.featured !== undefined) safeUpdates.featured = updateData.featured === true;
       if (updateData.logoUrl !== undefined) safeUpdates.logoUrl = String(updateData.logoUrl).slice(0, 2000);
+      if (updateData.featuredImageUrl !== undefined) safeUpdates.featuredImageUrl = String(updateData.featuredImageUrl).slice(0, 2000);
       if (updateData.websiteUrl !== undefined) safeUpdates.websiteUrl = String(updateData.websiteUrl).slice(0, 2000);
       if (updateData.tags !== undefined) safeUpdates.tags = Array.isArray(updateData.tags) ? updateData.tags.map((t) => escapeHtml(String(t))).slice(0, 20) : [];
 
