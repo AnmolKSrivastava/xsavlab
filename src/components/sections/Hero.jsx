@@ -12,8 +12,8 @@ const Hero = ({ onScheduleClick }) => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-16">
       {/* Subtle Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-40 left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-40 right-20 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
+        <div className="absolute top-40 left-20 hidden md:block w-96 h-96 bg-primary/5 rounded-full blur-2xl lg:blur-3xl" />
+        <div className="absolute bottom-40 right-20 hidden md:block w-96 h-96 bg-secondary/5 rounded-full blur-2xl lg:blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
