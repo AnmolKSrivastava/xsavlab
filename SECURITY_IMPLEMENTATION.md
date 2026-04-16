@@ -1,5 +1,9 @@
 # Security Implementation Summary
 
+> Historical snapshot: this document reflects the April 2026 implementation phase and can contain outdated version/vulnerability numbers.
+>
+> For current, code-aligned security controls and verification steps, use SECURITY_SETUP.md.
+
 ## ✅ Newly Implemented Security Measures
 
 ### 1. **HTTPS Enforcement** ✅

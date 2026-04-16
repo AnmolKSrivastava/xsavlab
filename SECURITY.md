@@ -1,5 +1,7 @@
 # Security Policy
 
+Implementation source of truth: SECURITY_SETUP.md
+
 ## Supported Versions
 
 We actively support and provide security updates for the following versions:
@@ -42,6 +44,8 @@ This project implements comprehensive security measures:
 - Weekly scheduled security scans
 - Dependabot for automated updates
 - Critical vulnerability blocking in CI/CD
+
+For current technical details (rules, headers, rate limits, storage controls, and verification commands), refer to SECURITY_SETUP.md.
 
 ## Reporting a Vulnerability
 
@@ -159,12 +163,15 @@ This project follows:
 
 ## Additional Resources
 
-- [SECURITY_SETUP.md](./SECURITY_SETUP.md) - Detailed security implementation
+- [SECURITY_SETUP.md](./SECURITY_SETUP.md) - Current implementation and operational checklist
+- [ADMIN_ROLES_GUIDE.md](./ADMIN_ROLES_GUIDE.md) - Admin/superadmin/moderator model and usage
+- [API_KEY_ROTATION_GUIDE.md](./API_KEY_ROTATION_GUIDE.md) - Firebase web API key rotation and restrictions
+- [SECURITY_IMPLEMENTATION.md](./SECURITY_IMPLEMENTATION.md) - Historical implementation snapshot
 - [Firebase Security Rules](https://firebase.google.com/docs/rules)
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [npm Security Best Practices](https://docs.npmjs.com/security-best-practices)
 
 ---
 
-**Last Updated**: April 4, 2026  
-**Version**: 1.0.0
+**Last Updated**: April 16, 2026  
+**Version**: 1.1.0
