@@ -73,29 +73,24 @@ jobs:
       - name: Validate build environment
         run: |
           test -n "$REACT_APP_FIREBASE_API_KEY"
-          test -n "$REACT_APP_FIREBASE_AUTH_DOMAIN"
-          test -n "$REACT_APP_FIREBASE_PROJECT_ID"
-          test -n "$REACT_APP_FIREBASE_STORAGE_BUCKET"
-          test -n "$REACT_APP_FIREBASE_MESSAGING_SENDER_ID"
-          test -n "$REACT_APP_FIREBASE_APP_ID"
         env:
           REACT_APP_FIREBASE_API_KEY: ${{ secrets.REACT_APP_FIREBASE_API_KEY }}
-          REACT_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.REACT_APP_FIREBASE_AUTH_DOMAIN }}
-          REACT_APP_FIREBASE_PROJECT_ID: ${{ secrets.REACT_APP_FIREBASE_PROJECT_ID }}
-          REACT_APP_FIREBASE_STORAGE_BUCKET: ${{ secrets.REACT_APP_FIREBASE_STORAGE_BUCKET }}
-          REACT_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_FIREBASE_MESSAGING_SENDER_ID }}
-          REACT_APP_FIREBASE_APP_ID: ${{ secrets.REACT_APP_FIREBASE_APP_ID }}
+          REACT_APP_FIREBASE_AUTH_DOMAIN: xsavlab.firebaseapp.com
+          REACT_APP_FIREBASE_PROJECT_ID: xsavlab
+          REACT_APP_FIREBASE_STORAGE_BUCKET: xsavlab.firebasestorage.app
+          REACT_APP_FIREBASE_MESSAGING_SENDER_ID: "400044598541"
+          REACT_APP_FIREBASE_APP_ID: 1:400044598541:web:6bbc431cf641c8edeabc44
 
       - name: Build project
         run: npm run build
         env:
           CI: false
           REACT_APP_FIREBASE_API_KEY: ${{ secrets.REACT_APP_FIREBASE_API_KEY }}
-          REACT_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.REACT_APP_FIREBASE_AUTH_DOMAIN }}
-          REACT_APP_FIREBASE_PROJECT_ID: ${{ secrets.REACT_APP_FIREBASE_PROJECT_ID }}
-          REACT_APP_FIREBASE_STORAGE_BUCKET: ${{ secrets.REACT_APP_FIREBASE_STORAGE_BUCKET }}
-          REACT_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_FIREBASE_MESSAGING_SENDER_ID }}
-          REACT_APP_FIREBASE_APP_ID: ${{ secrets.REACT_APP_FIREBASE_APP_ID }}
+          REACT_APP_FIREBASE_AUTH_DOMAIN: xsavlab.firebaseapp.com
+          REACT_APP_FIREBASE_PROJECT_ID: xsavlab
+          REACT_APP_FIREBASE_STORAGE_BUCKET: xsavlab.firebasestorage.app
+          REACT_APP_FIREBASE_MESSAGING_SENDER_ID: "400044598541"
+          REACT_APP_FIREBASE_APP_ID: 1:400044598541:web:6bbc431cf641c8edeabc44
 
       - name: Deploy to Firebase
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
