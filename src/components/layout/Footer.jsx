@@ -37,20 +37,32 @@ const Footer = () => {
 
             {/* Contact Info */}
             <div className="space-y-3 mb-6">
-              <a href="mailto:contact@xsavlab.com" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors">
+              <a href="mailto:contact@xsavlab.com" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors cursor-pointer">
                 <Mail className="w-4 h-4 flex-shrink-0" />
                 <span className="text-sm">Admin - contact@xsavlab.com</span>
+              </a>
+              <a href="mailto:sales@xsavlab.com" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors cursor-pointer">
+                <Mail className="w-4 h-4 flex-shrink-0" />
                 <span className="text-sm">Sales - sales@xsavlab.com</span>
               </a>
-              <a href="tel:+919884649716" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors">
+              <a href="tel:+919884649716" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors cursor-pointer">
                 <Phone className="w-4 h-4 flex-shrink-0" />
                 <span className="text-sm">+91 9884649716</span>
               </a>
-              <div className="flex items-center space-x-2 text-gray-400">
-                <MapPin className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">317-A, Sprint Tower, Hinjewadi Phase 1, Pune, Maharashtra, India - 411057</span>
-                <MapPin className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">Feltham, England</span>
+              <div className="space-y-2">
+                <a 
+                  href="https://www.google.com/maps/place/Sprint+Business+Tower+Hinjewadi/@18.5934873,73.7318534,17z/data=!3m1!4b1!4m6!3m5!1s0x3bc2bb589f5e17f7:0xa33b6c837f4c25fd!8m2!3d18.5934873!4d73.7318534!16s%2Fg%2F11xdfmr9j_?entry=ttu&g_ep=EgoyMDI2MDQyMi4wIKXMDSoASAFQAw%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors cursor-pointer"
+                >
+                  <MapPin className="w-4 h-4 flex-shrink-0" />
+                  <span className="text-sm">317-A, Sprint Tower, Hinjewadi Phase 1, Pune, Maharashtra, India - 411057</span>
+                </a>
+                <div className="flex items-center space-x-2 text-gray-400">
+                  <MapPin className="w-4 h-4 flex-shrink-0" />
+                  <span className="text-sm">Feltham, England</span>
+                </div>
               </div>
             </div>
 

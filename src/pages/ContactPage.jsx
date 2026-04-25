@@ -52,7 +52,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
     { icon: Mail, label: 'Email', value: 'Admin - contact@xsavlab.com', href: 'mailto:contact@xsavlab.com' },
     { icon: Mail, label: 'Email', value: 'Sales - sales@xsavlab.com', href: 'mailto:sales@xsavlab.com' },
     { icon: Phone, label: 'Phone', value: '+91 9884649716', href: 'tel:+919884649716' },
-    { icon: MapPin, label: 'Location', value: '317-A, Sprint Tower, Hinjewadi Phase 1, Pune, Maharashtra, India - 411057', href: '#' },
+    { icon: MapPin, label: 'Location', value: '317-A, Sprint Tower, Hinjewadi Phase 1, Pune, Maharashtra, India - 411057', href: 'https://www.google.com/maps/place/Sprint+Business+Tower+Hinjewadi/@18.5934873,73.7318534,17z/data=!3m1!4b1!4m6!3m5!1s0x3bc2bb589f5e17f7:0xa33b6c837f4c25fd!8m2!3d18.5934873!4d73.7318534!16s%2Fg%2F11xdfmr9j_?entry=ttu&g_ep=EgoyMDI2MDQyMi4wIKXMDSoASAFQAw%3D%3D' },
     { icon: MapPin, label: 'Location', value: 'Feltham, England', href: '#' },
   ];
 
@@ -114,12 +114,14 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                     <motion.a
                       key={index}
                       href={item.href}
+                      target={item.label === 'Location' ? '_blank' : undefined}
+                      rel={item.label === 'Location' ? 'noopener noreferrer' : undefined}
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: index * 0.1 }}
                       whileHover={{ x: 5 }}
-                      className="flex items-start space-x-4 group"
+                      className="flex items-start space-x-4 group cursor-pointer"
                     >
                       <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg group-hover:bg-primary/20 transition-all">
                         <item.icon className="w-5 h-5 text-primary" />

@@ -9,7 +9,7 @@ const Contact = () => {
   const contactInfo = [
     { icon: Mail, label: 'Email', value: 'contact@xsavlab.com', href: 'mailto:contact@xsavlab.com' },
     { icon: Phone, label: 'Phone', value: '+91 9884649716', href: 'tel:+919884649716' },
-    { icon: MapPin, label: 'Location', value: 'Pune, India', href: '#' },
+    { icon: MapPin, label: 'Location', value: 'Pune, India', href: 'https://www.google.com/maps/place/Sprint+Business+Tower+Hinjewadi/@18.5934873,73.7318534,17z/data=!3m1!4b1!4m6!3m5!1s0x3bc2bb589f5e17f7:0xa33b6c837f4c25fd!8m2!3d18.5934873!4d73.7318534!16s%2Fg%2F11xdfmr9j_?entry=ttu&g_ep=EgoyMDI2MDQyMi4wIKXMDSoASAFQAw%3D%3D' },
   ];
 
   return (
@@ -61,12 +61,14 @@ const Contact = () => {
             <motion.a
               key={index}
               href={item.href}
+              target={item.label === 'Location' ? '_blank' : undefined}
+              rel={item.label === 'Location' ? 'noopener noreferrer' : undefined}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -5 }}
-              className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 hover:border-primary/50 rounded-xl p-6 text-center group transition-all"
+              className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 hover:border-primary/50 rounded-xl p-6 text-center group transition-all cursor-pointer"
             >
               <div className="bg-primary/10 border border-primary/30 p-4 rounded-lg w-fit mx-auto mb-4 group-hover:bg-primary/20 transition-all">
                 <item.icon className="w-6 h-6 text-primary" />

@@ -6,6 +6,7 @@ import shivAryanImgWebp from '../assets/images/team/shiv-aryan-img.webp';
 import sumitKumarImgWebp from '../assets/images/team/sumit-kumar-img.webp';
 import CountUpNumber from '../components/ui/CountUpNumber';
 import useSiteSettings from '../hooks/useSiteSettings';
+import TechnologyPartners from '../components/sections/TechnologyPartners';
 
 const TeamMember = ({ name, role, bio, imageSet, linkedin, email, index }) => {
   return (
@@ -279,6 +280,13 @@ const AboutPage = () => {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Technology Partners Section */}
+      <section className="py-16 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <TechnologyPartners />
         </div>
       </section>
 

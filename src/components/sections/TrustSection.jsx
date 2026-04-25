@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Star, Quote, Award, Building2, Shield } from 'lucide-react';
 import CountUpNumber from '../ui/CountUpNumber';
 import useSiteSettings from '../../hooks/useSiteSettings';
+import TechnologyPartners from './TechnologyPartners';
 
 const TrustSection = () => {
   const { settings } = useSiteSettings({ deferFetch: true });
@@ -174,6 +175,9 @@ const TrustSection = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* Technology Partners */}
+        <TechnologyPartners />
 
         {/* Certifications */}
         <motion.div
