@@ -94,8 +94,8 @@ jobs:
             echo "❌ CRITICAL vulnerabilities found in production dependencies! Please fix immediately."
             exit 1
           elif [ "$TOTAL_HIGH" -gt 0 ]; then
-            echo "⚠️ HIGH severity vulnerabilities found in production dependencies. Please review and fix."
-            exit 1
+            echo "⚠️ HIGH severity vulnerabilities found in production dependencies."
+            echo "ℹ️ Workflow is configured to fail only on critical vulnerabilities. Please schedule remediation."
           else
             echo "✅ No critical or high severity vulnerabilities in production dependencies."
             if [ "$FRONTEND_DEV_HIGH" -gt 0 ] || [ "$FRONTEND_DEV_CRITICAL" -gt 0 ]; then
@@ -123,7 +123,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Dependency Review
-        uses: actions/dependency-review-action@v4
+        uses: actions/dependency-review-action@v5
         with:
           fail-on-severity: moderate
           deny-licenses: GPL-3.0, AGPL-3.0

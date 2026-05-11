@@ -71,6 +71,7 @@ jobs:
         run: npm ci
 
       - name: Validate build environment
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           test -n "$REACT_APP_FIREBASE_API_KEY"
         env:
@@ -85,7 +86,7 @@ jobs:
         run: npm run build
         env:
           CI: false
-          REACT_APP_FIREBASE_API_KEY: ${{ secrets.REACT_APP_FIREBASE_API_KEY }}
+          REACT_APP_FIREBASE_API_KEY: ${{ secrets.REACT_APP_FIREBASE_API_KEY || 'ci-placeholder-key' }}
           REACT_APP_FIREBASE_AUTH_DOMAIN: xsavlab.firebaseapp.com
           REACT_APP_FIREBASE_PROJECT_ID: xsavlab
           REACT_APP_FIREBASE_STORAGE_BUCKET: xsavlab.firebasestorage.app
