@@ -34,7 +34,7 @@ jobs:
       - name: Run frontend security audit
         run: |
           echo "=== Frontend Security Audit ==="
-          npm audit --audit-level=moderate || echo "⚠️ Vulnerabilities found in frontend"
+          npm audit --audit-level=moderate || true
           
       - name: Generate frontend audit report
         run: |
@@ -57,7 +57,7 @@ jobs:
         run: |
           echo "=== Cloud Functions Security Audit ==="
           cd functions
-          npm audit --audit-level=moderate || echo "⚠️ Vulnerabilities found in functions"
+          npm audit --audit-level=moderate || true
 
       - name: Generate functions audit report
         run: |
