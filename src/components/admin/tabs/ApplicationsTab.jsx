@@ -155,7 +155,12 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
     rejected: applications.filter(a => a.status === 'rejected').length
   };
 
-  const uniqueJobs = [...new Set(applications.map(a => ({ id: a.jobId, title: a.jobTitle })))];
+  // Get unique jobs by ID
+  const uniqueJobIds = [...new Set(applications.map(a => a.jobId))];
+  const uniqueJobs = uniqueJobIds.map(jobId => {
+    const app = applications.find(a => a.jobId === jobId);
+    return { id: jobId, title: app?.jobTitle || 'Unknown Job' };
+  });
 
   const StatusBadge = ({ status }) => {
     const colors = {

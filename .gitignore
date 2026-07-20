@@ -48,3 +48,5 @@ localhost_*.report.html
 
 # Audit output files
 audit-detailed.json
+*audit*.json
+current-*-audit.json
