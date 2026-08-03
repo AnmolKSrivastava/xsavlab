@@ -59,12 +59,22 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "XSAV Lab",
-        "url": "https://xsavlab.com/",
-        "logo": "https://xsavlab.com/xsavlab_logo.jpeg",
-        "sameAs": [
-          "https://www.linkedin.com/company/xsavlab"
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "XSAV Lab",
+            "alternateName": ["XSAVLAB", "XSAV Lab"],
+            "url": "https://xsavlab.com/"
+          },
+          {
+            "@type": "Organization",
+            "name": "XSAV Lab",
+            "url": "https://xsavlab.com/",
+            "logo": "https://xsavlab.com/xsavlab_logo.jpeg",
+            "sameAs": [
+              "https://www.linkedin.com/company/xsavlab"
+            ]
+          }
         ]
       }
     </script>
