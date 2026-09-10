@@ -3,9 +3,9 @@
   "name": "XSAV Lab - Cybersecurity Solutions",
   "icons": [
     {
-      "src": "xsavlab_logo.jpeg",
+      "src": "xsavlab_logo.png",
       "sizes": "any",
-      "type": "image/jpeg"
+      "type": "image/png"
     }
   ],
   "start_url": ".",

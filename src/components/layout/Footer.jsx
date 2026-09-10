@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, ArrowRight, CheckCircle, Shield, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import companyLogo from '../../assets/images/logo/xsavlab_logo.jpeg';
+const companyLogo = `${process.env.PUBLIC_URL}/xsavlab_logo.png`;
 
 const Footer = () => {
   const footerLinks = {

@@ -50,3 +50,6 @@ localhost_*.report.html
 audit-detailed.json
 *audit*.json
 current-*-audit.json
+
+# Local design reference (not part of the app)
+new_theme.html
