@@ -5,9 +5,6 @@ import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
-// Section Components
-import Hero from './components/sections/Hero';
-
 // UI Components
 import QuantumBackground from './components/ui/QuantumBackground';
 import ScrollToTop from './components/ui/ScrollToTop';
@@ -35,14 +32,29 @@ const JobDetailPage = lazy(() => import('./pages/JobDetailPage'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 
+
 const SectionLoader = () => <div className="h-16" aria-hidden="true" />;
 const PageLoader = () => <div className="min-h-[40vh]" aria-hidden="true" />;
+
+function HeroReel() {
+  return (
+    <div className="w-full overflow-hidden">
+      <iframe
+        title="XSAV Lab hero reel"
+        src="/reel-7-slides.html"
+        className="block w-full border-0"
+        style={{ minHeight: 'calc(100vh - 5rem)' }}
+      />
+    </div>
+  );
+}
 
 // Home Page Component
 function HomePage({ handleScheduleClick }) {
   return (
     <>
-      <Hero onScheduleClick={handleScheduleClick} />
+      <HeroReel />
+
       <Suspense fallback={<SectionLoader />}>
         <About />
       </Suspense>
