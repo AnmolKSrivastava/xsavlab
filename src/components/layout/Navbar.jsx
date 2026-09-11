@@ -31,6 +31,9 @@ const Navbar = ({ onScheduleClick }) => {
 
   const handleNavClick = (item) => {
     if (item.type === 'route') {
+      // Route changes should always begin at the page's content rather than
+      // retaining a scroll offset from the previous page.
+      window.scrollTo(0, 0);
       navigate(item.href);
     } else {
       // If we're not on home page, navigate there first
