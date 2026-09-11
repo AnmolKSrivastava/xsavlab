@@ -116,7 +116,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#38BDF8] mb-4"></div>
           <p className="text-gray-400">Loading settings...</p>
         </div>
       </div>
@@ -134,7 +134,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-3 bg-primary hover:bg-primary/80 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="px-6 py-3 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           <Save className="w-4 h-4" />
           {saving ? 'Saving...' : 'Save Changes'}
@@ -159,7 +159,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
       {/* Statistics Form */}
       <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6">
         <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-primary" />
+          <BarChart3 className="w-5 h-5 text-[#38BDF8]" />
           Main Statistics (About Section)
         </h4>
         
@@ -172,7 +172,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               type="number"
               value={statistics.foundedYear}
               onChange={(e) => handleChange('foundedYear', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="2018"
             />
             <p className="text-xs text-gray-500 mt-1">Shown in About section</p>
@@ -186,7 +186,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               type="number"
               value={statistics.clientsServed}
               onChange={(e) => handleChange('clientsServed', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="500"
             />
             <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.clientsServed}+"</p>
@@ -200,7 +200,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               type="number"
               value={statistics.industries}
               onChange={(e) => handleChange('industries', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="25"
             />
             <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.industries}+"</p>
@@ -215,7 +215,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               step="0.1"
               value={statistics.clientSatisfaction}
               onChange={(e) => handleChange('clientSatisfaction', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="99.9"
             />
             <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.clientSatisfaction}%"</p>
@@ -230,7 +230,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               step="0.1"
               value={statistics.successRate}
               onChange={(e) => handleChange('successRate', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="99.8"
             />
             <p className="text-xs text-gray-500 mt-1">Shown in Services section</p>
@@ -244,7 +244,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               type="number"
               value={statistics.organizations}
               onChange={(e) => handleChange('organizations', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="500"
             />
             <p className="text-xs text-gray-500 mt-1">Trust section count, displays as "{statistics.organizations}+"</p>
@@ -255,7 +255,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
       {/* Hero Section Stats */}
       <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6">
         <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-primary" />
+          <TrendingUp className="w-5 h-5 text-[#38BDF8]" />
           Hero Section Metrics
         </h4>
         
@@ -269,7 +269,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               step="0.1"
               value={statistics.threatDetection}
               onChange={(e) => handleChange('threatDetection', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="99.9"
             />
             <p className="text-xs text-gray-500 mt-1">Hero section: "Threat Detection"</p>
@@ -283,7 +283,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               type="number"
               value={statistics.yearsExperience}
               onChange={(e) => handleChange('yearsExperience', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="15"
             />
             <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.yearsExperience}+ Years Experience"</p>
@@ -294,7 +294,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
       {/* How It Works Section */}
       <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6">
         <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-primary" />
+          <BarChart3 className="w-5 h-5 text-[#38BDF8]" />
           How It Works Section - Key Metrics
         </h4>
         
@@ -307,7 +307,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               type="text"
               value={statistics.deploymentWeeks}
               onChange={(e) => handleChange('deploymentWeeks', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="2-4"
             />
             <p className="text-xs text-gray-500 mt-1">e.g., "2-4" (shows "2-4 Weeks")</p>
@@ -321,7 +321,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               type="number"
               value={statistics.projectSuccessRate}
               onChange={(e) => handleChange('projectSuccessRate', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="98"
             />
             <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.projectSuccessRate}%"</p>
@@ -335,7 +335,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               type="text"
               value={statistics.supportCoverage}
               onChange={(e) => handleChange('supportCoverage', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="24/7"
             />
             <p className="text-xs text-gray-500 mt-1">e.g., "24/7"</p>
@@ -349,7 +349,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               type="number"
               value={statistics.successfulProjects}
               onChange={(e) => handleChange('successfulProjects', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="500"
             />
             <p className="text-xs text-gray-500 mt-1">Displays as "{statistics.successfulProjects}+"</p>
@@ -360,7 +360,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
       {/* AI Demo Section */}
       <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-6">
         <h4 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-          <Globe className="w-5 h-5 text-primary" />
+          <Globe className="w-5 h-5 text-[#38BDF8]" />
           AI Demo Section
         </h4>
         
@@ -373,7 +373,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
               type="number"
               value={statistics.cloudCostReduction}
               onChange={(e) => handleChange('cloudCostReduction', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               placeholder="40"
             />
             <p className="text-xs text-gray-500 mt-1">Used in AI chatbot demo responses</p>
@@ -389,7 +389,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
         
         {/* FinServe Global */}
         <div className="mb-8">
-          <h5 className="text-md font-semibold text-primary mb-4">FinServe Global (Financial Services)</h5>
+          <h5 className="text-md font-semibold text-[#38BDF8] mb-4">FinServe Global (Financial Services)</h5>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Threat Reduction (%)</label>
@@ -397,7 +397,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
                 type="number"
                 value={caseStudies.finserve.threatReduction}
                 onChange={(e) => handleCaseStudyChange('finserve', 'threatReduction', e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
             <div>
@@ -406,7 +406,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
                 type="number"
                 value={caseStudies.finserve.fasterResponse}
                 onChange={(e) => handleCaseStudyChange('finserve', 'fasterResponse', e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
             <div>
@@ -415,7 +415,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
                 type="number"
                 value={caseStudies.finserve.complianceAchieved}
                 onChange={(e) => handleCaseStudyChange('finserve', 'complianceAchieved', e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
           </div>
@@ -423,7 +423,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
 
         {/* RetailMax Corp */}
         <div className="mb-8">
-          <h5 className="text-md font-semibold text-primary mb-4">RetailMax Corp (E-Commerce)</h5>
+          <h5 className="text-md font-semibold text-[#38BDF8] mb-4">RetailMax Corp (E-Commerce)</h5>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Cost Savings (%)</label>
@@ -431,7 +431,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
                 type="number"
                 value={caseStudies.retailmax.costSavings}
                 onChange={(e) => handleCaseStudyChange('retailmax', 'costSavings', e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
             <div>
@@ -441,7 +441,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
                 step="0.1"
                 value={caseStudies.retailmax.uptimeSLA}
                 onChange={(e) => handleCaseStudyChange('retailmax', 'uptimeSLA', e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
             <div>
@@ -450,7 +450,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
                 type="number"
                 value={caseStudies.retailmax.performanceBoost}
                 onChange={(e) => handleCaseStudyChange('retailmax', 'performanceBoost', e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
           </div>
@@ -458,7 +458,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
 
         {/* HealthTech Solutions */}
         <div>
-          <h5 className="text-md font-semibold text-primary mb-4">HealthTech Solutions (Healthcare)</h5>
+          <h5 className="text-md font-semibold text-[#38BDF8] mb-4">HealthTech Solutions (Healthcare)</h5>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Queries Automated (%)</label>
@@ -466,7 +466,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
                 type="number"
                 value={caseStudies.healthtech.queriesAutomated}
                 onChange={(e) => handleCaseStudyChange('healthtech', 'queriesAutomated', e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
             <div>
@@ -475,7 +475,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
                 type="number"
                 value={caseStudies.healthtech.responseTimeCut}
                 onChange={(e) => handleCaseStudyChange('healthtech', 'responseTimeCut', e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
             <div>
@@ -485,7 +485,7 @@ const SiteSettingsTab = ({ user, userRole }) => {
                 step="0.1"
                 value={caseStudies.healthtech.patientSatisfaction}
                 onChange={(e) => handleCaseStudyChange('healthtech', 'patientSatisfaction', e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
           </div>

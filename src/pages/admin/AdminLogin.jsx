@@ -28,6 +28,12 @@ const AdminLogin = () => {
     setIsLoading(true);
     setError('');
 
+    if (!auth) {
+      setError('Admin login is unavailable because Firebase is not configured in this environment.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       // Sign in with Firebase Authentication
       const userCredential = await signInWithEmailAndPassword(
@@ -79,7 +85,7 @@ const AdminLogin = () => {
     <div className="min-h-screen bg-gradient-to-br from-dark-navy via-gray-900 to-black flex items-center justify-center p-4">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-48 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 -left-48 w-96 h-96 bg-[#38BDF8]/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
       </div>
 
@@ -133,7 +139,7 @@ const AdminLogin = () => {
                   required
                   autoComplete="new-email"
                   data-form-type="other"
-                  className="block w-full pl-10 pr-3 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-primary focus:ring-2 focus:ring-primary/50 outline-none transition-all"
+                  className="block w-full pl-10 pr-3 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-[#38BDF8] focus:ring-2 focus:ring-primary/50 outline-none transition-all"
                   placeholder="admin@xsavlab.com"
                 />
               </div>
@@ -157,7 +163,7 @@ const AdminLogin = () => {
                   required
                   autoComplete="new-password"
                   data-form-type="other"
-                  className="block w-full pl-10 pr-12 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-primary focus:ring-2 focus:ring-primary/50 outline-none transition-all"
+                  className="block w-full pl-10 pr-12 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-[#38BDF8] focus:ring-2 focus:ring-primary/50 outline-none transition-all"
                   placeholder="Enter your password"
                 />
                 <button
@@ -209,7 +215,7 @@ const AdminLogin = () => {
               <button 
                 type="button"
                 onClick={() => alert('Please contact admin@xsavlab.com to reset your password.')}
-                className="text-sm text-gray-400 hover:text-primary transition-colors underline-offset-2 hover:underline"
+                className="text-sm text-gray-400 hover:text-[#38BDF8] transition-colors underline-offset-2 hover:underline"
               >
                 Forgot password?
               </button>
@@ -228,7 +234,7 @@ const AdminLogin = () => {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-500">
             Need access? Contact{' '}
-            <a href="mailto:admin@xsavlab.com" className="text-primary hover:underline">
+            <a href="mailto:admin@xsavlab.com" className="text-[#38BDF8] hover:underline">
               admin@xsavlab.com
             </a>
           </p>

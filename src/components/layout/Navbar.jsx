@@ -70,15 +70,11 @@ const Navbar = ({ onScheduleClick }) => {
   };
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-dark-navy/95 backdrop-blur-md border-b border-primary/20' 
-          : 'bg-transparent'
-      }`}
-    >
+<motion.nav
+  initial={{ y: -100 }}
+  animate={{ y: 0 }}
+  className="fixed top-0 left-0 right-0 z-50 bg-dark-navy border-b border-[#38BDF8]/20"
+>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
@@ -87,7 +83,7 @@ const Navbar = ({ onScheduleClick }) => {
             className="flex items-center space-x-3 cursor-pointer"
             whileHover={{ scale: 1.02 }}
           >
-            <div className="bg-primary/10 border border-primary/30 p-1.5 rounded-lg">
+            <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-1.5 rounded-lg">
               <img src={companyLogo} alt="XSAV Lab logo" className="w-10 h-10 rounded object-cover" />
             </div>
             <div className="flex flex-col">
@@ -118,7 +114,7 @@ const Navbar = ({ onScheduleClick }) => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               aria-label="Schedule consultation"
-              className="bg-primary hover:bg-primary/90 text-dark-navy px-6 py-2.5 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
+              className="bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-6 py-2.5 rounded-lg font-semibold shadow-lg shadow-[#38BDF8]/25 transition-all"
             >
               Schedule Consultation
             </motion.button>
@@ -144,7 +140,7 @@ const Navbar = ({ onScheduleClick }) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           id="mobile-navigation"
-          className="lg:hidden bg-dark-navy/98 backdrop-blur-md border-b border-primary/20"
+          className="lg:hidden bg-dark-navy border-b border-[#38BDF8]/20"
         >
           <div className="px-4 py-6 space-y-1">
             {menuItems.map((item) => (
@@ -163,7 +159,7 @@ const Navbar = ({ onScheduleClick }) => {
                   setIsOpen(false);
                 }}
                 aria-label="Schedule consultation"
-                className="w-full bg-primary hover:bg-primary/90 text-dark-navy px-6 py-3 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
+                className="w-full bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-6 py-3 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
               >
                 Schedule Consultation
               </button>

@@ -41,7 +41,7 @@ const FeaturedVentures = () => {
       <section id="featured-ventures" className="py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#38BDF8]"></div>
           </div>
         </div>
       </section>
@@ -62,16 +62,16 @@ const FeaturedVentures = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-6"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-6"
           >
-            <Building2 className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">
+            <Building2 className="w-4 h-4 text-[#38BDF8]" />
+            <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">
               Our Ventures
             </span>
           </motion.div>
 
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Explore Our <span className="text-primary">Ventures</span>
+            Explore Our <span className="text-[#38BDF8]">Ventures</span>
           </h2>
 
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
@@ -88,7 +88,7 @@ const FeaturedVentures = () => {
             className="text-center py-20"
           >
             <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-12 max-w-2xl mx-auto">
-              <Building2 className="w-20 h-20 text-primary/50 mx-auto mb-6" />
+              <Building2 className="w-20 h-20 text-[#38BDF8]/50 mx-auto mb-6" />
               <h3 className="text-2xl font-bold text-white mb-4">
                 New Ventures Launching Soon!
               </h3>
@@ -114,7 +114,7 @@ const FeaturedVentures = () => {
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -5 }}
               onClick={() => window.open(venture.websiteUrl, '_blank')}
-              className="cursor-pointer bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl overflow-hidden transition-all duration-300 group"
+              className="cursor-pointer bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl overflow-hidden transition-all duration-300 group"
             >
               {/* Logo/Image */}
               {venture.logoUrl && (
@@ -131,12 +131,12 @@ const FeaturedVentures = () => {
 
               <div className="p-6">
                 {/* Category Badge */}
-                <span className="inline-block bg-primary/20 border border-primary/30 text-primary px-3 py-1 rounded-full text-xs font-semibold mb-3">
+                <span className="inline-block bg-[#38BDF8]/20 border border-[#38BDF8]/30 text-[#38BDF8] px-3 py-1 rounded-full text-xs font-semibold mb-3">
                   {venture.category}
                 </span>
 
                 {/* Name */}
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#38BDF8] transition-colors">
                   {venture.name}
                 </h3>
 
@@ -161,7 +161,7 @@ const FeaturedVentures = () => {
                       </span>
                     )}
                   </div>
-                  <ExternalLink className="w-4 h-4 text-primary" />
+                  <ExternalLink className="w-4 h-4 text-[#38BDF8]" />
                 </div>
               </div>
             </motion.div>
@@ -179,7 +179,7 @@ const FeaturedVentures = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => navigate('/ventures')}
-            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all"
           >
             <span>View All Ventures</span>
             <ArrowRight className="w-5 h-5" />

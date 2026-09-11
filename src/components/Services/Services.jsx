@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { BriefcaseBusiness } from "lucide-react";
 
 const SERVICES = [
 //   {
@@ -456,6 +457,10 @@ export default function Services() {
         <div className="reel-grade" aria-hidden="true" />
         <div className="reel-in">
           <div className="shell">
+            <div className="services-page-label">
+              <BriefcaseBusiness aria-hidden="true" />
+              <span>Services</span>
+            </div>
             <div className="slides" ref={slidesRef}>
               {SERVICES.map((service, index) => (
                 <article className={`slide ${index === 0 ? "on" : ""}`} key={service.label}>
@@ -504,7 +509,7 @@ export default function Services() {
 
       <style>{`
         :root {
-          --void:#04060C; --void-2:#070B14; --panel:#0C1322; --panel-2:#101929;
+          --void:#0B0F19; --void-2:#070B14; --panel:#0C1322; --panel-2:#101929;
           --line:#1B2740; --line-hot:#2B3E63; --signal:#38BDF8; --amber:#38bdf8;
           --ice:#F2F5FA; --slate:#93A6C4; --slate-dim:#5B6C89;
           --ui:"Playfair Display",Georgia,serif;
@@ -512,17 +517,18 @@ export default function Services() {
           --fs-label:.6875rem; --shell:1440px; --gut:clamp(18px,4vw,60px); --head:68px;
         }
         .reel,.reel *{box-sizing:border-box}
-        .reel{position:relative;background:var(--void);color:var(--ice);font-family:var(--sans);font-size:clamp(1rem,.5vw + .88rem,1.0625rem);line-height:1.62}
+        .reel{position:relative;background:transparent;color:var(--ice);font-family:var(--sans);font-size:clamp(1rem,.5vw + .88rem,1.0625rem);line-height:1.62}
         .reel p{margin:0}
         .dsp{font-family:var(--display);font-weight:800;text-transform:uppercase;line-height:.9;letter-spacing:-.028em;margin:0;text-wrap:balance}
         .tint{color:var(--signal)}.tint-a{color:var(--amber)}
         .shell{width:100%;max-width:var(--shell);margin-inline:auto;padding-inline:var(--gut)}
+        .services-page-label{display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;padding:8px 14px;border:1px solid rgba(56,189,248,.3);border-radius:999px;background:rgba(56,189,248,.1);color:var(--signal);font-family:var(--sans);font-size:.875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}.services-page-label svg{width:16px;height:16px;flex:none}
         .eyebrow{font-family:var(--mono);font-size:var(--fs-label);letter-spacing:.22em;text-transform:uppercase;color:var(--signal);display:flex;align-items:flex-start;gap:12px;margin:0}
         .eyebrow::before{content:"";width:26px;height:2px;background:currentColor;flex:none;margin-top:.62em}
         .eyebrow.amber{color:var(--amber)}
         .reel-stage{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center}
         .reel-stage>canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-        .reel-grade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(58% 58% at 68% 50%,rgba(56,189,248,.07),transparent 68%),linear-gradient(90deg,var(--void) 0%,rgba(4,6,12,.86) 34%,rgba(4,6,12,.3) 62%,transparent 84%)}
+        .reel-grade{position:absolute;inset:0;pointer-events:none;background:transparent}
         .reel-in{position:relative;z-index:3;width:100%;padding-top:var(--head)}
         .slides{position:relative}@media(min-width:1024px){.slides{max-width:46%}}
         .slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:flex-start;gap:20px;opacity:0;visibility:hidden;transform:translateY(26px);will-change:opacity,transform;transition:opacity .45s ease,transform .45s ease,visibility .45s}
@@ -530,7 +536,7 @@ export default function Services() {
         .slide h2{font-size:clamp(2.1rem,4.6vw,4.2rem);max-width:100%;overflow-wrap:anywhere}
         .slide p{color:var(--slate);max-width:46ch}
         .slide-meta{display:flex;flex-wrap:wrap;gap:8px;width:100%}
-        .slide-meta span{flex:0 1 auto;min-width:0;max-width:100%;border:1px solid var(--line-hot);border-radius:999px;background:rgba(7,11,20,.78);backdrop-filter:blur(6px);padding:8px 14px;font-family:var(--mono);font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ice);white-space:normal;overflow-wrap:anywhere;line-height:1.35;text-align:left}
+        .slide-meta span{flex:0 1 auto;min-width:0;max-width:100%;border:1px solid var(--line-hot);border-radius:999px;background:rgba(7,11,20,.78);backdrop-filter:blur(6px);padding:8px 14px;font-family:var(--mono);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ice);white-space:normal;overflow-wrap:anywhere;line-height:1.35;text-align:left}
         .slide-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
         .btn{--bg:var(--amber);--fg:#12100A;display:inline-flex;align-items:center;gap:10px;padding:13px 22px;background:var(--bg);color:var(--fg);border:2px solid var(--bg);border-radius:999px;font-family:var(--mono);font-size:.6875rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer;white-space:nowrap;transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease,border-color .3s ease,color .3s ease}
         .btn:hover{transform:translateY(-2px);box-shadow:0 12px 34px -12px rgba(255,176,32,.8)}
@@ -552,7 +558,7 @@ export default function Services() {
         @media(max-width:1023px){
           .reel-stage{align-items:flex-end}
           .reel-in{padding-top:calc(var(--head) + 12px);padding-bottom:clamp(26px,5vh,64px)}
-          .reel-grade{background:linear-gradient(180deg,rgba(4,6,12,.10) 0%,rgba(4,6,12,.22) 26%,rgba(4,6,12,.72) 46%,rgba(4,6,12,.94) 62%,var(--void) 84%)}
+          .reel-grade{background:transparent}
           .reel-cue{display:none}
           .slide{gap:11px}
           .slide h2{font-size:clamp(1.45rem,7vw,2.6rem)}
@@ -562,7 +568,7 @@ export default function Services() {
         }
         @media(max-width:700px){
           .slide-meta{gap:6px}
-          .slide-meta span{padding:6px 10px;font-size:.5625rem;letter-spacing:.08em;white-space:normal}
+          .slide-meta span{padding:6px 10px;font-size:.65rem;letter-spacing:.07em;white-space:normal}
         }
         @media(max-width:400px){
           .slide h2{font-size:1.45rem}

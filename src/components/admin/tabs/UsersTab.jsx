@@ -194,7 +194,7 @@ const UsersTab = ({ user, userRole, users, setUsers, usersLoading, setUsersLoadi
         {canCreateUsers && (
           <button
             onClick={() => setShowAddUser(!showAddUser)}
-            className="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white rounded-lg transition-colors flex items-center gap-2"
           >
             <UserPlus className="w-4 h-4" />
             Add User
@@ -232,7 +232,7 @@ const UsersTab = ({ user, userRole, users, setUsers, usersLoading, setUsersLoadi
                   value={newUserEmail}
                   onChange={(e) => setNewUserEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="user@example.com"
                 />
               </div>
@@ -244,7 +244,7 @@ const UsersTab = ({ user, userRole, users, setUsers, usersLoading, setUsersLoadi
                   type="text"
                   value={newUserDisplayName}
                   onChange={(e) => setNewUserDisplayName(e.target.value)}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="John Doe"
                 />
               </div>
@@ -260,7 +260,7 @@ const UsersTab = ({ user, userRole, users, setUsers, usersLoading, setUsersLoadi
                   onChange={(e) => setNewUserPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="Min. 6 characters"
                 />
               </div>
@@ -271,7 +271,7 @@ const UsersTab = ({ user, userRole, users, setUsers, usersLoading, setUsersLoadi
                 <select
                   value={newUserRole}
                   onChange={(e) => setNewUserRole(e.target.value)}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 >
                   <option value="moderator">Moderator - View & update enquiries</option>
                   <option value="admin">Admin - Full enquiry management</option>
@@ -283,7 +283,7 @@ const UsersTab = ({ user, userRole, users, setUsers, usersLoading, setUsersLoadi
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-6 py-2 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white rounded-lg transition-colors disabled:opacity-50"
               >
                 {isSubmitting ? 'Creating...' : 'Create User'}
               </button>
@@ -312,7 +312,7 @@ const UsersTab = ({ user, userRole, users, setUsers, usersLoading, setUsersLoadi
       {/* Users List */}
       {usersLoading ? (
         <div className="text-center py-12">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-[#38BDF8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Loading users...</p>
         </div>
       ) : users.length === 0 ? (
@@ -328,7 +328,7 @@ const UsersTab = ({ user, userRole, users, setUsers, usersLoading, setUsersLoadi
           {users.map((adminUser) => (
             <div
               key={adminUser.uid}
-              className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-primary/50 transition-all"
+              className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-[#38BDF8]/50 transition-all"
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1">
@@ -360,7 +360,7 @@ const UsersTab = ({ user, userRole, users, setUsers, usersLoading, setUsersLoadi
                     <select
                       value={adminUser.role}
                       onChange={(e) => handleUpdateRole(adminUser.uid, e.target.value)}
-                      className="px-3 py-1.5 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-primary"
+                      className="px-3 py-1.5 bg-gray-900 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-[#38BDF8]"
                       title="Change role"
                     >
                       <option value="moderator">Moderator</option>

@@ -120,7 +120,7 @@ const EnquiriesTab = ({ enquiries, loading }) => {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <div className="w-16 h-16 border-4 border-[#38BDF8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <p className="text-gray-400">Loading enquiries...</p>
       </div>
     );
@@ -138,7 +138,7 @@ const EnquiriesTab = ({ enquiries, loading }) => {
             placeholder="Search by name, email, company, or message..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-primary focus:ring-2 focus:ring-primary/50 outline-none transition-all"
+            className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-[#38BDF8] focus:ring-2 focus:ring-primary/50 outline-none transition-all"
           />
         </div>
 
@@ -147,14 +147,14 @@ const EnquiriesTab = ({ enquiries, loading }) => {
           onClick={() => setShowFilters(!showFilters)}
           className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all ${
             showFilters || filterStatus !== 'all' || filterService !== 'all'
-              ? 'bg-primary text-white'
+              ? 'bg-[#38BDF8] text-white'
               : 'bg-gray-800/50 text-gray-400 hover:text-white border border-gray-700'
           }`}
         >
           <Filter className="w-5 h-5" />
           <span>Filters</span>
           {(filterStatus !== 'all' || filterService !== 'all') && (
-            <span className="bg-white text-primary rounded-full px-2 py-0.5 text-xs font-bold">
+            <span className="bg-white text-[#38BDF8] rounded-full px-2 py-0.5 text-xs font-bold">
               {(filterStatus !== 'all' ? 1 : 0) + (filterService !== 'all' ? 1 : 0)}
             </span>
           )}
@@ -175,7 +175,7 @@ const EnquiriesTab = ({ enquiries, loading }) => {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:border-primary focus:ring-2 focus:ring-primary/50 outline-none"
+                className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:border-[#38BDF8] focus:ring-2 focus:ring-primary/50 outline-none"
               >
                 <option value="all">All Statuses</option>
                 <option value="new">New</option>
@@ -191,7 +191,7 @@ const EnquiriesTab = ({ enquiries, loading }) => {
               <select
                 value={filterService}
                 onChange={(e) => setFilterService(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:border-primary focus:ring-2 focus:ring-primary/50 outline-none"
+                className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:border-[#38BDF8] focus:ring-2 focus:ring-primary/50 outline-none"
               >
                 <option value="all">All Services</option>
                 <option value="cybersecurity">Cybersecurity</option>
@@ -227,7 +227,7 @@ const EnquiriesTab = ({ enquiries, loading }) => {
         {searchTerm && (
           <button
             onClick={() => setSearchTerm('')}
-            className="text-primary hover:underline"
+            className="text-[#38BDF8] hover:underline"
           >
             Clear search
           </button>
@@ -262,7 +262,7 @@ const EnquiriesTab = ({ enquiries, loading }) => {
           key={enquiry.id}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`bg-gray-800/50 border rounded-lg p-4 hover:border-primary/50 transition-all ${
+          className={`bg-gray-800/50 border rounded-lg p-4 hover:border-[#38BDF8]/50 transition-all ${
             enquiry.isRead ? 'border-gray-700' : 'border-blue-500/50 bg-blue-500/5'
           }`}
         >
@@ -379,7 +379,7 @@ const EnquiriesTab = ({ enquiries, loading }) => {
               <div className="flex gap-2 flex-wrap">
                 <a
                   href={`mailto:${enquiry.email}?subject=Re: Your enquiry about ${formatServiceName(enquiry.service)}`}
-                  className="px-4 py-2 bg-primary hover:bg-primary/80 text-white text-sm rounded-lg transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white text-sm rounded-lg transition-colors flex items-center gap-2"
                 >
                   <Mail className="w-4 h-4" />
                   Reply via Email

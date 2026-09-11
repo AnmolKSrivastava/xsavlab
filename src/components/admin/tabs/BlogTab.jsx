@@ -289,7 +289,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
               featured: false
             });
           }}
-          className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center space-x-2 bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-4 py-2 rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>{isCreating ? 'Cancel' : 'New Post'}</span>
@@ -323,7 +323,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 required
               />
             </div>
@@ -333,7 +333,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 required
               >
                 {categories.map(cat => (
@@ -349,7 +349,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
                 value={formData.tags}
                 onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
                 placeholder="cybersecurity, cloud, devops"
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
 
@@ -359,7 +359,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
                 type="text"
                 value={formData.featuredImage}
                 onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 placeholder="https://example.com/image.jpg"
               />
               <div className="mt-2 flex items-center gap-3">
@@ -382,7 +382,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
                 value={formData.excerpt}
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                 rows={2}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 placeholder="Brief summary of the post..."
               />
             </div>
@@ -393,7 +393,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 rows={10}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 required
                 placeholder="Write your blog post content..."
               />
@@ -416,7 +416,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
             <button
               type="submit"
               disabled={submitLoading}
-              className="bg-primary hover:bg-primary/90 text-dark-navy px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+              className="bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
             >
               {submitLoading ? 'Saving...' : (editingPost ? 'Update Post' : 'Save as Draft')}
             </button>
@@ -441,7 +441,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
             onClick={() => setFilterStatus(status)}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               filterStatus === status
-                ? 'bg-primary text-white'
+                ? 'bg-[#38BDF8] text-white'
                 : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
             }`}
           >
@@ -455,7 +455,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="bg-gray-800/50 border border-gray-700 text-white px-3 py-1 rounded-lg text-sm focus:outline-none focus:border-primary"
+          className="bg-gray-800/50 border border-gray-700 text-white px-3 py-1 rounded-lg text-sm focus:outline-none focus:border-[#38BDF8]"
         >
           <option value="all">All Categories</option>
           {categories.map(cat => (
@@ -466,7 +466,7 @@ const BlogTab = ({ user, userRole, blogPosts, setBlogPosts, blogPostsLoading, se
 
       {blogPostsLoading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#38BDF8]"></div>
         </div>
       ) : filteredPosts.length === 0 ? (
         <div className="text-center py-12 bg-gray-800/30 rounded-lg border border-gray-700/50">

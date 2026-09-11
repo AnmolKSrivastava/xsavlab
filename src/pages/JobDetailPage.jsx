@@ -226,7 +226,7 @@ const JobDetailPage = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#38BDF8] mx-auto mb-4"></div>
           <p className="text-gray-400">Loading job details...</p>
         </div>
       </div>
@@ -242,7 +242,7 @@ const JobDetailPage = () => {
           <p className="text-gray-400 mb-6">{error}</p>
           <button
             onClick={() => navigate('/careers')}
-            className="bg-primary hover:bg-primary/80 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
+            className="bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Careers
@@ -289,8 +289,8 @@ const JobDetailPage = () => {
           className="bg-gray-800/30 border border-gray-700 rounded-xl p-8 mb-8"
         >
           <div className="flex items-start gap-4 mb-6">
-            <div className="bg-primary/10 p-4 rounded-xl">
-              <Briefcase className="w-8 h-8 text-primary" />
+            <div className="bg-[#38BDF8]/10 p-4 rounded-xl">
+              <Briefcase className="w-8 h-8 text-[#38BDF8]" />
             </div>
             <div className="flex-grow">
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">{job.title}</h1>
@@ -338,7 +338,7 @@ const JobDetailPage = () => {
                 <ul className="space-y-2">
                   {job.responsibilities.map((resp, index) => (
                     <li key={index} className="flex items-start gap-3 text-gray-300">
-                      <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                      <CheckCircle className="w-5 h-5 text-[#38BDF8] flex-shrink-0 mt-1" />
                       <span>{resp}</span>
                     </li>
                   ))}
@@ -352,7 +352,7 @@ const JobDetailPage = () => {
                 <ul className="space-y-2">
                   {job.requirements.map((req, index) => (
                     <li key={index} className="flex items-start gap-3 text-gray-300">
-                      <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-2"></div>
+                      <div className="w-2 h-2 bg-[#38BDF8] rounded-full flex-shrink-0 mt-2"></div>
                       <span>{req}</span>
                     </li>
                   ))}
@@ -410,7 +410,7 @@ const JobDetailPage = () => {
                       value={formData.applicantName}
                       onChange={(e) => setFormData({ ...formData, applicantName: e.target.value })}
                       placeholder="John Doe"
-                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                     />
                   </div>
                 </div>
@@ -428,7 +428,7 @@ const JobDetailPage = () => {
                       value={formData.applicantEmail}
                       onChange={(e) => setFormData({ ...formData, applicantEmail: e.target.value })}
                       placeholder="john@example.com"
-                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                     />
                   </div>
                 </div>
@@ -445,7 +445,7 @@ const JobDetailPage = () => {
                       value={formData.applicantPhone}
                       onChange={(e) => setFormData({ ...formData, applicantPhone: e.target.value })}
                       placeholder="+1 (555) 123-4567"
-                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                     />
                   </div>
                 </div>
@@ -462,7 +462,7 @@ const JobDetailPage = () => {
                       value={formData.linkedInUrl}
                       onChange={(e) => setFormData({ ...formData, linkedInUrl: e.target.value })}
                       placeholder="https://linkedin.com/in/johndoe"
-                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                     />
                   </div>
                 </div>
@@ -479,7 +479,7 @@ const JobDetailPage = () => {
                       value={formData.githubUrl}
                       onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
                       placeholder="https://github.com/johndoe"
-                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                     />
                   </div>
                 </div>
@@ -494,7 +494,7 @@ const JobDetailPage = () => {
                     value={formData.currentCompany}
                     onChange={(e) => setFormData({ ...formData, currentCompany: e.target.value })}
                     placeholder="ABC Technologies"
-                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                   />
                 </div>
 
@@ -508,7 +508,7 @@ const JobDetailPage = () => {
                     value={formData.currentRole}
                     onChange={(e) => setFormData({ ...formData, currentRole: e.target.value })}
                     placeholder="Security Analyst"
-                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                   />
                 </div>
 
@@ -525,7 +525,7 @@ const JobDetailPage = () => {
                     value={formData.yearsOfExperience}
                     onChange={(e) => setFormData({ ...formData, yearsOfExperience: e.target.value })}
                     placeholder="4"
-                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                   />
                 </div>
 
@@ -539,7 +539,7 @@ const JobDetailPage = () => {
                     value={formData.highestQualification}
                     onChange={(e) => setFormData({ ...formData, highestQualification: e.target.value })}
                     placeholder="B.Tech, MCA, MBA, etc."
-                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                   />
                 </div>
 
@@ -553,7 +553,7 @@ const JobDetailPage = () => {
                     value={formData.currentLocation}
                     onChange={(e) => setFormData({ ...formData, currentLocation: e.target.value })}
                     placeholder="Bangalore, India"
-                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                   />
                 </div>
 
@@ -565,7 +565,7 @@ const JobDetailPage = () => {
                   <select
                     value={formData.preferredWorkMode}
                     onChange={(e) => setFormData({ ...formData, preferredWorkMode: e.target.value })}
-                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                   >
                     <option value="Remote">Remote</option>
                     <option value="Hybrid">Hybrid</option>
@@ -586,7 +586,7 @@ const JobDetailPage = () => {
                     value={formData.noticePeriodDays}
                     onChange={(e) => setFormData({ ...formData, noticePeriodDays: e.target.value })}
                     placeholder="30"
-                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                   />
                 </div>
 
@@ -600,7 +600,7 @@ const JobDetailPage = () => {
                     value={formData.expectedSalary}
                     onChange={(e) => setFormData({ ...formData, expectedSalary: e.target.value })}
                     placeholder="e.g. 18 LPA / $120,000"
-                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                   />
                 </div>
 
@@ -614,7 +614,7 @@ const JobDetailPage = () => {
                     value={formData.workAuthorization}
                     onChange={(e) => setFormData({ ...formData, workAuthorization: e.target.value })}
                     placeholder="Authorized to work in India / Require visa sponsorship"
-                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                   />
                 </div>
 
@@ -629,7 +629,7 @@ const JobDetailPage = () => {
                       <select
                         value={formData.educationLevel}
                         onChange={(e) => setFormData({ ...formData, educationLevel: e.target.value })}
-                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                       >
                         <option value="10th">10th</option>
                         <option value="12th">12th</option>
@@ -650,7 +650,7 @@ const JobDetailPage = () => {
                         value={formData.degreeName}
                         onChange={(e) => setFormData({ ...formData, degreeName: e.target.value })}
                         placeholder="B.Tech, BCA, MBA, MCA, Diploma, etc."
-                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                       />
                     </div>
 
@@ -663,7 +663,7 @@ const JobDetailPage = () => {
                         value={formData.specialization}
                         onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
                         placeholder="Computer Science, IT, Commerce, PCM, etc."
-                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                       />
                     </div>
 
@@ -676,7 +676,7 @@ const JobDetailPage = () => {
                         value={formData.universityName}
                         onChange={(e) => setFormData({ ...formData, universityName: e.target.value })}
                         placeholder="AKTU / Delhi University / CBSE / ICSE"
-                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                       />
                     </div>
 
@@ -691,7 +691,7 @@ const JobDetailPage = () => {
                         value={formData.graduationYear}
                         onChange={(e) => setFormData({ ...formData, graduationYear: e.target.value })}
                         placeholder="2024"
-                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                       />
                     </div>
 
@@ -704,7 +704,7 @@ const JobDetailPage = () => {
                         value={formData.academicScore}
                         onChange={(e) => setFormData({ ...formData, academicScore: e.target.value })}
                         placeholder="78% / 8.1 CGPA"
-                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                       />
                     </div>
 
@@ -717,7 +717,7 @@ const JobDetailPage = () => {
                         value={formData.twelfthBoard}
                         onChange={(e) => setFormData({ ...formData, twelfthBoard: e.target.value })}
                         placeholder="CBSE / ISC / State Board"
-                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                       />
                     </div>
 
@@ -730,7 +730,7 @@ const JobDetailPage = () => {
                         value={formData.twelfthStream}
                         onChange={(e) => setFormData({ ...formData, twelfthStream: e.target.value })}
                         placeholder="Science / Commerce / Arts"
-                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                        className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                       />
                     </div>
                   </div>
@@ -748,7 +748,7 @@ const JobDetailPage = () => {
                       value={formData.portfolioUrl}
                       onChange={(e) => setFormData({ ...formData, portfolioUrl: e.target.value })}
                       placeholder="https://yourportfolio.com"
-                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                      className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                     />
                   </div>
                 </div>
@@ -769,11 +769,11 @@ const JobDetailPage = () => {
                     />
                     <label
                       htmlFor="resume-upload"
-                      className="flex items-center justify-center gap-3 w-full bg-gray-900/50 border-2 border-dashed border-gray-700 text-gray-400 px-4 py-6 rounded-lg cursor-pointer hover:border-primary hover:bg-gray-900/70 transition-all"
+                      className="flex items-center justify-center gap-3 w-full bg-gray-900/50 border-2 border-dashed border-gray-700 text-gray-400 px-4 py-6 rounded-lg cursor-pointer hover:border-[#38BDF8] hover:bg-gray-900/70 transition-all"
                     >
                       {resumeFile ? (
                         <>
-                          <FileText className="w-6 h-6 text-primary" />
+                          <FileText className="w-6 h-6 text-[#38BDF8]" />
                           <span className="text-white">{resumeFile.name}</span>
                           <span className="text-xs text-gray-500">({(resumeFile.size / 1024 / 1024).toFixed(2)} MB)</span>
                         </>
@@ -802,11 +802,11 @@ const JobDetailPage = () => {
                     />
                     <label
                       htmlFor="coverletter-upload"
-                      className="flex items-center justify-center gap-3 w-full bg-gray-900/50 border-2 border-dashed border-gray-700 text-gray-400 px-4 py-6 rounded-lg cursor-pointer hover:border-primary hover:bg-gray-900/70 transition-all"
+                      className="flex items-center justify-center gap-3 w-full bg-gray-900/50 border-2 border-dashed border-gray-700 text-gray-400 px-4 py-6 rounded-lg cursor-pointer hover:border-[#38BDF8] hover:bg-gray-900/70 transition-all"
                     >
                       {coverLetterFile ? (
                         <>
-                          <FileText className="w-6 h-6 text-primary" />
+                          <FileText className="w-6 h-6 text-[#38BDF8]" />
                           <span className="text-white">{coverLetterFile.name}</span>
                           <span className="text-xs text-gray-500">({(coverLetterFile.size / 1024 / 1024).toFixed(2)} MB)</span>
                         </>
@@ -830,7 +830,7 @@ const JobDetailPage = () => {
                     onChange={(e) => setFormData({ ...formData, coverLetter: e.target.value })}
                     rows="6"
                     placeholder="Tell us why you're a great fit for this role..."
-                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                    className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                   />
                 </div>
               </div>
@@ -840,7 +840,7 @@ const JobDetailPage = () => {
                 <button
                   type="submit"
                   disabled={submitting || resumeUploading}
-                  className="bg-primary hover:bg-primary/80 text-white px-8 py-4 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white px-8 py-4 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {submitting || resumeUploading ? (
                     <>

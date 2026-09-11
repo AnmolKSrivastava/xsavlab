@@ -104,15 +104,15 @@ const ProcessPage = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-4"
+              className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-4"
             >
-              <Shield className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Our Methodology</span>
+              <Shield className="w-4 h-4 text-[#38BDF8]" />
+              <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">Our Methodology</span>
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Proven Process For
-              <span className="text-primary"> Project Success</span>
+              <span className="text-[#38BDF8]"> Project Success</span>
             </h1>
 
             <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -142,15 +142,15 @@ const ProcessPage = () => {
                   className="relative"
                 >
                   {/* Number Badge */}
-                  <div className="relative z-10 mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-xl mb-8 shadow-lg shadow-primary/30">
+                  <div className="relative z-10 mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-[#38BDF8] to-[#0EA5E9] flex items-center justify-center font-bold text-xl mb-8 shadow-lg shadow-[#38BDF8]/30">
                     {step.number}
                   </div>
 
                   {/* Card */}
                   <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 h-full">
                     {/* Icon */}
-                    <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mb-4">
-                      <step.icon className="w-6 h-6 text-primary" />
+                    <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-3 rounded-lg w-fit mb-4">
+                      <step.icon className="w-6 h-6 text-[#38BDF8]" />
                     </div>
 
                     {/* Content */}
@@ -160,7 +160,7 @@ const ProcessPage = () => {
                     {/* Deliverable */}
                     <div className="pt-4 border-t border-gray-700">
                       <div className="text-xs text-gray-500 mb-1">Deliverable</div>
-                      <div className="text-sm font-semibold text-primary">{step.deliverable}</div>
+                      <div className="text-sm font-semibold text-[#38BDF8]">{step.deliverable}</div>
                     </div>
                   </div>
                 </motion.div>
@@ -195,14 +195,14 @@ const ProcessPage = () => {
 
                 {/* Right: Content */}
                 <div className="flex-1 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
-                  <div className="bg-primary/10 border border-primary/30 p-2.5 rounded-lg w-fit mb-4">
-                    <step.icon className="w-5 h-5 text-primary" />
+                  <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-2.5 rounded-lg w-fit mb-4">
+                    <step.icon className="w-5 h-5 text-[#38BDF8]" />
                   </div>
                   <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
                   <p className="text-gray-400 mb-4 leading-relaxed">{step.description}</p>
                   <div className="pt-4 border-t border-gray-700">
                     <div className="text-xs text-gray-500 mb-1">Deliverable</div>
-                    <div className="text-sm font-semibold text-primary">{step.deliverable}</div>
+                    <div className="text-sm font-semibold text-[#38BDF8]">{step.deliverable}</div>
                   </div>
                 </div>
               </motion.div>
@@ -223,7 +223,7 @@ const ProcessPage = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              What's Included in <span className="text-primary">Each Phase</span>
+              What's Included in <span className="text-[#38BDF8]">Each Phase</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Detailed breakdown of our comprehensive approach
@@ -241,8 +241,8 @@ const ProcessPage = () => {
                 className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 border border-gray-700/50 rounded-xl p-8"
               >
                 <div className="flex items-center space-x-4 mb-6">
-                  <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg">
-                    <step.icon className="w-6 h-6 text-primary" />
+                  <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-3 rounded-lg">
+                    <step.icon className="w-6 h-6 text-[#38BDF8]" />
                   </div>
                   <div>
                     <div className="text-sm text-gray-500">Phase {step.number}</div>
@@ -253,7 +253,7 @@ const ProcessPage = () => {
                 <ul className="space-y-3">
                   {step.details.map((detail, idx) => (
                     <li key={idx} className="flex items-start space-x-3">
-                      <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-4 h-4 text-[#38BDF8] flex-shrink-0 mt-0.5" />
                       <span className="text-gray-400 text-sm">{detail}</span>
                     </li>
                   ))}
@@ -274,7 +274,7 @@ const ProcessPage = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Why Our <span className="text-primary">Process Works</span>
+              Why Our <span className="text-[#38BDF8]">Process Works</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Proven methodology delivering consistent results
@@ -291,8 +291,8 @@ const ProcessPage = () => {
                 transition={{ delay: index * 0.1 }}
                 className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 border border-gray-700/50 rounded-xl p-6 text-center"
               >
-                <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mx-auto mb-4">
-                  <benefit.icon className="w-6 h-6 text-primary" />
+                <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-3 rounded-lg w-fit mx-auto mb-4">
+                  <benefit.icon className="w-6 h-6 text-[#38BDF8]" />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">{benefit.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{benefit.description}</p>

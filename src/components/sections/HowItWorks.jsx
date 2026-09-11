@@ -53,15 +53,15 @@ const HowItWorks = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-6"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-6"
           >
-            <Shield className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Our Methodology</span>
+            <Shield className="w-4 h-4 text-[#38BDF8]" />
+            <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">Our Methodology</span>
           </motion.div>
 
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Proven Process For
-            <span className="text-primary"> Project Success</span>
+            <span className="text-[#38BDF8]"> Project Success</span>
           </h2>
 
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -81,13 +81,13 @@ const HowItWorks = () => {
               className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6"
             >
               {/* Number Badge */}
-              <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-xl mb-6 shadow-lg shadow-primary/30">
+              <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-[#38BDF8] to-[#0EA5E9] flex items-center justify-center font-bold text-xl mb-6 shadow-lg shadow-[#38BDF8]/30">
                 {step.number}
               </div>
 
               {/* Icon */}
-              <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mb-4">
-                <step.icon className="w-6 h-6 text-primary" />
+              <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-3 rounded-lg w-fit mb-4">
+                <step.icon className="w-6 h-6 text-[#38BDF8]" />
               </div>
 
               {/* Content */}
@@ -97,7 +97,7 @@ const HowItWorks = () => {
               {/* Deliverable */}
               <div className="pt-4 border-t border-gray-700">
                 <div className="text-xs text-gray-500 mb-1">Deliverable</div>
-                <div className="text-sm font-semibold text-primary">{step.deliverable}</div>
+                <div className="text-sm font-semibold text-[#38BDF8]">{step.deliverable}</div>
               </div>
             </motion.div>
           ))}
@@ -114,7 +114,7 @@ const HowItWorks = () => {
             onClick={() => navigate('/process')}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 hover:bg-primary/20 text-primary px-6 py-3 rounded-lg font-semibold transition-all"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 hover:bg-[#38BDF8]/20 text-[#38BDF8] px-6 py-3 rounded-lg font-semibold transition-all"
           >
             <span>View Detailed Process</span>
             <ArrowRight className="w-4 h-4" />

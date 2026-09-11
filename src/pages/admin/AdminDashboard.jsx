@@ -59,6 +59,12 @@ const AdminDashboard = () => {
   const [applicationsLoading, setApplicationsLoading] = useState(false);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      navigate('/admin-login');
+      return;
+    }
+
     // Check authentication and admin status
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -120,7 +126,7 @@ const AdminDashboard = () => {
     return (
       <div className="min-h-screen bg-dark-navy flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-[#38BDF8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Loading dashboard...</p>
         </div>
       </div>

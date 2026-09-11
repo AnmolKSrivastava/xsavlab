@@ -82,7 +82,7 @@ const AIDemo = () => {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl"
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#38BDF8]/5 rounded-full blur-3xl"
         />
       </div>
 
@@ -151,7 +151,7 @@ const AIDemo = () => {
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`flex items-start space-x-2 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    <div className={`p-2 rounded-lg ${message.role === 'user' ? 'bg-primary' : 'bg-secondary/20'}`}>
+                    <div className={`p-2 rounded-lg ${message.role === 'user' ? 'bg-[#38BDF8]' : 'bg-secondary/20'}`}>
                       {message.role === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
                     </div>
                     <div className={`p-4 rounded-2xl ${message.role === 'user' ? 'bg-gradient-to-r from-primary to-secondary' : 'glass'}`}>
@@ -177,17 +177,17 @@ const AIDemo = () => {
                     <motion.div
                       animate={{ opacity: [0.4, 1, 0.4] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
-                      className="w-2 h-2 bg-primary rounded-full"
+                      className="w-2 h-2 bg-[#38BDF8] rounded-full"
                     />
                     <motion.div
                       animate={{ opacity: [0.4, 1, 0.4] }}
                       transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
-                      className="w-2 h-2 bg-primary rounded-full"
+                      className="w-2 h-2 bg-[#38BDF8] rounded-full"
                     />
                     <motion.div
                       animate={{ opacity: [0.4, 1, 0.4] }}
                       transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-                      className="w-2 h-2 bg-primary rounded-full"
+                      className="w-2 h-2 bg-[#38BDF8] rounded-full"
                     />
                   </div>
                 </div>
@@ -206,7 +206,7 @@ const AIDemo = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setInput(question)}
-                  className="text-xs px-3 py-2 glass rounded-full hover:bg-primary/20 transition-colors"
+                  className="text-xs px-3 py-2 glass rounded-full hover:bg-[#38BDF8]/20 transition-colors"
                 >
                   {question}
                 </motion.button>
@@ -223,7 +223,7 @@ const AIDemo = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask me anything..."
-                className="flex-1 bg-white/5 border border-white/10 rounded-full px-6 py-3 focus:outline-none focus:border-primary transition-colors"
+                className="flex-1 bg-white/5 border border-white/10 rounded-full px-6 py-3 focus:outline-none focus:border-[#38BDF8] transition-colors"
               />
               <motion.button
                 whileHover={{ scale: 1.1 }}

@@ -108,7 +108,7 @@ const BlogPost = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-dark-navy flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#38BDF8]"></div>
       </div>
     );
   }
@@ -121,7 +121,7 @@ const BlogPost = () => {
           <p className="text-gray-400 mb-8">{error || 'The blog post you\'re looking for doesn\'t exist.'}</p>
           <button
             onClick={() => navigate('/blog')}
-            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-6 py-3 rounded-lg transition-colors"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-6 py-3 rounded-lg transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Blog</span>
@@ -165,7 +165,7 @@ const BlogPost = () => {
             transition={{ delay: 0.1 }}
             className="mb-6"
           >
-            <span className="inline-flex items-center space-x-1 bg-primary/20 border border-primary/30 text-primary px-4 py-2 rounded-full text-sm font-semibold">
+            <span className="inline-flex items-center space-x-1 bg-[#38BDF8]/20 border border-[#38BDF8]/30 text-[#38BDF8] px-4 py-2 rounded-full text-sm font-semibold">
               <Tag className="w-4 h-4" />
               <span>{post.category}</span>
             </span>
@@ -220,7 +220,7 @@ const BlogPost = () => {
             )}
             <button
               onClick={handleShare}
-              className="flex items-center space-x-2 ml-auto text-primary hover:text-primary/80 transition-colors"
+              className="flex items-center space-x-2 ml-auto text-[#38BDF8] hover:text-[#38BDF8]/80 transition-colors"
             >
               {copied ? (
                 <>
@@ -273,7 +273,7 @@ const BlogPost = () => {
                 {post.tags.map((tag, idx) => (
                   <span 
                     key={idx}
-                    className="px-3 py-1 bg-gray-800/50 border border-gray-700/50 text-gray-400 text-sm rounded-lg hover:border-primary/50 transition-colors"
+                    className="px-3 py-1 bg-gray-800/50 border border-gray-700/50 text-gray-400 text-sm rounded-lg hover:border-[#38BDF8]/50 transition-colors"
                   >
                     #{tag}
                   </span>
@@ -291,8 +291,8 @@ const BlogPost = () => {
               className="mt-12 p-6 bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl"
             >
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
-                  <User className="w-8 h-8 text-primary" />
+                <div className="w-16 h-16 bg-[#38BDF8]/20 rounded-full flex items-center justify-center">
+                  <User className="w-8 h-8 text-[#38BDF8]" />
                 </div>
                 <div>
                   <h4 className="text-lg font-semibold text-white mb-1">
@@ -324,12 +324,12 @@ const BlogPost = () => {
                   viewport={{ once: true }}
                   whileHover={{ y: -5 }}
                   onClick={() => navigate(`/blog/${relatedPost.slug}`)}
-                  className="cursor-pointer bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl p-6 transition-all duration-300"
+                  className="cursor-pointer bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl p-6 transition-all duration-300"
                 >
-                  <span className="inline-flex items-center space-x-1 bg-primary/20 border border-primary/30 text-primary px-2 py-1 rounded-full text-xs font-semibold mb-3">
+                  <span className="inline-flex items-center space-x-1 bg-[#38BDF8]/20 border border-[#38BDF8]/30 text-[#38BDF8] px-2 py-1 rounded-full text-xs font-semibold mb-3">
                     {relatedPost.category}
                   </span>
-                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 hover:text-primary transition-colors">
+                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 hover:text-[#38BDF8] transition-colors">
                     {relatedPost.title}
                   </h3>
                   {relatedPost.excerpt && (

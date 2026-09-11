@@ -28,15 +28,15 @@ const Contact = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-6"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-6"
           >
-            <Mail className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Get In Touch</span>
+            <Mail className="w-4 h-4 text-[#38BDF8]" />
+            <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">Get In Touch</span>
           </motion.div>
 
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Ready to Secure Your
-            <span className="text-primary"> Digital Future?</span>
+            <span className="text-[#38BDF8]"> Digital Future?</span>
           </h2>
 
           <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-12">
@@ -48,7 +48,7 @@ const Contact = () => {
             onClick={() => navigate('/contact')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-10 py-5 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-10 py-5 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all"
           >
             <span>Get In Touch</span>
             <ArrowRight className="w-5 h-5" />
@@ -68,13 +68,13 @@ const Contact = () => {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -5 }}
-              className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 hover:border-primary/50 rounded-xl p-6 text-center group transition-all cursor-pointer"
+              className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl p-6 text-center group transition-all cursor-pointer"
             >
-              <div className="bg-primary/10 border border-primary/30 p-4 rounded-lg w-fit mx-auto mb-4 group-hover:bg-primary/20 transition-all">
-                <item.icon className="w-6 h-6 text-primary" />
+              <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-4 rounded-lg w-fit mx-auto mb-4 group-hover:bg-[#38BDF8]/20 transition-all">
+                <item.icon className="w-6 h-6 text-[#38BDF8]" />
               </div>
               <div className="text-sm text-gray-400 mb-2">{item.label}</div>
-              <div className="font-semibold text-white group-hover:text-primary transition-colors">
+              <div className="font-semibold text-white group-hover:text-[#38BDF8] transition-colors">
                 {item.value}
               </div>
             </motion.a>

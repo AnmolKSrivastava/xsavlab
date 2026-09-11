@@ -4,7 +4,7 @@ const REEL_CSS = `
 :root {
   color-scheme: dark;
 
-  --void:      #04060C;
+  --void:      #0B0F19;
   --void-2:    #070B14;
   --panel:     #0C1322;
   --panel-2:   #101929;
@@ -33,7 +33,11 @@ const REEL_CSS = `
 .reel-root * { box-sizing: border-box; }
 
 .reel-root {
-  background: var(--void);
+  background: transparent;
+width: 100%;
+  min-width: 100%;
+  margin: 0;
+  padding: 0;
   color: var(--ice);
   font-family: var(--sans);
   font-size: clamp(1rem, .5vw + .88rem, 1.0625rem);
@@ -59,20 +63,28 @@ const REEL_CSS = `
 .reel-root .btn {
   --bg: var(--amber); --fg: #12100A;
   display: inline-flex; align-items: center; gap: 10px;
-  padding: 13px 22px; background: var(--bg); color: var(--fg);
+  padding: 10px 17px; background: var(--bg); color: var(--fg);
   border: 2px solid var(--bg); border-radius: 999px;
-  font-family: var(--mono); font-size: .6875rem; font-weight: 700;
-  letter-spacing: .16em; text-transform: uppercase; text-decoration: none;
+  font-family: var(--mono); font-size: .80rem; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase; text-decoration: none;
   cursor: pointer; white-space: nowrap;
   transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease, border-color .3s ease, color .3s ease;
 }
-.reel-root .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 34px -12px rgba(255,176,32,.8); }
+.reel-root .btn:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--bg);
+  color: var(--fg);
+}
 .reel-root .btn .arw { transition: transform .35s cubic-bezier(.22,1,.36,1); }
-.reel-root .btn:hover .arw { transform: translate(3px,-3px); }
+.reel-root .btn:hover .arw { transform: none; }
 .reel-root .btn.ghost { --bg: transparent; --fg: var(--ice); border-color: var(--line-hot); }
 .reel-root .btn.ghost:hover { border-color: var(--ice); box-shadow: none; }
 
-.reel-root .reel { position: relative; }
+.reel-root .reel {   position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;}
 
 .reel-root .reel-stage {
   position: sticky; top: 0;
@@ -87,15 +99,15 @@ const REEL_CSS = `
   position: absolute; inset: 0; pointer-events: none;
   background:
     radial-gradient(58% 58% at 68% 50%, rgba(56,189,248,.07), transparent 68%),
-    linear-gradient(90deg, var(--void) 0%, rgba(4,6,12,.86) 34%, rgba(4,6,12,.3) 62%, transparent 84%);
+    linear-gradient(90deg, var(--void) 0%, rgba(11,15,25,.86) 34%, rgba(11,15,25,.3) 62%, transparent 84%);
 }
 @media (max-width: 1023px) {
   .reel-root .reel-stage { align-items: flex-end; }
   .reel-root .reel-in { padding-top: 0; padding-bottom: clamp(40px, 8vh, 96px); }
   .reel-root .reel-grade {
     background: linear-gradient(180deg,
-      rgba(4,6,12,.10) 0%, rgba(4,6,12,.22) 26%, rgba(4,6,12,.72) 46%,
-      rgba(4,6,12,.94) 62%, var(--void) 84%);
+      rgba(11,15,25,.10) 0%, rgba(11,15,25,.22) 26%, rgba(11,15,25,.72) 46%,
+      rgba(11,15,25,.94) 62%, var(--void) 84%);
   }
 }
 
@@ -140,12 +152,36 @@ const REEL_CSS = `
 .reel-root .slide-meta span {
   flex: 0 1 auto;
   min-width: 0;
-  border: 1px solid var(--line-hot); border-radius: 999px;
-  background: rgba(7,11,20,.78); backdrop-filter: blur(6px);
-  padding: 8px 14px;
-  font-family: var(--mono); font-size: .625rem; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--ice); white-space: normal;
-  max-width: 100%; overflow-wrap: anywhere; line-height: 1.35; text-align: left;
+
+  border: 1px solid var(--line-hot);
+  border-radius: 999px;
+
+  background: rgba(7, 11, 20, 0.82);
+  backdrop-filter: blur(8px);
+
+  /* Increased size */
+  padding: 10px 17px;
+
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: var(--ice);
+
+  white-space: normal;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+
+  line-height: 1.4;
+  text-align: left;
+
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease,
+    transform 0.3s ease;
 }
 
 .reel-root .slide-actions {
@@ -201,12 +237,61 @@ const REEL_CSS = `
   .reel-root .slide h2 { font-size: clamp(1.45rem, 7vw, 2.6rem); }
   .reel-root .slide p { font-size: .875rem; line-height: 1.5; }
   .reel-root .slide-actions { width: 100%; gap: 9px; }
-  .reel-root .slide-actions .btn { flex: 1 1 auto; justify-content: center; padding: 12px 14px; }
+  .reel-root .slide-actions .btn {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+  
 }
 
 @media (max-width: 700px) {
   .reel-root .slide-meta { gap: 6px; }
   .reel-root .slide-meta span { padding: 6px 10px; font-size: .5625rem; letter-spacing: .08em; }
+}
+
+@media (min-width: 1900px) {
+  .reel-root {
+    --shell: 1720px;
+    --gut: clamp(64px, 6vw, 132px);
+  }
+
+  .reel-root .slides {
+    max-width: 48%;
+  }
+
+  .reel-root .slide {
+    gap: 22px;
+  }
+
+  .reel-root .slide h2 {
+    font-size: clamp(3.6rem, 3.7vw, 5rem);
+  }
+
+  .reel-root .slide p {
+    max-width: 52ch;
+    font-size: 1.08rem;
+  }
+
+  .reel-root .slide-meta {
+    gap: 10px;
+  }
+
+  .reel-root .slide-meta span {
+    padding: 10px 18px;
+    font-size: 0.82rem;
+  }
+
+  .reel-root .slide-actions .btn {
+    padding: 12px 20px;
+    font-size: 0.82rem;
+  }
+
+  .reel-root .reel-nav {
+    right: clamp(36px, 4vw, 84px);
+  }
 }
 
 @media (max-width: 400px) {
@@ -233,7 +318,12 @@ const REEL_CSS = `
   .reel-root .slide h2 { font-size: clamp(3.6rem, 3.7vw, 5rem); }
   .reel-root .slide p { max-width: 52ch; font-size: 1.08rem; }
   .reel-root .slide-meta { gap: 10px; }
-  .reel-root .slide-meta span { padding: 9px 16px; font-size: .7rem; }
+  .reel-root .slide-meta span {
+    padding: 12px 20px;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    }
   .reel-root .reel-nav { right: clamp(36px, 4vw, 84px); }
 }
 `;
@@ -354,7 +444,7 @@ export default function Hero() {
         }
 
         var SHAPES = [shapeMark];
-        var LABELS = ['Overview'];
+        // var LABELS = ['Overview'];
         var TONES = [
             [[0.22, 0.74, 0.97], [1.00, 0.69, 0.13]]
         ];
@@ -362,25 +452,25 @@ export default function Hero() {
         var COUNT = SHAPES.length;
         // if (reel) reel.style.height = (COUNT * 100) + 'svh';
 
-        var dotEls = [];
-        var onDotClick = [];
-        if (nav) {
-            LABELS.forEach(function (name, i) {
-                var b = document.createElement('button');
-                b.className = 'reel-dot';
-                b.setAttribute('aria-label', 'Go to ' + name);
-                b.innerHTML = '<u>' + name + '</u><i></i>';
-                var handler = function () {
-                    var total = reel.offsetHeight - window.innerHeight;
-                    var y = reel.offsetTop + (i / (COUNT - 1)) * total;
-                    window.scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' });
-                };
-                b.addEventListener('click', handler);
-                onDotClick.push({ el: b, handler: handler });
-                nav.appendChild(b);
-                dotEls.push(b);
-            });
-        }
+        // var dotEls = [];
+        // var onDotClick = [];
+        // if (nav) {
+        //     LABELS.forEach(function (name, i) {
+        //         var b = document.createElement('button');
+        //         b.className = 'reel-dot';
+        //         b.setAttribute('aria-label', 'Go to ' + name);
+        //         b.innerHTML = '<u>' + name + '</u><i></i>';
+        //         var handler = function () {
+        //             var total = reel.offsetHeight - window.innerHeight;
+        //             var y = reel.offsetTop + (i / (COUNT - 1)) * total;
+        //             window.scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' });
+        //         };
+        //         b.addEventListener('click', handler);
+        //         onDotClick.push({ el: b, handler: handler });
+        //         nav.appendChild(b);
+        //         dotEls.push(b);
+        //     });
+        // }
 
         var current = -1, progress = 0, shownIdx = 0, mixT = 0, burst = 0;
 
@@ -418,15 +508,23 @@ export default function Hero() {
             mixT = 0;
             burst = 0;
 
+            // if (current !== 0) {
+            //     current = 0;
+            //     slideEls.forEach(function (el) {
+            //         el.classList.toggle('on', true);
+            //     });
+            //     dotEls.forEach(function (d) {
+            //         d.setAttribute('aria-current', 'true');
+            //     });
+            // }
+
             if (current !== 0) {
-                current = 0;
-                slideEls.forEach(function (el) {
-                    el.classList.toggle('on', true);
-                });
-                dotEls.forEach(function (d) {
-                    d.setAttribute('aria-current', 'true');
-                });
-            }
+    current = 0;
+
+    slideEls.forEach(function (el) {
+        el.classList.toggle('on', true);
+    });
+}
 
             if (cue) cue.style.opacity = '1';
         }
@@ -493,8 +591,8 @@ export default function Hero() {
             var wideLayout = r.width >= 1024;
             gl.uniformMatrix4fv(U.uProj, false, M.persp(0.9, aspect, 0.1, 60));
             gl.uniformMatrix4fv(U.uView, false, wideLayout
-                ? M.trans(1.3, 0, -4.5)
-                : M.trans(0, 0.85, -5.9));
+    ? M.trans(1.7, 0, -4.5)
+    : M.trans(0, 0.85, -5.9));
 
             var yaw = Math.sin(clock * 0.22) * 0.42 + mx * 0.5 + progress * 0.55;
             var model = M.mul(M.rotY(yaw), M.rotX(-0.10 + my * 0.26));
@@ -578,8 +676,8 @@ export default function Hero() {
             window.removeEventListener('pointermove', onPointerMove);
             window.removeEventListener('scroll', onScroll);
             window.removeEventListener('resize', onResize);
-            onDotClick.forEach(function (d) { d.el.removeEventListener('click', d.handler); });
-            dotEls.forEach(function (d) { d.remove(); });
+            // onDotClick.forEach(function (d) { d.el.removeEventListener('click', d.handler); });
+            // dotEls.forEach(function (d) { d.remove(); });
         };
     }, []);
 
@@ -616,8 +714,8 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    <nav className="reel-nav" id="reelNav" ref={navRef} aria-label="Showcase sections"></nav>
-                    <div className="reel-cue" id="reelCue" ref={cueRef} aria-hidden="true"><i></i>Scroll</div>
+                    {/* <nav className="reel-nav" id="reelNav" ref={navRef} aria-label="Showcase sections"></nav> */}
+                    {/* <div className="reel-cue" id="reelCue" ref={cueRef} aria-hidden="true"><i></i>Scroll</div> */}
                 </div>
             </section>
         </div>

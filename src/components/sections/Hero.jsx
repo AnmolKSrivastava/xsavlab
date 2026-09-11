@@ -12,7 +12,7 @@ const Hero = ({ onScheduleClick }) => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-16">
       {/* Subtle Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-40 left-20 hidden md:block w-96 h-96 bg-primary/5 rounded-full blur-2xl lg:blur-3xl" />
+        <div className="absolute top-40 left-20 hidden md:block w-96 h-96 bg-[#38BDF8]/5 rounded-full blur-2xl lg:blur-3xl" />
         <div className="absolute bottom-40 right-20 hidden md:block w-96 h-96 bg-secondary/5 rounded-full blur-2xl lg:blur-3xl" />
       </div>
 
@@ -24,15 +24,15 @@ const Hero = ({ onScheduleClick }) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-6"
+              className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-6"
             >
-              <Award className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">Trusted Security Partner</span>
+              <Award className="w-4 h-4 text-[#38BDF8]" />
+              <span className="text-sm font-semibold text-[#38BDF8]">Trusted Security Partner</span>
             </motion.div>
 
             <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
               Enterprise
-              <span className="text-primary"> Cybersecurity </span>
+              <span className="text-[#38BDF8]"> Cybersecurity </span>
               Services That Protect Your Business
             </h1>
 
@@ -53,7 +53,7 @@ const Hero = ({ onScheduleClick }) => {
                 'Zero Trust Architecture Specialists'
               ].map((item, index) => (
                 <div key={index} className="flex items-center space-x-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-[#38BDF8] flex-shrink-0" />
                   <span className="text-gray-300">{item}</span>
                 </div>
               ))}
@@ -70,7 +70,7 @@ const Hero = ({ onScheduleClick }) => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 aria-label="Request security assessment"
-                className="bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 shadow-xl shadow-primary/25 transition-all"
+                className="bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center space-x-2 shadow-xl shadow-primary/25 transition-all"
               >
                 <span>Request Security Assessment</span>
                 <ArrowRight className="w-5 h-5" />
@@ -84,7 +84,7 @@ const Hero = ({ onScheduleClick }) => {
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="border-2 border-gray-600 hover:border-primary text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all"
+                className="border-2 border-gray-600 hover:border-[#38BDF8] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all"
               >
                 View Services
               </motion.button>
@@ -123,8 +123,8 @@ const Hero = ({ onScheduleClick }) => {
               {/* Dashboard Header */}
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center space-x-3">
-                  <div className="bg-primary/20 border border-primary/40 p-2 rounded-lg">
-                    <Shield className="w-5 h-5 text-primary" />
+                  <div className="bg-[#38BDF8]/20 border border-[#38BDF8]/40 p-2 rounded-lg">
+                    <Shield className="w-5 h-5 text-[#38BDF8]" />
                   </div>
                   <div>
                     <div className="font-semibold text-white">Security Overview</div>
@@ -147,7 +147,7 @@ const Hero = ({ onScheduleClick }) => {
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-sm text-gray-400">Threat Prevention Rate</span>
-                    <span className="text-primary font-semibold text-sm">Excellent</span>
+                    <span className="text-[#38BDF8] font-semibold text-sm">Excellent</span>
                   </div>
                   <div className="text-3xl font-bold text-white mb-2"><CountUpNumber end={99.8} decimals={1} suffix="%" /></div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
@@ -184,15 +184,15 @@ const Hero = ({ onScheduleClick }) => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.7 }}
-                  className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/30 rounded-xl p-4"
+                  className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-[#38BDF8]/30 rounded-xl p-4"
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="text-sm text-gray-300 mb-1">Security Score</div>
-                      <div className="text-3xl font-bold text-primary">A+</div>
+                      <div className="text-3xl font-bold text-[#38BDF8]">A+</div>
                     </div>
-                    <div className="bg-primary/20 p-3 rounded-lg">
-                      <Shield className="w-8 h-8 text-primary" />
+                    <div className="bg-[#38BDF8]/20 p-3 rounded-lg">
+                      <Shield className="w-8 h-8 text-[#38BDF8]" />
                     </div>
                   </div>
                 </motion.div>
@@ -204,10 +204,10 @@ const Hero = ({ onScheduleClick }) => {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1, duration: 0.5 }}
-              className="absolute -bottom-6 -left-6 bg-gradient-to-br from-gray-800 to-gray-900 border border-primary/30 p-5 rounded-xl shadow-xl"
+              className="absolute -bottom-6 -left-6 bg-gradient-to-br from-gray-800 to-gray-900 border border-[#38BDF8]/30 p-5 rounded-xl shadow-xl"
             >
               <div className="text-sm text-gray-400 mb-1">Threats Blocked Today</div>
-              <div className="text-3xl font-bold text-primary"><CountUpNumber end={2847} /></div>
+              <div className="text-3xl font-bold text-[#38BDF8]"><CountUpNumber end={2847} /></div>
             </motion.div>
           </motion.div>
         </div>

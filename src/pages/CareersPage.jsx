@@ -101,7 +101,7 @@ const CareersPage = () => {
                   placeholder="Search positions..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                  className="w-full bg-gray-900/50 border border-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 />
               </div>
 
@@ -109,7 +109,7 @@ const CareersPage = () => {
               <select
                 value={filterDepartment}
                 onChange={(e) => setFilterDepartment(e.target.value)}
-                className="bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                className="bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
               >
                 <option value="all">All Departments</option>
                 {departments.map(dept => (
@@ -121,7 +121,7 @@ const CareersPage = () => {
               <select
                 value={filterLocation}
                 onChange={(e) => setFilterLocation(e.target.value)}
-                className="bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                className="bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
               >
                 <option value="all">All Locations</option>
                 {locations.map(loc => (
@@ -133,7 +133,7 @@ const CareersPage = () => {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                className="bg-gray-900/50 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
               >
                 <option value="all">All Types</option>
                 {jobTypes.map(type => (
@@ -151,7 +151,7 @@ const CareersPage = () => {
           {loading ? (
             <div className="flex justify-center items-center min-h-[400px]">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#38BDF8] mx-auto mb-4"></div>
                 <p className="text-gray-400">Loading opportunities...</p>
               </div>
             </div>
@@ -168,7 +168,7 @@ const CareersPage = () => {
               </p>
               <p className="text-gray-400">
                 Check back soon or send us your resume at{' '}
-                <a href="mailto:careers@xsavlab.com" className="text-primary hover:underline">
+                <a href="mailto:careers@xsavlab.com" className="text-[#38BDF8] hover:underline">
                   careers@xsavlab.com
                 </a>
               </p>
@@ -189,17 +189,17 @@ const CareersPage = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.1 }}
-                    className="bg-gray-800/30 border border-gray-700 rounded-xl p-6 hover:border-primary/50 hover:bg-gray-800/50 transition-all cursor-pointer group"
+                    className="bg-gray-800/30 border border-gray-700 rounded-xl p-6 hover:border-[#38BDF8]/50 hover:bg-gray-800/50 transition-all cursor-pointer group"
                     onClick={() => navigate(`/careers/${job.id}`)}
                   >
                     <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                       <div className="flex-grow">
                         <div className="flex items-start gap-3 mb-3">
-                          <div className="bg-primary/10 p-3 rounded-lg group-hover:bg-primary/20 transition-colors">
-                            <Briefcase className="w-6 h-6 text-primary" />
+                          <div className="bg-[#38BDF8]/10 p-3 rounded-lg group-hover:bg-[#38BDF8]/20 transition-colors">
+                            <Briefcase className="w-6 h-6 text-[#38BDF8]" />
                           </div>
                           <div className="flex-grow">
-                            <h3 className="text-2xl font-bold text-white group-hover:text-primary transition-colors mb-2">
+                            <h3 className="text-2xl font-bold text-white group-hover:text-[#38BDF8] transition-colors mb-2">
                               {job.title}
                             </h3>
                             {job.featured && (
@@ -262,7 +262,7 @@ const CareersPage = () => {
                             e.stopPropagation();
                             navigate(`/careers/${job.id}`);
                           }}
-                          className="flex-1 lg:flex-none bg-primary hover:bg-primary/80 text-white px-6 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap"
+                          className="flex-1 lg:flex-none bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white px-6 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap"
                         >
                           Apply Now
                         </button>
@@ -292,7 +292,7 @@ const CareersPage = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Why Join <span className="text-primary">XSAV Lab</span>?
+              Why Join <span className="text-[#38BDF8]">XSAV Lab</span>?
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               We're not just building software — we're building the future of secure digital infrastructure
@@ -338,9 +338,9 @@ const CareersPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="bg-gray-800/30 border border-gray-700 rounded-xl p-6 hover:border-primary/50 transition-colors"
+                className="bg-gray-800/30 border border-gray-700 rounded-xl p-6 hover:border-[#38BDF8]/50 transition-colors"
               >
-                <div className="bg-primary/10 w-16 h-16 rounded-lg flex items-center justify-center text-primary mb-4">
+                <div className="bg-[#38BDF8]/10 w-16 h-16 rounded-lg flex items-center justify-center text-[#38BDF8] mb-4">
                   {benefit.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">{benefit.title}</h3>
@@ -358,9 +358,9 @@ const CareersPage = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-r from-primary/20 to-purple-500/20 border border-primary/30 rounded-2xl p-8 md:p-12 text-center"
+            className="bg-gradient-to-r from-primary/20 to-purple-500/20 border border-[#38BDF8]/30 rounded-2xl p-8 md:p-12 text-center"
           >
-            <Heart className="w-12 h-12 text-primary mx-auto mb-4" />
+            <Heart className="w-12 h-12 text-[#38BDF8] mx-auto mb-4" />
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Don't See the Right Role?
             </h2>
@@ -370,7 +370,7 @@ const CareersPage = () => {
             </p>
             <a
               href="mailto:careers@xsavlab.com"
-              className="inline-block bg-primary hover:bg-primary/80 text-white px-8 py-4 rounded-lg font-semibold transition-colors"
+              className="inline-block bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white px-8 py-4 rounded-lg font-semibold transition-colors"
             >
               Send Your Resume
             </a>

@@ -208,7 +208,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
               resetForm();
               setShowAddStory(!showAddStory);
             }}
-            className="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white rounded-lg transition-colors flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Success Story
@@ -244,7 +244,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                   value={formData.company}
                   onChange={(e) => setFormData({...formData, company: e.target.value})}
                   required
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="Acme Corporation"
                 />
               </div>
@@ -255,7 +255,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                   value={formData.industry}
                   onChange={(e) => setFormData({...formData, industry: e.target.value})}
                   required
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="Finance & Banking"
                 />
               </div>
@@ -268,7 +268,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                 onChange={(e) => setFormData({...formData, challenge: e.target.value})}
                 required
                 rows="3"
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 placeholder="Describe the client's main challenges..."
               />
             </div>
@@ -280,7 +280,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                 onChange={(e) => setFormData({...formData, solution: e.target.value})}
                 required
                 rows="3"
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 placeholder="Describe the solution provided..."
               />
             </div>
@@ -294,21 +294,21 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                       type="text"
                       value={formData.results[index].label}
                       onChange={(e) => handleResultChange(index, 'label', e.target.value)}
-                      className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                       placeholder="Metric label"
                     />
                     <input
                       type="text"
                       value={formData.results[index].value}
                       onChange={(e) => handleResultChange(index, 'value', e.target.value)}
-                      className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                       placeholder="Value (e.g., 50)"
                     />
                     <input
                       type="text"
                       value={formData.results[index].suffix}
                       onChange={(e) => handleResultChange(index, 'suffix', e.target.value)}
-                      className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                       placeholder="Suffix (e.g., %)"
                     />
                   </div>
@@ -325,7 +325,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                     type="text"
                     value={formData.clientName}
                     onChange={(e) => setFormData({...formData, clientName: e.target.value})}
-                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                     placeholder="John Doe"
                   />
                 </div>
@@ -335,7 +335,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                     type="text"
                     value={formData.clientRole}
                     onChange={(e) => setFormData({...formData, clientRole: e.target.value})}
-                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                     placeholder="CTO"
                   />
                 </div>
@@ -345,7 +345,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                     type="text"
                     value={formData.clientCompany}
                     onChange={(e) => setFormData({...formData, clientCompany: e.target.value})}
-                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                     placeholder="Acme Corp"
                   />
                 </div>
@@ -356,7 +356,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                   value={formData.testimonial}
                   onChange={(e) => setFormData({...formData, testimonial: e.target.value})}
                   rows="3"
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="Client's feedback and remarks..."
                 />
               </div>
@@ -368,7 +368,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 >
                   <option value="draft">Draft</option>
                   <option value="live">Live (Published)</option>
@@ -380,7 +380,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                   type="number"
                   value={formData.order}
                   onChange={(e) => setFormData({...formData, order: parseInt(e.target.value) || 0})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   min="0"
                 />
               </div>
@@ -390,7 +390,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                     type="checkbox"
                     checked={formData.featured}
                     onChange={(e) => setFormData({...formData, featured: e.target.checked})}
-                    className="w-4 h-4 text-primary bg-gray-900 border-gray-700 rounded focus:ring-primary"
+                    className="w-4 h-4 text-[#38BDF8] bg-gray-900 border-gray-700 rounded focus:ring-primary"
                   />
                   <span className="text-sm text-gray-300">Featured Story</span>
                 </label>
@@ -400,7 +400,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
             <div className="flex gap-3 pt-4">
               <button
                 type="submit"
-                className="flex-1 px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 {editingStory ? 'Update Success Story' : 'Create Success Story'}
@@ -420,7 +420,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
       <div className="space-y-4">
         {successStoriesLoading ? (
           <div className="text-center py-12">
-            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-12 h-12 border-4 border-[#38BDF8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-400">Loading success stories...</p>
           </div>
         ) : successStories.length === 0 ? (
@@ -486,7 +486,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
                 <div className="grid grid-cols-3 gap-4 mb-4 pt-3 border-t border-gray-700">
                   {story.results.filter(r => r.label && r.value).map((result, idx) => (
                     <div key={idx} className="text-center">
-                      <div className="text-2xl font-bold text-primary mb-1">
+                      <div className="text-2xl font-bold text-[#38BDF8] mb-1">
                         {result.value}{result.suffix}
                       </div>
                       <div className="text-xs text-gray-400">{result.label}</div>
@@ -496,7 +496,7 @@ const SuccessStoriesTab = ({ user, userRole, successStories, setSuccessStories, 
               )}
 
               {story.testimonial && (
-                <div className="bg-gray-900/50 rounded-lg p-4 border-l-4 border-primary">
+                <div className="bg-gray-900/50 rounded-lg p-4 border-l-4 border-[#38BDF8]">
                   <p className="text-sm text-gray-300 italic mb-2">"{story.testimonial}"</p>
                   {(story.clientName || story.clientRole) && (
                     <p className="text-xs text-gray-500">

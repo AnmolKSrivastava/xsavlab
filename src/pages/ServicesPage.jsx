@@ -14,11 +14,11 @@ const ServiceCard = ({ icon: Icon, title, description, features, benefits, index
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.15 }}
-      className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl p-8 transition-all duration-300 group"
+      className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl p-8 transition-all duration-300 group"
     >
       {/* Icon */}
-      <div className="bg-primary/10 border border-primary/30 p-4 rounded-lg w-fit mb-6 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
-        <Icon className="w-8 h-8 text-primary" />
+      <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-4 rounded-lg w-fit mb-6 group-hover:bg-[#38BDF8]/20 group-hover:scale-110 transition-all duration-300">
+        <Icon className="w-8 h-8 text-[#38BDF8]" />
       </div>
 
       {/* Title */}
@@ -35,7 +35,7 @@ const ServiceCard = ({ icon: Icon, title, description, features, benefits, index
         <ul className="space-y-3">
           {features.map((feature, idx) => (
             <li key={idx} className="flex items-start space-x-3">
-              <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 text-[#38BDF8] flex-shrink-0 mt-0.5" />
               <span className="text-gray-300 text-sm">{feature}</span>
             </li>
           ))}
@@ -49,7 +49,7 @@ const ServiceCard = ({ icon: Icon, title, description, features, benefits, index
           <ul className="space-y-2">
             {benefits.map((benefit, idx) => (
               <li key={idx} className="flex items-start space-x-2">
-                <ArrowRight className="w-3 h-3 text-primary flex-shrink-0 mt-1" />
+                <ArrowRight className="w-3 h-3 text-[#38BDF8] flex-shrink-0 mt-1" />
                 <span className="text-gray-400 text-xs">{benefit}</span>
               </li>
             ))}
@@ -61,7 +61,7 @@ const ServiceCard = ({ icon: Icon, title, description, features, benefits, index
       <motion.button
         onClick={() => navigate('/contact')}
         whileHover={{ x: 5 }}
-        className="flex items-center space-x-2 text-primary font-semibold group/btn"
+        className="flex items-center space-x-2 text-[#38BDF8] font-semibold group/btn"
       >
         <span>Get Started</span>
         <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -195,15 +195,15 @@ const ServicesPage = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-4"
+              className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-4"
             >
-              <Shield className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Our Services</span>
+              <Shield className="w-4 h-4 text-[#38BDF8]" />
+              <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">Our Services</span>
             </motion.div>
             
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Full-Stack Technology &
-              <span className="text-primary"> Security Solutions</span>
+              <span className="text-[#38BDF8]"> Security Solutions</span>
             </h1>
             
             <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -236,7 +236,7 @@ const ServicesPage = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Why Choose <span className="text-primary">XSAV Lab</span>
+              Why Choose <span className="text-[#38BDF8]">XSAV Lab</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Industry-leading expertise and commitment to your success
@@ -260,8 +260,8 @@ const ServicesPage = () => {
                   transition={{ delay: index * 0.1 }}
                   className="text-center"
                 >
-                  <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mx-auto mb-4">
-                    <metric.icon className="w-6 h-6 text-primary" />
+                  <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-3 rounded-lg w-fit mx-auto mb-4">
+                    <metric.icon className="w-6 h-6 text-[#38BDF8]" />
                   </div>
                   <div className="text-lg font-semibold text-white mb-1">
                     {metric.value !== undefined ? (
@@ -285,9 +285,9 @@ const ServicesPage = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/30 rounded-2xl p-12 text-center"
+            className="bg-gradient-to-r from-primary/20 to-secondary/20 border border-[#38BDF8]/30 rounded-2xl p-12 text-center"
           >
-            <Award className="w-16 h-16 text-primary mx-auto mb-6" />
+            <Award className="w-16 h-16 text-[#38BDF8] mx-auto mb-6" />
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Ready to Get Started?
             </h2>
@@ -298,7 +298,7 @@ const ServicesPage = () => {
               onClick={() => navigate('/contact')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
+              className="inline-flex items-center space-x-2 bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-8 py-4 rounded-lg font-semibold shadow-lg shadow-primary/25 transition-all"
             >
               <span>Schedule Consultation</span>
               <ArrowRight className="w-5 h-5" />

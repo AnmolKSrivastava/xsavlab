@@ -268,7 +268,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
               resetForm();
               setShowAddVenture(!showAddVenture);
             }}
-            className="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white rounded-lg transition-colors flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Venture
@@ -308,7 +308,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                   required
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="TheWedHaven"
                 />
               </div>
@@ -321,7 +321,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                   value={formData.slug}
                   onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})}
                   required
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="thewedhaven"
                 />
               </div>
@@ -335,7 +335,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                 type="text"
                 value={formData.tagline}
                 onChange={(e) => setFormData({...formData, tagline: e.target.value})}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 placeholder="Making Wedding Planning Effortless"
               />
             </div>
@@ -348,7 +348,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({...formData, category: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 >
                   <option value="saas">SaaS Platform</option>
                   <option value="ecommerce">E-Commerce</option>
@@ -365,7 +365,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                   type="text"
                   value={formData.industry}
                   onChange={(e) => setFormData({...formData, industry: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="Wedding Planning"
                 />
               </div>
@@ -376,7 +376,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 >
                   <option value="live">Live</option>
                   <option value="in-development">In Development</option>
@@ -394,7 +394,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                 value={formData.shortDescription}
                 onChange={(e) => setFormData({...formData, shortDescription: e.target.value})}
                 rows={2}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 placeholder="Brief one-liner about the venture"
               />
             </div>
@@ -407,7 +407,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                 value={formData.fullDescription}
                 onChange={(e) => setFormData({...formData, fullDescription: e.target.value})}
                 rows={4}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 placeholder="Detailed description of the venture, its features, and benefits"
               />
             </div>
@@ -421,7 +421,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                   type="url"
                   value={formData.logo}
                   onChange={(e) => setFormData({...formData, logo: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="https://..."
                 />
                 <div className="mt-2 flex items-center gap-3">
@@ -445,7 +445,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                   type="url"
                   value={formData.featuredImage}
                   onChange={(e) => setFormData({...formData, featuredImage: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="https://..."
                 />
                 <div className="mt-2 flex items-center gap-3">
@@ -472,7 +472,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                   type="url"
                   value={formData.website}
                   onChange={(e) => setFormData({...formData, website: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   placeholder="https://thewedhaven.com"
                 />
               </div>
@@ -485,7 +485,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                   value={formData.order}
                   onChange={(e) => setFormData({...formData, order: parseInt(e.target.value) || 1})}
                   min="1"
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 />
               </div>
             </div>
@@ -496,7 +496,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                 id="featured"
                 checked={formData.featured}
                 onChange={(e) => setFormData({...formData, featured: e.target.checked})}
-                className="w-4 h-4 rounded border-gray-700 bg-gray-900 text-primary focus:ring-primary"
+                className="w-4 h-4 rounded border-gray-700 bg-gray-900 text-[#38BDF8] focus:ring-primary"
               />
               <label htmlFor="featured" className="text-sm text-gray-300">
                 Feature on homepage
@@ -506,7 +506,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
             <div className="flex gap-3 pt-2">
               <button
                 type="submit"
-                className="px-6 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors"
+                className="px-6 py-2 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white rounded-lg transition-colors"
               >
                 {editingVenture ? 'Update Venture' : 'Create Venture'}
               </button>
@@ -525,7 +525,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
       {/* Ventures List */}
       {venturesLoading ? (
         <div className="text-center py-12">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-[#38BDF8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Loading ventures...</p>
         </div>
       ) : ventures.length === 0 ? (
@@ -541,7 +541,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
           {ventures.map((venture) => (
             <div
               key={venture.id}
-              className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 hover:border-primary/50 transition-all"
+              className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 hover:border-[#38BDF8]/50 transition-all"
             >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
@@ -596,7 +596,7 @@ const VenturesTab = ({ user, userRole, ventures, setVentures, venturesLoading, s
                     href={venture.website || venture.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 px-3 py-2 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 text-sm rounded-lg transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-3 py-2 bg-[#38BDF8]/20 hover:bg-[#38BDF8]/30 text-[#38BDF8] border border-[#38BDF8]/30 text-sm rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
                     <Globe className="w-4 h-4" />
                     Visit Site

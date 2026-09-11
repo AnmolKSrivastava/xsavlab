@@ -44,15 +44,15 @@ const About = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-6"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-6"
           >
-            <Award className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">About Us</span>
+            <Award className="w-4 h-4 text-[#38BDF8]" />
+            <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">About Us</span>
           </motion.div>
           
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Securing The Digital Future With
-            <span className="text-primary"> Expert Solutions</span>
+            <span className="text-[#38BDF8]"> Expert Solutions</span>
           </h2>
           
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -71,8 +71,8 @@ const About = () => {
               transition={{ delay: index * 0.1 }}
               className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 text-center"
             >
-              <div className="bg-primary/10 border border-primary/30 p-4 rounded-lg w-fit mx-auto mb-4">
-                <value.icon className="w-8 h-8 text-primary" />
+              <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-4 rounded-lg w-fit mx-auto mb-4">
+                <value.icon className="w-8 h-8 text-[#38BDF8]" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">{value.title}</h3>
               <p className="text-gray-400 text-sm leading-relaxed">{value.description}</p>
@@ -118,7 +118,7 @@ const About = () => {
             onClick={() => navigate('/about')}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 hover:bg-primary/20 text-primary px-6 py-3 rounded-lg font-semibold transition-all"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 hover:bg-[#38BDF8]/20 text-[#38BDF8] px-6 py-3 rounded-lg font-semibold transition-all"
           >
             <span>Learn More About Us</span>
             <ArrowRight className="w-4 h-4" />

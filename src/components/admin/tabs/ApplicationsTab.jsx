@@ -210,7 +210,7 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
               onClick={() => setFilterStatus(status)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 filterStatus === status
-                  ? 'bg-primary text-white'
+                  ? 'bg-[#38BDF8] text-white'
                   : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
               }`}
             >
@@ -223,7 +223,7 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
           <select
             value={filterJob}
             onChange={(e) => setFilterJob(e.target.value)}
-            className="bg-gray-800/50 border border-gray-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary"
+            className="bg-gray-800/50 border border-gray-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-[#38BDF8]"
           >
             <option value="all">All Jobs</option>
             {uniqueJobs.map(job => (
@@ -235,7 +235,7 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
 
       {applicationsLoading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#38BDF8]"></div>
         </div>
       ) : filteredApplications.length === 0 ? (
         <div className="text-center py-12 bg-gray-800/30 rounded-lg border border-gray-700/50">
@@ -433,7 +433,7 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
                   <select
                     value={application.status}
                     onChange={(e) => handleStatusChange(application.id, e.target.value)}
-                    className="bg-gray-900/50 border border-gray-700 text-white text-xs px-2 py-1 rounded focus:outline-none focus:border-primary"
+                    className="bg-gray-900/50 border border-gray-700 text-white text-xs px-2 py-1 rounded focus:outline-none focus:border-[#38BDF8]"
                   >
                     {statusOptions.map(status => (
                       <option key={status} value={status}>
@@ -541,7 +541,7 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
                     handleStatusChange(viewingApplication.id, e.target.value);
                     setViewingApplication({ ...viewingApplication, status: e.target.value });
                   }}
-                  className="bg-gray-800/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                  className="bg-gray-800/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 >
                   {statusOptions.map(status => (
                     <option key={status} value={status}>
@@ -575,7 +575,7 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
                       value={newNote}
                       onChange={(e) => setNewNote(e.target.value)}
                       placeholder="Add a note..."
-                      className="flex-1 bg-gray-800/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary text-sm"
+                      className="flex-1 bg-gray-800/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8] text-sm"
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
                           handleAddNote(viewingApplication.id);
@@ -585,7 +585,7 @@ const ApplicationsTab = ({ user, userRole, applications, setApplications, applic
                     <button
                       onClick={() => handleAddNote(viewingApplication.id)}
                       disabled={!newNote.trim()}
-                      className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center space-x-2 bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Send className="w-4 h-4" />
                     </button>

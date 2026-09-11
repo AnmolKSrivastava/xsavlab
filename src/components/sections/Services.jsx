@@ -10,11 +10,11 @@ const ServiceCard = ({ icon: Icon, title, description, features, index, onSchedu
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.15 }}
-      className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl p-8 transition-all duration-300 group"
+      className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl p-8 transition-all duration-300 group"
     >
       {/* Icon */}
-      <div className="bg-primary/10 border border-primary/30 p-4 rounded-lg w-fit mb-6 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
-        <Icon className="w-8 h-8 text-primary" />
+      <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-4 rounded-lg w-fit mb-6 group-hover:bg-[#38BDF8]/20 group-hover:scale-110 transition-all duration-300">
+        <Icon className="w-8 h-8 text-[#38BDF8]" />
       </div>
 
       {/* Title */}
@@ -29,7 +29,7 @@ const ServiceCard = ({ icon: Icon, title, description, features, index, onSchedu
       <ul className="space-y-3 mb-6">
         {features.map((feature, idx) => (
           <li key={idx} className="flex items-start space-x-3">
-            <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-4 h-4 text-[#38BDF8] flex-shrink-0 mt-0.5" />
             <span className="text-gray-300 text-sm">{feature}</span>
           </li>
         ))}
@@ -39,7 +39,7 @@ const ServiceCard = ({ icon: Icon, title, description, features, index, onSchedu
       <motion.button
         onClick={() => onScheduleClick && onScheduleClick(serviceId)}
         whileHover={{ x: 5 }}
-        className="flex items-center space-x-2 text-primary font-semibold group/btn"
+        className="flex items-center space-x-2 text-[#38BDF8] font-semibold group/btn"
       >
         <span>Get Started</span>
         <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -125,15 +125,15 @@ const Services = ({ onScheduleClick }) => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-6"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-6"
           >
-            <Shield className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Our Services</span>
+            <Shield className="w-4 h-4 text-[#38BDF8]" />
+            <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">Our Services</span>
           </motion.div>
           
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Full-Stack Technology &
-            <span className="text-primary"> Security Solutions</span>
+            <span className="text-[#38BDF8]"> Security Solutions</span>
           </h2>
           
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -159,7 +159,7 @@ const Services = ({ onScheduleClick }) => {
             onClick={() => navigate('/services')}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 hover:bg-primary/20 text-primary px-6 py-3 rounded-lg font-semibold transition-all"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 hover:bg-[#38BDF8]/20 text-[#38BDF8] px-6 py-3 rounded-lg font-semibold transition-all"
           >
             <span>View All Services & Details</span>
             <ArrowRight className="w-4 h-4" />

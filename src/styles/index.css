@@ -31,12 +31,12 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #00D4FF;
+  background: #38BDF8;
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #7B61FF;
+  background: #38BDF8;
 }
 
 /* Thin scrollbar for horizontal tabs */
@@ -66,8 +66,8 @@ code {
 /* Grid background */
 .grid-bg {
   background-image: 
-    linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+    linear-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.1) 1px, transparent 1px);
   background-size: 50px 50px;
 }
 
@@ -80,9 +80,9 @@ code {
 
 /* Glow effect */
 .glow {
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
 }
 
 .glow-purple {
-  box-shadow: 0 0 20px rgba(123, 97, 255, 0.5);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
 }
