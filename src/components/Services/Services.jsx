@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { BriefcaseBusiness } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const SERVICES = [
 //   {
@@ -107,17 +108,19 @@ const LABELS = ["Cybersecurity", "Cloud", "AI", "Web", "Software", "Reach"];
 //   [[0.22, 0.74, 0.97], [1.0, 0.69, 0.13]],
 // ];
 
+const LOGO_CYAN = [0.220, 0.741, 0.973]; // #38BDF8
+const LOGO_CYAN_LIGHT = [0.55, 0.88, 1.0];
 const TONES = [
-  [[0.22, 0.74, 0.97], [0.42, 0.86, 1.0]],
-  [[0.22, 0.74, 0.97], [0.55, 0.9, 1.0]],
-  [[0.22, 0.74, 0.97], [0.85, 0.94, 1.0]],
-  [[0.22, 0.74, 0.97], [0.85, 0.94, 1.0]],
-  [[0.22, 0.74, 0.97], [0.6, 0.88, 1.0]],
-  [[0.22, 0.74, 0.97], [0.75, 0.9, 1.0]],
-  [[0.22, 0.74, 0.97], [0.42, 0.86, 1.0]],
+  [LOGO_CYAN, LOGO_CYAN_LIGHT],
+  [LOGO_CYAN, LOGO_CYAN_LIGHT],
+  [LOGO_CYAN, LOGO_CYAN_LIGHT],
+  [LOGO_CYAN, LOGO_CYAN_LIGHT],
+  [LOGO_CYAN, LOGO_CYAN_LIGHT],
+  [LOGO_CYAN, LOGO_CYAN_LIGHT],
 ];
 
 export default function Services() {
+  const navigate = useNavigate();
   const reelRef = useRef(null);
   const stageRef = useRef(null);
   const slidesRef = useRef(null);
@@ -302,7 +305,7 @@ export default function Services() {
     const U={};["uProj","uView","uModel","uMix","uTime","uSize","uBurst","uC1","uC2","uOp"].forEach(k=>U[k]=gl.getUniformLocation(pm,k));
     gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.disable(gl.DEPTH_TEST);
 
-    let dpr=1,mx=0,my=0,tx=0,ty=0,clock=0,current=-1,progress=0,shownIdx=0,mixT=0,burst=0,raf=0,ticking=false;
+    let dpr=1,mx=0,my=0,tx=0,ty=0,clock=0,current=-1,progress=0,shownIdx=0,mixT=0,burst=0,raf=0,ticking=false,settleT=0;
 
     function sizeStage(){
       const r=stage.getBoundingClientRect();if(!r.width||!r.height)return false;
@@ -334,6 +337,7 @@ export default function Services() {
       const active = e < 0.5 ? i : i + 1;
       if (active !== current) {
         current = active;
+        settleT = 0; // face front on each new section, then sway
         slides.forEach((el, k) => el.classList.toggle("on", k === active));
         Array.from(nav?.querySelectorAll(".reel-dot") || []).forEach((d, k) =>
           d.setAttribute("aria-current", k === active ? "true" : "false")
@@ -348,8 +352,14 @@ export default function Services() {
       const aspect=stage.width/stage.height,wideLayout=r.width>=1024;
       gl.uniformMatrix4fv(U.uProj,false,M.persp(0.9,aspect,0.1,60));
       gl.uniformMatrix4fv(U.uView,false,wideLayout?M.trans(1.3,0,-4.5):M.trans(0,0.85,-5.9));
-      const yaw=Math.sin(clock*0.22)*0.42+mx*0.5+progress*0.55;
-      gl.uniformMatrix4fv(U.uModel,false,M.mul(M.rotY(yaw),M.rotX(-0.10+my*0.26)));
+      // Front-facing on section entry, then ease into sway (dampen during morph)
+      const settle=Math.min(1,settleT/1.35);
+      const settleEase=settle*settle*(3-2*settle);
+      const morphDamp=1-Math.sin(Math.PI*mixT)*0.9;
+      const amp=settleEase*morphDamp;
+      const yaw=Math.sin(clock*0.22)*0.42*amp+mx*0.45*amp;
+      const pitch=(-0.08+my*0.22)*amp;
+      gl.uniformMatrix4fv(U.uModel,false,M.mul(M.rotY(yaw),M.rotX(pitch)));
       attrib(gl,pm,"aA",bufs[shownIdx],3);attrib(gl,pm,"aB",bufs[Math.min(shownIdx+1,COUNT-1)],3);attrib(gl,pm,"aSeed",bSeed,1);
       const t1=TONES[shownIdx],t2=TONES[Math.min(shownIdx+1,COUNT-1)];
       const lerp=(a,b,k,i)=>a[i]+(b[i]-a[i])*k;
@@ -407,6 +417,7 @@ export default function Services() {
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
       clock += dt;
+      settleT += dt;
       mx += (tx - mx) * 0.06;
       my += (ty - my) * 0.06;
       readProgress();
@@ -434,19 +445,28 @@ export default function Services() {
       ref={reelRef}
       style={{ minHeight: '100svh' }}
     >
+      <div className="shell services-section-header">
+        <div className="services-page-label">
+          <BriefcaseBusiness aria-hidden="true" className="w-4 h-4" />
+          <span>Services</span>
+        </div>
+        <h2 className="services-section-title">
+          Securing Growth And Innovation With
+          <span className="tint"> Expert Services</span>
+        </h2>
+        <p className="services-section-lede">
+          From cybersecurity and cloud to AI and custom software, we design and deliver
+          solutions that protect your business and accelerate growth.
+        </p>
+      </div>
       <div className="reel-stage">
         <canvas ref={stageRef} aria-hidden="true" />
         <div className="reel-grade" aria-hidden="true" />
         <div className="reel-in">
           <div className="shell">
-            <div className="services-page-label">
-              <BriefcaseBusiness aria-hidden="true" />
-              <span>Services</span>
-            </div>
             <div className="slides" ref={slidesRef}>
               {SERVICES.map((service, index) => (
                 <article className={`slide ${index === 0 ? "on" : ""}`} key={service.label}>
-                  <p className={`eyebrow ${service.amber ? "amber" : ""}`}>{service.label}</p>
                   <h2 className="dsp">{service.title}</h2>
                   <p>{service.description}</p>
                   <div className="slide-meta">
@@ -458,7 +478,11 @@ export default function Services() {
                     <div className="slide-actions">
                       <a
                         className="btn"
-                        href={service.overview ? "mailto:contact@xsavlab.com?subject=Security%20assessment%20request" : "mailto:contact@xsavlab.com?subject=Consultation%20request"}
+                        href="/contact"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          navigate("/contact");
+                        }}
                       >
                         {service.overview ? "Request security assessment" : "Schedule consultation"}
                         <svg
@@ -504,16 +528,27 @@ export default function Services() {
         .services-reel .dsp{font-family:inherit;font-weight:700;text-transform:none;line-height:1.15;letter-spacing:normal;margin:0;text-wrap:balance}
         .services-reel .tint{color:var(--signal)}.services-reel .tint-a{color:var(--amber)}
         .services-reel .shell{width:100%;max-width:var(--shell);margin-inline:auto;padding-inline:var(--gut)}
-        .services-reel .services-page-label{display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;padding:8px 14px;border:1px solid rgba(56,189,248,.3);border-radius:999px;background:rgba(56,189,248,.1);color:var(--signal);font-family:inherit;font-size:.875rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}.services-reel .services-page-label svg{width:16px;height:16px;flex:none}
-        .services-reel .eyebrow{font-family:inherit;font-size:var(--fs-label);font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--signal);display:inline-flex;align-items:center;gap:8px;margin:0;padding:8px 16px;border-radius:999px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3)}
+        .services-reel .services-section-header{display:flex;flex-direction:column;align-items:center;text-align:center;padding-block:clamp(64px,8vw,96px) clamp(32px,4vw,48px);margin-bottom:0;max-width:var(--shell)}
+        .services-reel .services-page-label{display:inline-flex;align-items:center;gap:8px;margin:0 0 1.5rem;padding:8px 16px;border:1px solid rgba(56,189,248,.3);border-radius:999px;background:rgba(56,189,248,.1);color:#38BDF8;font-family:inherit;font-size:.875rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+        .services-reel .services-page-label svg{width:16px;height:16px;flex:none;color:#38BDF8}
+        .services-reel .services-section-title{margin:0 0 1.5rem;font-size:clamp(2.25rem,5vw,3rem);font-weight:700;line-height:1.2;letter-spacing:normal;text-transform:none;color:#fff;text-wrap:balance;max-width:none;white-space:normal}
+        @media (min-width:1024px){.services-reel .services-section-title{white-space:nowrap;font-size:2.75rem}}
+        .services-reel .services-section-lede{margin:0 auto;max-width:48rem;color:#d1d5db;font-size:1.25rem;line-height:1.625}
+        .services-reel .eyebrow{font-family:inherit;font-size:.75rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--signal);display:inline-flex;align-items:center;gap:8px;margin:0;padding:6px 12px;border-radius:999px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3)}
         .services-reel .eyebrow::before{display:none}
         .services-reel .eyebrow.amber{color:var(--amber)}
-        .services-reel .reel-stage{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:flex-start}
+        .services-reel .eyebrow-spacer{display:none}
+        .services-reel .reel-stage{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center}
         .services-reel .reel-stage>canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
         .services-reel .reel-grade{position:absolute;inset:0;pointer-events:none;background:transparent}
-        .services-reel .reel-in{position:relative;z-index:3;width:100%;padding-top:12px}
-        .services-reel .slides{position:relative}@media(min-width:1024px){.services-reel .slides{max-width:46%}}
-        .services-reel .slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:flex-start;gap:20px;opacity:0;visibility:hidden;transform:translateY(26px);will-change:opacity,transform;transition:opacity .45s ease,transform .45s ease,visibility .45s}
+        .services-reel .reel-in{position:relative;z-index:3;width:100%;padding-top:0;padding-bottom:0;display:flex;align-items:center;min-height:100%}
+        .services-reel .slides{position:relative;width:100%}
+        @media(min-width:1024px){
+          .services-reel .reel-in{min-height:calc(100svh - 5rem)}
+          .services-reel .slides{max-width:46%;display:flex;align-items:center}
+          .services-reel .slide.on{width:100%}
+        }
+        .services-reel .slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:20px;opacity:0;visibility:hidden;transform:translateY(26px);will-change:opacity,transform;transition:opacity .45s ease,transform .45s ease,visibility .45s}
         .services-reel .slide.on{position:relative;opacity:1;visibility:visible;transform:none}
         .services-reel .slide h2{font-size:clamp(2.25rem,4vw,3rem);line-height:1.15;max-width:100%;overflow-wrap:anywhere}
         .services-reel .slide p{color:#d1d5db;max-width:48ch;font-size:1.25rem;line-height:1.625}
@@ -540,7 +575,9 @@ export default function Services() {
         @media(min-width:720px){.services-reel .reel-nav{display:flex}}
         @media(max-width:1023px){
           .services-reel .reel-stage{align-items:flex-end}
-          .services-reel .reel-in{padding-top:calc(var(--head) + 12px);padding-bottom:clamp(26px,5vh,64px)}
+          .services-reel .reel-in{padding-top:calc(var(--head) + 12px);padding-bottom:clamp(26px,5vh,64px);align-items:flex-end;min-height:0}
+          .services-reel .slides{display:block}
+          .services-reel .slide{justify-content:flex-start}
           .services-reel .reel-grade{background:transparent}
           .services-reel .reel-cue{display:none}
           .services-reel .slide{gap:11px}

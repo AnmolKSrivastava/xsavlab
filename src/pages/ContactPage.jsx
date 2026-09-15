@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, CheckCircle, Clock, Shield, ArrowRight, AlertCircle, Loader } from 'lucide-react';
 import { submitEnquiry } from '../services/enquiry';
+import LogoParticles from '../components/Hero/LogoParticles';
 
 const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
   const [formData, setFormData] = useState({
@@ -107,6 +108,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
               className="lg:col-span-2"
             >
               <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-8 sticky top-24">
+                <LogoParticles variant="idle" className="mb-6 -mt-2" height={200} />
                 <h3 className="text-2xl font-bold text-white mb-6">Contact Information</h3>
                 
                 <div className="space-y-5 mb-8">
