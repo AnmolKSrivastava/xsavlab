@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
+import { Shield } from 'lucide-react';
 
 const REEL_CSS = `
-:root {
+.reel-root {
   color-scheme: dark;
 
   --void:      #0B0F19;
@@ -19,56 +20,90 @@ const REEL_CSS = `
   --slate-dim: #5B6C89;
   --ok:        #34D399;
 
-  --ui: "Playfair Display", Georgia, serif;
+  --ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
   --display: var(--ui);
   --sans: var(--ui);
-  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --mono: var(--ui);
 
-  --fs-label: 0.6875rem;
+  --fs-label: 0.75rem;
   --shell: 1440px;
   --gut: clamp(18px, 4vw, 60px);
   --head: 0px;
-}
 
-.reel-root * { box-sizing: border-box; }
-
-.reel-root {
   background: transparent;
-width: 100%;
+  width: 100%;
   min-width: 100%;
   margin: 0;
   padding: 0;
   color: var(--ice);
-  font-family: var(--sans);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   font-size: clamp(1rem, .5vw + .88rem, 1.0625rem);
   line-height: 1.62;
   -webkit-font-smoothing: antialiased;
 }
+
+.reel-root * { box-sizing: border-box; }
 
 .reel-root ::selection { background: var(--amber); color: #12100A; }
 .reel-root a { color: inherit; }
 .reel-root :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
 .reel-root p { margin: 0; }
 
-.reel-root .dsp { font-family: var(--display); font-weight: 800; text-transform: uppercase; line-height: .9; letter-spacing: -0.028em; margin: 0; text-wrap: balance; }
+.reel-root .dsp {
+  font-family: inherit;
+  font-weight: 700;
+  text-transform: none;
+  line-height: 1.15;
+  letter-spacing: normal;
+  margin: 0;
+  text-wrap: balance;
+}
 .reel-root .tint { color: var(--signal); }
 .reel-root .tint-a { color: var(--amber); }
 
 .reel-root .shell { width: 100%; max-width: var(--shell); margin-inline: auto; padding-inline: var(--gut); }
 
-.reel-root .eyebrow { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .22em; text-transform: uppercase; color: var(--signal); display: flex; align-items: flex-start; gap: 12px; margin: 0; }
-.reel-root .eyebrow::before { content: ""; width: 26px; height: 2px; background: currentColor; flex: none; margin-top: .62em; }
+.reel-root .slide p.eyebrow,
+.reel-root .eyebrow {
+  font-family: inherit !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: var(--signal) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  max-width: none !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(56, 189, 248, 0.1) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  line-height: 1.2 !important;
+}
+.reel-root .eyebrow svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: var(--signal);
+}
+.reel-root .eyebrow::before { display: none !important; content: none !important; }
 .reel-root .eyebrow.amber { color: var(--amber); }
 
 .reel-root .btn {
-  --bg: var(--amber); --fg: #12100A;
+  --bg: var(--amber); --fg: #0B0F19;
   display: inline-flex; align-items: center; gap: 10px;
-  padding: 10px 17px; background: var(--bg); color: var(--fg);
-  border: 2px solid var(--bg); border-radius: 999px;
-  font-family: var(--mono); font-size: .80rem; font-weight: 500;
-  letter-spacing: .08em; text-transform: uppercase; text-decoration: none;
+  padding: 12px 24px; background: var(--bg); color: var(--fg);
+  border: 1px solid var(--bg); border-radius: 0.5rem;
+  font-family: inherit; font-size: 0.875rem; font-weight: 600;
+  letter-spacing: normal; text-transform: none; text-decoration: none;
   cursor: pointer; white-space: nowrap;
-  transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease, border-color .3s ease, color .3s ease;
+  transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease, border-color .3s ease, color .3s ease, background .3s ease;
 }
 .reel-root .btn:hover {
   transform: none;
@@ -81,16 +116,20 @@ width: 100%;
 .reel-root .btn.ghost { --bg: transparent; --fg: var(--ice); border-color: var(--line-hot); }
 .reel-root .btn.ghost:hover { border-color: var(--ice); box-shadow: none; }
 
-.reel-root .reel {   position: relative;
+.reel-root .hero-reel {
+  position: relative;
   width: 100%;
   margin: 0;
-  padding: 0;}
+  padding: 0;
+}
 
 .reel-root .reel-stage {
   position: sticky; top: 0;
-  height: 100svh;
+  height: calc(100svh - 5rem);
+  min-height: 0;
   overflow: hidden;
-  display: flex; align-items: center;
+  display: flex;
+  align-items: flex-start !important;
 }
 
 .reel-root #stage3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -102,8 +141,8 @@ width: 100%;
     linear-gradient(90deg, var(--void) 0%, rgba(11,15,25,.86) 34%, rgba(11,15,25,.3) 62%, transparent 84%);
 }
 @media (max-width: 1023px) {
-  .reel-root .reel-stage { align-items: flex-end; }
-  .reel-root .reel-in { padding-top: 0; padding-bottom: clamp(40px, 8vh, 96px); }
+  .reel-root .reel-stage { align-items: flex-start !important; height: calc(100svh - 5rem); }
+  .reel-root .reel-in { padding-bottom: clamp(26px, 5vh, 64px); }
   .reel-root .reel-grade {
     background: linear-gradient(180deg,
       rgba(11,15,25,.10) 0%, rgba(11,15,25,.22) 26%, rgba(11,15,25,.72) 46%,
@@ -111,7 +150,13 @@ width: 100%;
   }
 }
 
-.reel-root .reel-in { position: relative; z-index: 3; width: 100%; padding-top: var(--head); }
+.reel-root .reel-in {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  padding-bottom: 0;
+  margin-top: 0;
+}
 
 .reel-root .slides { position: relative; }
 @media (min-width: 1024px) { .reel-root .slides { max-width: 46%; } }
@@ -131,16 +176,16 @@ width: 100%;
 .reel-root .slide.on { position: relative; opacity: 1; visibility: visible; transform: none; }
 
 .reel-root .slide h2 {
-  font-size: clamp(1.8rem, 3.5vw, 3.2rem);
-  line-height: 0.95;
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  line-height: 1.15;
   max-width: 100%;
   overflow-wrap: anywhere;
 }
-.reel-root .slide p {
-  color: var(--slate);
-  max-width: 42ch;
-  font-size: 0.9rem;
-  line-height: 1.45;
+.reel-root .slide > p:not(.eyebrow) {
+  color: #d1d5db;
+  max-width: 48ch;
+  font-size: 1.25rem;
+  line-height: 1.625;
 }
 
 .reel-root .slide-meta {
@@ -153,23 +198,22 @@ width: 100%;
   flex: 0 1 auto;
   min-width: 0;
 
-  border: 1px solid var(--line-hot);
-  border-radius: 999px;
+  border: 1px solid rgba(55, 65, 81, 0.5);
+  border-radius: 0.5rem;
 
-  background: rgba(7, 11, 20, 0.82);
+  background: rgba(31, 41, 55, 0.4);
   backdrop-filter: blur(8px);
 
-  /* Increased size */
   padding: 10px 17px;
 
-  font-family: var(--mono);
-  font-size: 0.78rem;
+  font-family: inherit;
+  font-size: 0.875rem;
   font-weight: 500;
 
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: normal;
+  text-transform: none;
 
-  color: var(--ice);
+  color: #9ca3af;
 
   white-space: normal;
   max-width: 100%;
@@ -192,13 +236,8 @@ width: 100%;
 }
 
 .reel-root .btn {
-  padding: 10px 17px;
-  font-size: 0.6rem;
-}
-
-.reel-root .eyebrow {
-  font-size: 0.6rem;
-  letter-spacing: 0.16em;
+  padding: 12px 24px;
+  font-size: 0.875rem;
 }
 
 .reel-root .reel-nav {
@@ -230,26 +269,26 @@ width: 100%;
 @keyframes reel-drop { 0%,100% { transform: scaleY(.3); transform-origin: top; opacity: .35; } 50% { transform: scaleY(1); transform-origin: top; opacity: 1; } }
 
 @media (max-width: 1023px) {
-  .reel-root .reel-stage { align-items: flex-end; }
-  .reel-root .reel-in { padding-top: calc(var(--head) + 12px); padding-bottom: clamp(26px, 5vh, 64px); }
+  .reel-root .reel-stage { align-items: flex-start !important; }
+  .reel-root .reel-in { padding-bottom: clamp(26px, 5vh, 64px); }
   .reel-root .reel-cue { display: none; }
   .reel-root .slide { gap: 11px; }
-  .reel-root .slide h2 { font-size: clamp(1.45rem, 7vw, 2.6rem); }
-  .reel-root .slide p { font-size: .875rem; line-height: 1.5; }
+  .reel-root .slide h2 { font-size: clamp(1.875rem, 6vw, 2.5rem); }
+  .reel-root .slide > p:not(.eyebrow) { font-size: 1.125rem; line-height: 1.625; }
   .reel-root .slide-actions { width: 100%; gap: 9px; }
   .reel-root .slide-actions .btn {
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
 }
   
 }
 
 @media (max-width: 700px) {
   .reel-root .slide-meta { gap: 6px; }
-  .reel-root .slide-meta span { padding: 6px 10px; font-size: .5625rem; letter-spacing: .08em; }
+  .reel-root .slide-meta span { padding: 8px 12px; font-size: 0.8125rem; letter-spacing: normal; text-transform: none; }
 }
 
 @media (min-width: 1900px) {
@@ -270,7 +309,7 @@ width: 100%;
     font-size: clamp(3.6rem, 3.7vw, 5rem);
   }
 
-  .reel-root .slide p {
+  .reel-root .slide > p:not(.eyebrow) {
     max-width: 52ch;
     font-size: 1.08rem;
   }
@@ -295,19 +334,19 @@ width: 100%;
 }
 
 @media (max-width: 400px) {
-  .reel-root .slide h2 { font-size: 1.45rem; }
-  .reel-root .slide p { font-size: .8125rem; }
+  .reel-root .slide h2 { font-size: 1.75rem; }
+  .reel-root .slide > p:not(.eyebrow) { font-size: 1rem; }
   .reel-root .slide-actions { flex-direction: column; }
 }
 
 /* Keep all hero copy inside short mobile and landscape viewports. */
 @media (max-width: 1023px) and (max-height: 620px) {
-  .reel-root .reel-in { padding-top: 12px; padding-bottom: 18px; }
+  .reel-root .reel-in { padding-bottom: 18px; }
   .reel-root .slide { gap: 7px; }
-  .reel-root .slide h2 { font-size: clamp(1.3rem, 5vw, 2rem); }
-  .reel-root .slide p { font-size: .78rem; line-height: 1.35; }
-  .reel-root .slide-meta span { padding: 4px 8px; font-size: .5rem; }
-  .reel-root .slide-actions .btn { padding: 9px 12px; font-size: .53rem; }
+  .reel-root .slide h2 { font-size: clamp(1.5rem, 5vw, 2rem); }
+  .reel-root .slide > p:not(.eyebrow) { font-size: 1rem; line-height: 1.5; }
+  .reel-root .slide-meta span { padding: 6px 10px; font-size: 0.75rem; }
+  .reel-root .slide-actions .btn { padding: 10px 16px; font-size: 0.8125rem; }
 }
 
 /* Large desktop and ultra-wide displays */
@@ -316,7 +355,7 @@ width: 100%;
   .reel-root .slides { max-width: 48%; }
   .reel-root .slide { gap: 22px; }
   .reel-root .slide h2 { font-size: clamp(3.6rem, 3.7vw, 5rem); }
-  .reel-root .slide p { max-width: 52ch; font-size: 1.08rem; }
+  .reel-root .slide > p:not(.eyebrow) { max-width: 52ch; font-size: 1.08rem; }
   .reel-root .slide-meta { gap: 10px; }
   .reel-root .slide-meta span {
     padding: 12px 20px;
@@ -332,14 +371,12 @@ export default function Hero() {
     const rootRef = useRef(null);
     const stageRef = useRef(null);
     const reelRef = useRef(null);
-    const navRef = useRef(null);
     const cueRef = useRef(null);
 
     useEffect(() => {
         const root = rootRef.current;
         const stage = stageRef.current;
         const reel = reelRef.current;
-        const nav = navRef.current;
         const cue = cueRef.current;
         if (!root || !stage || !reel) return;
 
@@ -685,17 +722,20 @@ export default function Hero() {
         <div className="reel-root" ref={rootRef}>
             <style>{REEL_CSS}</style>
 
-            <section className="reel" id="reel" ref={reelRef}>
+            <section className="hero-reel" id="hero-reel" ref={reelRef}>
                 <div className="reel-stage">
                     <canvas id="stage3d" ref={stageRef} aria-hidden="true"></canvas>
                     <div className="reel-grade" aria-hidden="true"></div>
 
-                    <div className="reel-in">
+                    <div className="reel-in" style={{ paddingTop: '72px' }}>
                         <div className="shell">
                             <div className="slides" id="slides">
 
                                 <article className="slide on">
-                                    <p className="eyebrow">Trusted security partner</p>
+                                    <div className="eyebrow">
+                                        <Shield aria-hidden="true" />
+                                        <span>Trusted security partner</span>
+                                    </div>
                                     <h2 className="dsp">Innovate with AI.<br /><span className="tint">Secure with confidence.</span></h2>
                                     <p>Comprehensive security solutions, cloud infrastructure management, and expert consulting to safeguard your digital assets and ensure business continuity.</p>
                                     <div className="slide-meta">
