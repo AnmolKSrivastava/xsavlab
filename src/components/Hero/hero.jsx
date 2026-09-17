@@ -151,12 +151,27 @@ const REEL_CSS = `
     linear-gradient(90deg, var(--void) 0%, rgba(11,15,25,.86) 34%, rgba(11,15,25,.3) 62%, transparent 84%);
 }
 @media (max-width: 1023px) {
-  .reel-root .reel-stage { align-items: flex-start !important; height: calc(100svh - 5rem); }
-  .reel-root .reel-in { padding-bottom: clamp(26px, 5vh, 64px); }
+  .reel-root .reel-stage {
+    align-items: flex-start !important;
+    height: calc(100svh - 5rem);
+  }
+
+  .reel-root .reel-in {
+    padding-bottom: clamp(26px, 5vh, 64px);
+  }
+
+  /* LogoParticles - low opacity on mobile/tablet */
+  .reel-root #stage3d {
+    opacity: 0.40;
+  }
+
   .reel-root .reel-grade {
     background: linear-gradient(180deg,
-      rgba(11,15,25,.10) 0%, rgba(11,15,25,.22) 26%, rgba(11,15,25,.72) 46%,
-      rgba(11,15,25,.94) 62%, var(--void) 84%);
+      rgba(11,15,25,.10) 0%,
+      rgba(11,15,25,.22) 26%,
+      rgba(11,15,25,.72) 46%,
+      rgba(11,15,25,.94) 62%,
+      var(--void) 84%);
   }
 }
 
@@ -300,7 +315,7 @@ export default function Hero() {
                 <article className="slide on">
                   <div className="eyebrow">
                     <Shield aria-hidden="true" />
-                    <span>Trusted security partner</span>
+                    <span>Your Trusted security partner</span>
                   </div>
                   <h2 className="dsp">
                     Innovate with AI.

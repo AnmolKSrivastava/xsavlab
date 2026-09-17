@@ -180,6 +180,117 @@ export default function Services() {
       }
     }
 
+    function shapeSecure(N, out) {
+      const top = 1.12;
+      const shoulder = 0.28;
+      const tip = -1.2;
+      const maxW = 1.05;
+      const lift = 0.12;
+      const S = 0.9;
+
+      // Flat crown → gently curved flanks → pointed tip
+      function halfW(y) {
+        if (y >= shoulder) return maxW;
+        const t = Math.min(1, Math.max(0, (shoulder - y) / (shoulder - tip)));
+        return maxW * Math.sqrt(Math.max(0, 1 - t * t));
+      }
+
+      for (let i = 0; i < N; i++) {
+        const r = rnd();
+        let x = 0;
+        let y = 0;
+        let z = 0;
+
+        if (r < 0.48) {
+          // Outer rim only — no face fill behind the lock
+          const edgePick = rnd();
+          if (edgePick < 0.16) {
+            // Flat top edge
+            x = (rnd() * 2 - 1) * maxW;
+            y = top + (rnd() - 0.5) * 0.04;
+            z = rnd() < 0.5 ? 0.14 : -0.14;
+          } else if (edgePick < 0.88) {
+            y = tip + rnd() * (top - tip);
+            const side = rnd() < 0.5 ? -1 : 1;
+            x = side * (halfW(y) - rnd() * 0.045);
+            z = rnd() < 0.5 ? 0.15 : -0.15;
+          } else {
+            x = (rnd() - 0.5) * 0.1;
+            y = tip + rnd() * 0.1;
+            z = rnd() < 0.5 ? 0.12 : -0.12;
+          }
+        } else if (r < 0.58) {
+          // Inner rim (edge only)
+          y = tip + 0.12 + rnd() * (top - tip - 0.22);
+          const side = rnd() < 0.5 ? -1 : 1;
+          x = side * halfW(y) * 0.88;
+          z = rnd() < 0.5 ? 0.09 : -0.09;
+        } else if (r < 0.8) {
+          // Padlock body
+          const bw = 0.4;
+          const bh = 0.36;
+          const bx = 0;
+          const by = -0.02;
+          const pick = rnd();
+          if (pick < 0.72) {
+            x = bx + (rnd() * 2 - 1) * bw * 0.92;
+            y = by + (rnd() * 2 - 1) * bh * 0.92;
+            z = 0.1 + (rnd() - 0.5) * 0.03;
+          } else {
+            const e = (Math.random() * 4) | 0;
+            const t = rnd();
+            if (e === 0) {
+              x = bx - bw + 2 * bw * t;
+              y = by + bh;
+            } else if (e === 1) {
+              x = bx - bw + 2 * bw * t;
+              y = by - bh;
+            } else if (e === 2) {
+              x = bx - bw;
+              y = by - bh + 2 * bh * t;
+            } else {
+              x = bx + bw;
+              y = by - bh + 2 * bh * t;
+            }
+            z = 0.12;
+          }
+        } else if (r < 0.94) {
+          // Padlock shackle
+          const a0 = 0.15;
+          const a1 = Math.PI - 0.15;
+          const a = a0 + rnd() * (a1 - a0);
+          const rad = 0.32 + (rnd() - 0.5) * 0.05;
+          const thick = (rnd() - 0.5) * 0.07;
+          x = Math.cos(a) * (rad + thick);
+          y = 0.36 + Math.sin(a) * (rad * 0.95 + thick * 0.5);
+          z = 0.11 + (rnd() - 0.5) * 0.02;
+          if (rnd() < 0.22) {
+            const side = rnd() < 0.5 ? -1 : 1;
+            x = side * 0.32 + (rnd() - 0.5) * 0.05;
+            y = 0.18 - rnd() * 0.26;
+            z = 0.11;
+          }
+        } else {
+          // Keyhole
+          if (rnd() < 0.55) {
+            const a = rnd() * Math.PI * 2;
+            const rad = rnd() * 0.09;
+            x = Math.cos(a) * rad;
+            y = 0.06 + Math.sin(a) * rad;
+            z = 0.14;
+          } else {
+            x = (rnd() - 0.5) * 0.08;
+            y = -0.08 - rnd() * 0.18;
+            z = 0.14;
+          }
+        }
+
+        out[i * 3] = x * S;
+        out[i * 3 + 1] = (y + lift) * S;
+        out[i * 3 + 2] = z * S;
+      }
+    }
+
     function shapeCloud(N, out) {
       const lobes = [
         [0.00,0.10,0.00,0.78],[-0.85,-0.05,0.10,0.55],[0.85,-0.02,-0.10,0.58],
@@ -256,7 +367,7 @@ export default function Services() {
       }
     }
 
-    const SHAPES=[shapeShield,shapeCloud,shapeNeural,shapeScreen,shapeStack,shapeGlobe];
+    const SHAPES=[shapeSecure,shapeCloud,shapeNeural,shapeScreen,shapeStack,shapeGlobe];
 
     const V_MORPH =
       "attribute vec3 aA; attribute vec3 aB; attribute float aSeed;"+
