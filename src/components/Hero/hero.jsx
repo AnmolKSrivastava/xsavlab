@@ -151,27 +151,18 @@ const REEL_CSS = `
     linear-gradient(90deg, var(--void) 0%, rgba(11,15,25,.86) 34%, rgba(11,15,25,.3) 62%, transparent 84%);
 }
 @media (max-width: 1023px) {
-  .reel-root .reel-stage {
-    align-items: flex-start !important;
-    height: calc(100svh - 5rem);
-  }
-
+  .reel-root .reel-stage { align-items: flex-end !important; height: calc(100svh - 5rem); }
   .reel-root .reel-in {
-    padding-bottom: clamp(26px, 5vh, 64px);
+    padding-top: clamp(9rem, 30svh, 17rem);
+    padding-bottom: max(22px, env(safe-area-inset-bottom));
   }
-
-  /* LogoParticles - low opacity on mobile/tablet */
   .reel-root #stage3d {
     opacity: 0.40;
   }
-
   .reel-root .reel-grade {
     background: linear-gradient(180deg,
-      rgba(11,15,25,.10) 0%,
-      rgba(11,15,25,.22) 26%,
-      rgba(11,15,25,.72) 46%,
-      rgba(11,15,25,.94) 62%,
-      var(--void) 84%);
+      rgba(11,15,25,.10) 0%, rgba(11,15,25,.22) 26%, rgba(11,15,25,.72) 46%,
+      rgba(11,15,25,.94) 62%, var(--void) 84%);
   }
 }
 
@@ -179,6 +170,7 @@ const REEL_CSS = `
   position: relative;
   z-index: 3;
   width: 100%;
+  padding-top: 72px;
   padding-bottom: 0;
   margin-top: 0;
   pointer-events: auto;
@@ -250,10 +242,11 @@ const REEL_CSS = `
 }
 
 @media (max-width: 1023px) {
-  .reel-root .reel-stage { align-items: flex-start !important; }
   .reel-root .slides { max-width: 100%; }
   .reel-root .slide h2 { font-size: clamp(1.85rem, 7vw, 2.5rem); }
   .reel-root .slide > p:not(.eyebrow) { font-size: 1.05rem; max-width: 40ch; }
+  .reel-root .slide { gap: clamp(8px, 1.8vh, 14px); }
+  .reel-root .slide-meta span { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 }
 
 @media (max-width: 400px) {
@@ -262,8 +255,17 @@ const REEL_CSS = `
   .reel-root .slide-actions { flex-direction: column; }
 }
 
+@media (max-width: 480px) {
+  .reel-root { --gut: 18px; }
+  .reel-root .eyebrow { font-size: 0.6875rem !important; padding: 5px 9px !important; }
+  .reel-root .slide-meta { gap: 5px; }
+  .reel-root .slide-meta span { width: 100%; padding: 7px 10px; font-size: 0.75rem; }
+  .reel-root .slide-actions { width: 100%; }
+  .reel-root .slide-actions .btn { flex: 1 1 100%; justify-content: center; }
+}
+
 @media (max-width: 1023px) and (max-height: 620px) {
-  .reel-root .reel-in { padding-bottom: 18px; }
+  .reel-root .reel-in { padding-top: 56px; padding-bottom: 18px; }
   .reel-root .slide { gap: 7px; }
   .reel-root .slide h2 { font-size: clamp(1.5rem, 5vw, 2rem); }
   .reel-root .slide > p:not(.eyebrow) { font-size: 1rem; line-height: 1.5; }
@@ -309,7 +311,7 @@ export default function Hero() {
           <LogoParticles variant="hero" />
           <div className="reel-grade" aria-hidden="true" />
 
-          <div className="reel-in" style={{ paddingTop: '72px' }}>
+          <div className="reel-in">
             <div className="shell">
               <div className="slides" id="slides">
                 <article className="slide on">

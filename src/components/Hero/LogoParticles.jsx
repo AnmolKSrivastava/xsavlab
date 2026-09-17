@@ -266,9 +266,15 @@ export default function LogoParticles({
       } else {
         const wideLayout = r.width >= 1024;
         gl.uniformMatrix4fv(U.uProj, false, M.persp(0.9, aspect, 0.1, 60));
-        gl.uniformMatrix4fv(U.uView, false, wideLayout
-          ? M.trans(1.7, 0, -4.5)
-          : M.trans(0, 0.85, -5.9));
+        gl.uniformMatrix4fv(
+          U.uView,
+          false,
+          wideLayout
+            ? M.trans(1.7, 0, -4.5)
+            : r.width < 480
+              ? M.trans(0, 1.42, -6.2)
+              : M.trans(0, 1.12, -6.0)
+        );
         const yaw = Math.sin(clock * 0.22) * 0.42 + mx * 0.5;
         const model = M.mul(M.rotY(yaw), M.rotX(-0.1 + my * 0.26));
         gl.uniformMatrix4fv(U.uModel, false, model);

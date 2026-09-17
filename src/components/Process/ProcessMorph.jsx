@@ -274,117 +274,347 @@ export default function ProcessMorph() {
       }
     }
 
-    // 04 Secure — flat-top shield outline + padlock (empty face)
-    function shapeSecure(N, out) {
-      const top = 1.12;
-      const shoulder = 0.28;
-      const tip = -1.2;
-      const maxW = 1.05;
-      const lift = 0.12;
-      const S = 0.9;
+// 04 Secure — W-shaped crown shield + padlock
+function shapeSecure(N, out) {
+  const top = 1.12;          // outer top peaks
+  const valley = 0.68;       // first/second W valleys
+  const centerPeak = 0.92;   // center peak
+  const shoulder = 0.28;      // where side curves begin
+  const tip = -1.2;
 
-      // Flat crown → gently curved flanks → pointed tip
-      function halfW(y) {
-        if (y >= shoulder) return maxW;
-        const t = Math.min(1, Math.max(0, (shoulder - y) / (shoulder - tip)));
-        return maxW * Math.sqrt(Math.max(0, 1 - t * t));
+  const maxW = 1.05;
+  const lift = 0.12;
+  const S = 0.9;
+
+  // -----------------------------------------
+  // Shield side width
+  // -----------------------------------------
+  function halfW(y) {
+    // Upper side area:
+    // keep the outer sides wide
+    if (y >= shoulder) {
+      return maxW;
+    }
+
+    // Lower curved shield
+    const t = Math.min(
+      1,
+      Math.max(
+        0,
+        (shoulder - y) / (shoulder - tip)
+      )
+    );
+
+    return maxW * Math.sqrt(
+      Math.max(0, 1 - t * t)
+    );
+  }
+
+  // -----------------------------------------
+  // W-shaped crown
+  //
+  // LEFT OUTER PEAK
+  //        \ 
+  //         \
+  //          \ 
+  //           \/
+  //           /\
+  //          /  \
+  //         /    \
+  //        /
+  // RIGHT OUTER PEAK
+  // -----------------------------------------
+  function wTop(x) {
+    const ax = Math.abs(x);
+
+    // Left/right outer peak -> valley
+    if (ax >= 0.5) {
+      const t = (ax - 0.5) / 0.5;
+
+      return valley +
+        (top - valley) * Math.pow(t, 0.92);
+    }
+
+    // Valley -> center peak
+    const t = ax / 0.5;
+
+    return valley +
+      (centerPeak - valley) *
+      Math.pow(1 - t, 0.92);
+  }
+
+  for (let i = 0; i < N; i++) {
+    const r = rnd();
+
+    let x = 0;
+    let y = 0;
+    let z = 0;
+
+    // =========================================
+    // OUTER SHIELD
+    // =========================================
+    if (r < 0.48) {
+
+      const edgePick = rnd();
+
+      if (edgePick < 0.22) {
+
+        // =====================================
+        // W-SHAPED TOP
+        // =====================================
+
+        const xNorm = rnd() * 2 - 1;
+
+        x = xNorm * maxW;
+
+        // Convert x position to W crown
+        y = wTop(xNorm);
+
+        // Small particle variation
+        x += (rnd() - 0.5) * 0.035;
+        y += (rnd() - 0.5) * 0.035;
+
+        z = rnd() < 0.5
+          ? 0.14
+          : -0.14;
+
+      } else if (edgePick < 0.88) {
+
+        // =====================================
+        // OUTER CURVED SIDES
+        // =====================================
+
+        y = tip + rnd() * (top - tip);
+
+        const side =
+          rnd() < 0.5 ? -1 : 1;
+
+        x =
+          side *
+          (
+            halfW(y) -
+            rnd() * 0.045
+          );
+
+        z = rnd() < 0.5
+          ? 0.15
+          : -0.15;
+
+      } else {
+
+        // =====================================
+        // BOTTOM TIP
+        // =====================================
+
+        x = (rnd() - 0.5) * 0.10;
+
+        y = tip + rnd() * 0.10;
+
+        z = rnd() < 0.5
+          ? 0.12
+          : -0.12;
       }
 
-      for (let i = 0; i < N; i++) {
-        const r = rnd();
-        let x = 0;
-        let y = 0;
-        let z = 0;
+    // =========================================
+    // INNER SHIELD RIM
+    // =========================================
+    } else if (r < 0.58) {
 
-        if (r < 0.48) {
-          // Outer rim only — no face fill behind the lock
-          const edgePick = rnd();
-          if (edgePick < 0.16) {
-            // Flat top edge
-            x = (rnd() * 2 - 1) * maxW;
-            y = top + (rnd() - 0.5) * 0.04;
-            z = rnd() < 0.5 ? 0.14 : -0.14;
-          } else if (edgePick < 0.88) {
-            y = tip + rnd() * (top - tip);
-            const side = rnd() < 0.5 ? -1 : 1;
-            x = side * (halfW(y) - rnd() * 0.045);
-            z = rnd() < 0.5 ? 0.15 : -0.15;
-          } else {
-            x = (rnd() - 0.5) * 0.1;
-            y = tip + rnd() * 0.1;
-            z = rnd() < 0.5 ? 0.12 : -0.12;
-          }
-        } else if (r < 0.58) {
-          // Inner rim (edge only)
-          y = tip + 0.12 + rnd() * (top - tip - 0.22);
-          const side = rnd() < 0.5 ? -1 : 1;
-          x = side * halfW(y) * 0.88;
-          z = rnd() < 0.5 ? 0.09 : -0.09;
-        } else if (r < 0.8) {
-          // Padlock body
-          const bw = 0.4;
-          const bh = 0.36;
-          const bx = 0;
-          const by = -0.02;
-          const pick = rnd();
-          if (pick < 0.72) {
-            x = bx + (rnd() * 2 - 1) * bw * 0.92;
-            y = by + (rnd() * 2 - 1) * bh * 0.92;
-            z = 0.1 + (rnd() - 0.5) * 0.03;
-          } else {
-            const e = (Math.random() * 4) | 0;
-            const t = rnd();
-            if (e === 0) {
-              x = bx - bw + 2 * bw * t;
-              y = by + bh;
-            } else if (e === 1) {
-              x = bx - bw + 2 * bw * t;
-              y = by - bh;
-            } else if (e === 2) {
-              x = bx - bw;
-              y = by - bh + 2 * bh * t;
-            } else {
-              x = bx + bw;
-              y = by - bh + 2 * bh * t;
-            }
-            z = 0.12;
-          }
-        } else if (r < 0.94) {
-          // Padlock shackle
-          const a0 = 0.15;
-          const a1 = Math.PI - 0.15;
-          const a = a0 + rnd() * (a1 - a0);
-          const rad = 0.32 + (rnd() - 0.5) * 0.05;
-          const thick = (rnd() - 0.5) * 0.07;
-          x = Math.cos(a) * (rad + thick);
-          y = 0.36 + Math.sin(a) * (rad * 0.95 + thick * 0.5);
-          z = 0.11 + (rnd() - 0.5) * 0.02;
-          if (rnd() < 0.22) {
-            const side = rnd() < 0.5 ? -1 : 1;
-            x = side * 0.32 + (rnd() - 0.5) * 0.05;
-            y = 0.18 - rnd() * 0.26;
-            z = 0.11;
-          }
+      const xNorm = rnd() * 2 - 1;
+
+      x = xNorm * maxW * 0.88;
+
+      // Follow same W shape
+      y =
+        wTop(xNorm) -
+        0.10;
+
+      // Lower inner rim follows curved sides
+      if (y < shoulder) {
+        const side =
+          xNorm < 0 ? -1 : 1;
+
+        const t = Math.min(
+          1,
+          Math.max(
+            0,
+            (shoulder - y) /
+            (shoulder - tip)
+          )
+        );
+
+        x =
+          side *
+          maxW *
+          0.88 *
+          Math.sqrt(
+            Math.max(0, 1 - t * t)
+          );
+      }
+
+      z = rnd() < 0.5
+        ? 0.09
+        : -0.09;
+
+    // =========================================
+    // PADLOCK BODY
+    // =========================================
+    } else if (r < 0.80) {
+
+      const bw = 0.4;
+      const bh = 0.36;
+
+      const bx = 0;
+      const by = -0.02;
+
+      const pick = rnd();
+
+      if (pick < 0.72) {
+
+        x =
+          bx +
+          (rnd() * 2 - 1) *
+          bw *
+          0.92;
+
+        y =
+          by +
+          (rnd() * 2 - 1) *
+          bh *
+          0.92;
+
+        z =
+          0.1 +
+          (rnd() - 0.5) * 0.03;
+
+      } else {
+
+        const e =
+          (Math.random() * 4) | 0;
+
+        const t = rnd();
+
+        if (e === 0) {
+
+          x = bx - bw + 2 * bw * t;
+          y = by + bh;
+
+        } else if (e === 1) {
+
+          x = bx - bw + 2 * bw * t;
+          y = by - bh;
+
+        } else if (e === 2) {
+
+          x = bx - bw;
+          y = by - bh + 2 * bh * t;
+
         } else {
-          // Keyhole
-          if (rnd() < 0.55) {
-            const a = rnd() * Math.PI * 2;
-            const rad = rnd() * 0.09;
-            x = Math.cos(a) * rad;
-            y = 0.06 + Math.sin(a) * rad;
-            z = 0.14;
-          } else {
-            x = (rnd() - 0.5) * 0.08;
-            y = -0.08 - rnd() * 0.18;
-            z = 0.14;
-          }
+
+          x = bx + bw;
+          y = by - bh + 2 * bh * t;
         }
 
-        out[i * 3] = x * S;
-        out[i * 3 + 1] = (y + lift) * S;
-        out[i * 3 + 2] = z * S;
+        z = 0.12;
+      }
+
+    // =========================================
+    // PADLOCK SHACKLE
+    // =========================================
+    } else if (r < 0.94) {
+
+      const a0 = 0.15;
+      const a1 = Math.PI - 0.15;
+
+      const a =
+        a0 +
+        rnd() * (a1 - a0);
+
+      const rad =
+        0.32 +
+        (rnd() - 0.5) * 0.05;
+
+      const thick =
+        (rnd() - 0.5) * 0.07;
+
+      x =
+        Math.cos(a) *
+        (rad + thick);
+
+      y =
+        0.36 +
+        Math.sin(a) *
+        (rad * 0.95 + thick * 0.5);
+
+      z =
+        0.11 +
+        (rnd() - 0.5) * 0.02;
+
+      if (rnd() < 0.22) {
+
+        const side =
+          rnd() < 0.5 ? -1 : 1;
+
+        x =
+          side * 0.32 +
+          (rnd() - 0.5) * 0.05;
+
+        y =
+          0.18 -
+          rnd() * 0.26;
+
+        z = 0.11;
+      }
+
+    // =========================================
+    // KEYHOLE
+    // =========================================
+    } else {
+
+      if (rnd() < 0.55) {
+
+        const a =
+          rnd() * Math.PI * 2;
+
+        const rad =
+          rnd() * 0.09;
+
+        x =
+          Math.cos(a) * rad;
+
+        y =
+          0.06 +
+          Math.sin(a) * rad;
+
+        z = 0.14;
+
+      } else {
+
+        x =
+          (rnd() - 0.5) * 0.08;
+
+        y =
+          -0.08 -
+          rnd() * 0.18;
+
+        z = 0.14;
       }
     }
+
+    // =========================================
+    // FINAL SCALE
+    // =========================================
+
+    out[i * 3] =
+      x * S;
+
+    out[i * 3 + 1] =
+      (y + lift) * S;
+
+    out[i * 3 + 2] =
+      z * S;
+  }
+}
 
     const SHAPES = [shapeDiscover, shapeBuild, shapeLaunch, shapeSecure];
 
@@ -541,7 +771,11 @@ export default function ProcessMorph() {
         U.uView,
         false,
         // Keep the hologram to the right of copy; mobile lifts it above the text block
-        wideLayout ? M.trans(1.35, 0, -4.6) : M.trans(0.55, 1.15, -6.2)
+        wideLayout
+          ? M.trans(1.35, 0, -4.6)
+          : r.width < 480
+            ? M.trans(0, 1.55, -6.65)
+            : M.trans(0.3, 1.25, -6.35)
       );
       // Front-facing on section entry, then ease into sway (dampen during morph)
       const settle = Math.min(1, settleT / 1.35);
@@ -769,15 +1003,34 @@ export default function ProcessMorph() {
         @media(min-width:720px){.process-reel .reel-nav{display:flex}}
         @media(max-width:1023px){
           .process-reel .reel-stage{align-items:flex-end}
-          .process-reel .reel-in{padding-top:calc(var(--head) + 12px);padding-bottom:clamp(26px,5vh,64px);align-items:flex-end;min-height:0}
+          .process-reel .reel-in{padding-top:clamp(9rem,31svh,17rem);padding-bottom:max(20px,env(safe-area-inset-bottom));align-items:flex-end;min-height:0}
           .process-reel .slide{justify-content:flex-start;gap:12px}
           .process-reel .slide h2{font-size:clamp(1.85rem,6vw,2.4rem)}
           .process-reel .slide>p:not(.eyebrow){font-size:1.05rem}
+          .process-reel .reel-grade{background:linear-gradient(180deg,transparent 0%,rgba(11,15,25,.16) 32%,rgba(11,15,25,.86) 55%,var(--void) 84%)}
           .process-reel .reel-cue{display:none}
         }
         @media(max-width:700px){
           .process-reel .slide-meta{gap:6px}
           .process-reel .slide-meta span{padding:8px 12px;font-size:.8125rem}
+        }
+        @media(max-width:480px){
+          .process-reel{--gut:18px}
+          .process-reel .process-section-header{padding-block:64px 30px}
+          .process-reel .process-page-label{margin-bottom:1rem;padding:6px 11px;font-size:.75rem}
+          .process-reel .process-section-title{margin-bottom:1rem;font-size:2rem}
+          .process-reel .process-section-lede{font-size:1rem;line-height:1.55}
+          .process-reel .slide-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+          .process-reel .slide-meta span{width:100%;padding:7px 9px;font-size:.75rem}
+          .process-reel .slide-actions{width:100%}
+          .process-reel .slide-actions .btn{width:100%;justify-content:center}
+        }
+        @media(max-width:1023px) and (max-height:620px){
+          .process-reel .reel-in{padding-top:52px;padding-bottom:18px}
+          .process-reel .slide{gap:7px}
+          .process-reel .slide h2{font-size:clamp(1.5rem,5vw,2rem)}
+          .process-reel .slide>p:not(.eyebrow){font-size:1rem;line-height:1.5}
+          .process-reel .slide-meta span{padding:6px 10px;font-size:.75rem}
         }
         @media(prefers-reduced-motion:reduce){
           .process-reel .reel-cue i{animation:none}
