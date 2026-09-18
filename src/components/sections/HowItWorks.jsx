@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FileSearch, Settings, Rocket, Shield, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import LogoParticles from '../Hero/LogoParticles';
+// import LogoParticles from '../Hero/LogoParticles';
 
 const HowItWorks = () => {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ const HowItWorks = () => {
           viewport={{ once: true }}
           className="text-center mb-20"
         >
-          <LogoParticles variant="idle" className="mx-auto mb-8 max-w-md" height={160} />
+          {/* <LogoParticles variant="idle" className="mx-auto mb-8 max-w-md" height={160} /> */}
 
           <motion.div
             initial={{ opacity: 0 }}
