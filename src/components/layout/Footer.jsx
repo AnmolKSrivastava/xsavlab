@@ -120,23 +120,23 @@ const Footer = () => {
         </div>
 
         {/* Newsletter Section */}
-        <div className="border-t border-gray-800 pt-12 mb-12">
+        <div className="border-t border-gray-800 pt-8 sm:pt-12 mb-8 sm:mb-12">
           <div className="max-w-2xl">
-            <h3 className="text-2xl font-bold text-white mb-3">Stay Updated on Security Trends</h3>
-            <p className="text-gray-400 mb-6">
+            <h3 className="text-xl sm:text-2xl font-bold leading-tight text-white mb-3">Stay Updated on Security Trends</h3>
+            <p className="text-sm sm:text-base text-gray-400 mb-5 sm:mb-6">
               Get the latest cybersecurity insights, threat intelligence, and best practices delivered to your inbox.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-[#38BDF8] focus:ring-1 focus:ring-primary outline-none transition-all"
+                className="w-full min-w-0 flex-1 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-[#38BDF8] focus:ring-1 focus:ring-primary outline-none transition-all"
               />
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 aria-label="Subscribe to security updates"
-                className="bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-6 py-3 rounded-lg font-semibold transition-all flex items-center space-x-2 whitespace-nowrap"
+                className="w-full sm:w-auto justify-center bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-6 py-3 rounded-lg font-semibold transition-all flex items-center space-x-2 whitespace-nowrap"
               >
                 <span>Subscribe</span>
                 <ArrowRight className="w-4 h-4" />
