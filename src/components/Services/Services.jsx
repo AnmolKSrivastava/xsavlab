@@ -804,7 +804,7 @@ function shapeSecure(N, out) {
       gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(pm);
       const aspect=stage.width/stage.height,wideLayout=r.width>=1024;
       gl.uniformMatrix4fv(U.uProj,false,M.persp(0.9,aspect,0.1,60));
-      gl.uniformMatrix4fv(U.uView,false,wideLayout?M.trans(1.3,0,-4.5):r.width<480?M.trans(0,1.55,-6.65):M.trans(0.3,1.25,-6.35));
+      gl.uniformMatrix4fv(U.uView,false,wideLayout?M.trans(1.3,0,-4.5):r.width<480?M.trans(0,1.2,-7.1):M.trans(0.2,1.0,-6.8));
       // Front-facing on section entry, then ease into sway (dampen during morph)
       const settle=Math.min(1,settleT/1.35);
       const settleEase=settle*settle*(3-2*settle);
@@ -1028,7 +1028,7 @@ function shapeSecure(N, out) {
         @media(min-width:720px){.services-reel .reel-nav{display:flex}}
         @media(max-width:1023px){
           .services-reel .reel-stage{align-items:flex-end}
-          .services-reel .reel-in{padding-top:clamp(9rem,31svh,17rem);padding-bottom:max(20px,env(safe-area-inset-bottom));align-items:flex-end;min-height:0}
+          .services-reel .reel-in{padding-top:clamp(5.5rem,18svh,8.5rem);padding-bottom:max(20px,env(safe-area-inset-bottom));align-items:flex-end;min-height:0}
           .services-reel .slides{display:block}
           .services-reel .slide{justify-content:flex-start}
           .services-reel .reel-grade{background:linear-gradient(180deg,transparent 0%,rgba(11,15,25,.16) 32%,rgba(11,15,25,.86) 55%,var(--void) 84%)}
@@ -1045,12 +1045,16 @@ function shapeSecure(N, out) {
         }
         @media(max-width:480px){
           .services-reel{--gut:18px}
+          .services-reel .reel-in{padding-top:clamp(5.25rem,16svh,7.5rem)}
+          .services-reel .slide{gap:8px}
+          .services-reel .slide h2{font-size:clamp(1.75rem,7vw,2rem)}
+          .services-reel .slide p{font-size:1rem;line-height:1.5}
           .services-reel .services-section-header{padding-block:56px 30px}
           .services-reel .services-page-label{margin-bottom:1rem;padding:6px 11px;font-size:.75rem}
           .services-reel .services-section-title{margin-bottom:1rem;font-size:2rem}
           .services-reel .services-section-lede{font-size:1rem;line-height:1.55}
           .services-reel .slide-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-          .services-reel .slide-meta span{width:100%;padding:7px 9px;font-size:.75rem}
+          .services-reel .slide-meta span{width:100%;padding:7px 9px;font-size:.6875rem;line-height:1.25}
         }
         @media(max-width:400px){
           .services-reel .slide h2{font-size:1.75rem}

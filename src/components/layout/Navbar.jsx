@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { ArrowLeft, Menu, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 const companyLogo = `${process.env.PUBLIC_URL}/xsavlab_logo.png`;
 
@@ -45,7 +45,7 @@ const Navbar = ({ onScheduleClick }) => {
             const navbarHeight = 80; // Height of fixed navbar
             const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
             const offsetPosition = elementPosition - navbarHeight;
-            
+
             window.scrollTo({
               top: offsetPosition,
               behavior: 'smooth'
@@ -58,7 +58,7 @@ const Navbar = ({ onScheduleClick }) => {
           const navbarHeight = 80; // Height of fixed navbar
           const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
           const offsetPosition = elementPosition - navbarHeight;
-          
+
           window.scrollTo({
             top: offsetPosition,
             behavior: 'smooth'
@@ -70,21 +70,21 @@ const Navbar = ({ onScheduleClick }) => {
   };
 
   return (
-<motion.nav
-  initial={{ y: -100 }}
-  animate={{ y: 0 }}
-  className="fixed top-0 left-0 right-0 z-50 bg-dark-navy border-b border-[#38BDF8]/20"
->
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className="fixed top-0 left-3 right-3 z-50 rounded-b-xl bg-dark-navy border-b border-[#38BDF8]/20 lg:left-0 lg:right-0 lg:rounded-none"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-16 lg:h-20">
           {/* Logo */}
           <motion.div
             onClick={() => navigate('/')}
-            className="flex items-center space-x-3 cursor-pointer"
+            className="lg:flex hidden items-center space-x-3 cursor-pointer"
             whileHover={{ scale: 1.02 }}
           >
             <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-1.5 rounded-lg">
-              <img src={companyLogo} alt="XSAV Lab logo" className="w-10 h-10 rounded object-cover" />
+              <img src={companyLogo} alt="XSAV Lab logo" className="w-7 h-7 lg:w-10 lg:h-10 rounded object-cover" />
             </div>
             <div className="flex flex-col">
               <span className="text-2xl font-bold text-white tracking-tight">
@@ -93,6 +93,14 @@ const Navbar = ({ onScheduleClick }) => {
               <span className="text-xs text-gray-400 tracking-wider">CYBERSECURITY SERVICES</span>
             </div>
           </motion.div>
+          <button
+            type="button"
+            className="lg:hidden text-white p-2 hover:bg-white/5 rounded-lg transition-colors"
+            onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}
+            aria-label="Go back"
+          >
+            <ArrowLeft size={24} aria-hidden="true" />
+          </button>
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center space-x-1">
@@ -122,7 +130,7 @@ const Navbar = ({ onScheduleClick }) => {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden text-white p-2 hover:bg-white/5 rounded-lg transition-colors"
+            className="ml-auto lg:hidden text-white p-2 hover:bg-white/5 rounded-lg transition-colors"
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={isOpen}
@@ -153,7 +161,7 @@ const Navbar = ({ onScheduleClick }) => {
               </button>
             ))}
             <div className="pt-4">
-              <button 
+              <button
                 onClick={() => {
                   onScheduleClick && onScheduleClick();
                   setIsOpen(false);

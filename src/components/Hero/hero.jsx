@@ -153,7 +153,8 @@ const REEL_CSS = `
 @media (max-width: 1023px) {
   .reel-root .reel-stage { align-items: flex-end !important; height: calc(100svh - 5rem); }
   .reel-root .reel-in {
-    padding-top: clamp(9rem, 30svh, 17rem);
+    /* Leave room for the hologram without pushing copy below the viewport. */
+    padding-top: clamp(3.5rem, 12svh, 6rem);
     padding-bottom: max(22px, env(safe-area-inset-bottom));
   }
   .reel-root #stage3d {
@@ -253,6 +254,11 @@ const REEL_CSS = `
   .reel-root .slide h2 { font-size: 1.75rem; }
   .reel-root .slide > p:not(.eyebrow) { font-size: 1rem; }
   .reel-root .slide-actions { flex-direction: column; }
+}
+
+@media (max-width: 480px) and (min-height: 621px) {
+  .reel-root .reel-in { padding-top: clamp(2.75rem, 9svh, 4.5rem); }
+  .reel-root .slide { gap: 8px; }
 }
 
 @media (max-width: 480px) {

@@ -272,8 +272,8 @@ export default function LogoParticles({
           wideLayout
             ? M.trans(1.7, 0, -4.5)
             : r.width < 480
-              ? M.trans(0, 1.42, -6.2)
-              : M.trans(0, 1.12, -6.0)
+              ? M.trans(0, 1.65, -7.0)
+              : M.trans(0, 1.0, -6.7)
         );
         const yaw = Math.sin(clock * 0.22) * 0.42 + mx * 0.5;
         const model = M.mul(M.rotY(yaw), M.rotX(-0.1 + my * 0.26));

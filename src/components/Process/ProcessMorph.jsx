@@ -138,6 +138,13 @@ export default function ProcessMorph() {
         m[14] = z;
         return m;
       },
+      scale: (s) => {
+        const m = M.ident();
+        m[0] = s;
+        m[5] = s;
+        m[10] = s;
+        return m;
+      },
       rotX: (r) => {
         const c = Math.cos(r);
         const s = Math.sin(r);
@@ -784,7 +791,8 @@ function shapeSecure(N, out) {
       const amp = settleEase * morphDamp;
       const yaw = Math.sin(clock * 0.22) * 0.42 * amp + mx * 0.45 * amp;
       const pitch = (-0.08 + my * 0.22) * amp;
-      gl.uniformMatrix4fv(U.uModel, false, M.mul(M.rotY(yaw), M.rotX(pitch)));
+      const model = M.mul(M.rotY(yaw), M.rotX(pitch));
+      gl.uniformMatrix4fv(U.uModel, false, M.mul(model, M.scale(wideLayout ? 1 : 0.55)));
       attrib(gl, pm, 'aA', bufs[shownIdx], 3);
       attrib(gl, pm, 'aB', bufs[Math.min(shownIdx + 1, COUNT - 1)], 3);
       attrib(gl, pm, 'aSeed', bSeed, 1);
@@ -1003,7 +1011,7 @@ function shapeSecure(N, out) {
         @media(min-width:720px){.process-reel .reel-nav{display:flex}}
         @media(max-width:1023px){
           .process-reel .reel-stage{align-items:flex-end}
-          .process-reel .reel-in{padding-top:clamp(9rem,31svh,17rem);padding-bottom:max(20px,env(safe-area-inset-bottom));align-items:flex-end;min-height:0}
+          .process-reel .reel-in{padding-top:clamp(5.5rem,18svh,8.5rem);padding-bottom:max(20px,env(safe-area-inset-bottom));align-items:flex-end;min-height:0}
           .process-reel .slide{justify-content:flex-start;gap:12px}
           .process-reel .slide h2{font-size:clamp(1.85rem,6vw,2.4rem)}
           .process-reel .slide>p:not(.eyebrow){font-size:1.05rem}
