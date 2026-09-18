@@ -292,119 +292,597 @@ export default function Services() {
     // }
 
     // 04 Secure — W-shaped crown shield + padlock
+// function shapeSecure(N, out) {
+//   const top = 1.12;          // outer top peaks
+//   const valley = 0.68;       // first/second W valleys
+//   const centerPeak = 0.92;   // center peak
+//   const shoulder = 0.28;      // where side curves begin
+//   const tip = -1.2;
+
+//   const maxW = 1.05;
+//   const lift = 0.12;
+//   const S = 0.9;
+
+//   // -----------------------------------------
+//   // Shield side width
+//   // -----------------------------------------
+//   function halfW(y) {
+//     // Upper side area:
+//     // keep the outer sides wide
+//     if (y >= shoulder) {
+//       return maxW;
+//     }
+
+//     // Lower curved shield
+//     const t = Math.min(
+//       1,
+//       Math.max(
+//         0,
+//         (shoulder - y) / (shoulder - tip)
+//       )
+//     );
+
+//     return maxW * Math.sqrt(
+//       Math.max(0, 1 - t * t)
+//     );
+//   }
+
+//   // -----------------------------------------
+//   // W-shaped crown
+//   //
+//   // LEFT OUTER PEAK
+//   //        \ 
+//   //         \
+//   //          \ 
+//   //           \/
+//   //           /\
+//   //          /  \
+//   //         /    \
+//   //        /
+//   // RIGHT OUTER PEAK
+//   // -----------------------------------------
+//   function wTop(x) {
+//     const ax = Math.abs(x);
+
+//     // Left/right outer peak -> valley
+//     if (ax >= 0.5) {
+//       const t = (ax - 0.5) / 0.5;
+
+//       return valley +
+//         (top - valley) * Math.pow(t, 0.92);
+//     }
+
+//     // Valley -> center peak
+//     const t = ax / 0.5;
+
+//     return valley +
+//       (centerPeak - valley) *
+//       Math.pow(1 - t, 0.92);
+//   }
+
+//   for (let i = 0; i < N; i++) {
+//     const r = rnd();
+
+//     let x = 0;
+//     let y = 0;
+//     let z = 0;
+
+//     // =========================================
+//     // OUTER SHIELD
+//     // =========================================
+//     if (r < 0.48) {
+
+//       const edgePick = rnd();
+
+//       if (edgePick < 0.22) {
+
+//         // =====================================
+//         // W-SHAPED TOP
+//         // =====================================
+
+//         const xNorm = rnd() * 2 - 1;
+
+//         x = xNorm * maxW;
+
+//         // Convert x position to W crown
+//         y = wTop(xNorm);
+
+//         // Small particle variation
+//         x += (rnd() - 0.5) * 0.035;
+//         y += (rnd() - 0.5) * 0.035;
+
+//         z = rnd() < 0.5
+//           ? 0.14
+//           : -0.14;
+
+//       } else if (edgePick < 0.88) {
+
+//         // =====================================
+//         // OUTER CURVED SIDES
+//         // =====================================
+
+//         y = tip + rnd() * (top - tip);
+
+//         const side =
+//           rnd() < 0.5 ? -1 : 1;
+
+//         x =
+//           side *
+//           (
+//             halfW(y) -
+//             rnd() * 0.045
+//           );
+
+//         z = rnd() < 0.5
+//           ? 0.15
+//           : -0.15;
+
+//       } else {
+
+//         // =====================================
+//         // BOTTOM TIP
+//         // =====================================
+
+//         x = (rnd() - 0.5) * 0.10;
+
+//         y = tip + rnd() * 0.10;
+
+//         z = rnd() < 0.5
+//           ? 0.12
+//           : -0.12;
+//       }
+
+//     // =========================================
+//     // INNER SHIELD RIM
+//     // =========================================
+//     } else if (r < 0.58) {
+
+//       const xNorm = rnd() * 2 - 1;
+
+//       x = xNorm * maxW * 0.88;
+
+//       // Follow same W shape
+//       y =
+//         wTop(xNorm) -
+//         0.10;
+
+//       // Lower inner rim follows curved sides
+//       if (y < shoulder) {
+//         const side =
+//           xNorm < 0 ? -1 : 1;
+
+//         const t = Math.min(
+//           1,
+//           Math.max(
+//             0,
+//             (shoulder - y) /
+//             (shoulder - tip)
+//           )
+//         );
+
+//         x =
+//           side *
+//           maxW *
+//           0.88 *
+//           Math.sqrt(
+//             Math.max(0, 1 - t * t)
+//           );
+//       }
+
+//       z = rnd() < 0.5
+//         ? 0.09
+//         : -0.09;
+
+//     // =========================================
+//     // PADLOCK BODY
+//     // =========================================
+//     } else if (r < 0.80) {
+
+//       const bw = 0.4;
+//       const bh = 0.36;
+
+//       const bx = 0;
+//       const by = -0.02;
+
+//       const pick = rnd();
+
+//       if (pick < 0.72) {
+
+//         x =
+//           bx +
+//           (rnd() * 2 - 1) *
+//           bw *
+//           0.92;
+
+//         y =
+//           by +
+//           (rnd() * 2 - 1) *
+//           bh *
+//           0.92;
+
+//         z =
+//           0.1 +
+//           (rnd() - 0.5) * 0.03;
+
+//       } else {
+
+//         const e =
+//           (Math.random() * 4) | 0;
+
+//         const t = rnd();
+
+//         if (e === 0) {
+
+//           x = bx - bw + 2 * bw * t;
+//           y = by + bh;
+
+//         } else if (e === 1) {
+
+//           x = bx - bw + 2 * bw * t;
+//           y = by - bh;
+
+//         } else if (e === 2) {
+
+//           x = bx - bw;
+//           y = by - bh + 2 * bh * t;
+
+//         } else {
+
+//           x = bx + bw;
+//           y = by - bh + 2 * bh * t;
+//         }
+
+//         z = 0.12;
+//       }
+
+//     // =========================================
+//     // PADLOCK SHACKLE
+//     // =========================================
+//     } else if (r < 0.94) {
+
+//       const a0 = 0.15;
+//       const a1 = Math.PI - 0.15;
+
+//       const a =
+//         a0 +
+//         rnd() * (a1 - a0);
+
+//       const rad =
+//         0.32 +
+//         (rnd() - 0.5) * 0.05;
+
+//       const thick =
+//         (rnd() - 0.5) * 0.07;
+
+//       x =
+//         Math.cos(a) *
+//         (rad + thick);
+
+//       y =
+//         0.36 +
+//         Math.sin(a) *
+//         (rad * 0.95 + thick * 0.5);
+
+//       z =
+//         0.11 +
+//         (rnd() - 0.5) * 0.02;
+
+//       if (rnd() < 0.22) {
+
+//         const side =
+//           rnd() < 0.5 ? -1 : 1;
+
+//         x =
+//           side * 0.32 +
+//           (rnd() - 0.5) * 0.05;
+
+//         y =
+//           0.18 -
+//           rnd() * 0.26;
+
+//         z = 0.11;
+//       }
+
+//     // =========================================
+//     // KEYHOLE
+//     // =========================================
+//     } else {
+
+//       if (rnd() < 0.55) {
+
+//         const a =
+//           rnd() * Math.PI * 2;
+
+//         const rad =
+//           rnd() * 0.09;
+
+//         x =
+//           Math.cos(a) * rad;
+
+//         y =
+//           0.06 +
+//           Math.sin(a) * rad;
+
+//         z = 0.14;
+
+//       } else {
+
+//         x =
+//           (rnd() - 0.5) * 0.08;
+
+//         y =
+//           -0.08 -
+//           rnd() * 0.18;
+
+//         z = 0.14;
+//       }
+//     }
+
+//     // =========================================
+//     // FINAL SCALE
+//     // =========================================
+
+//     out[i * 3] =
+//       x * S;
+
+//     out[i * 3 + 1] =
+//       (y + lift) * S;
+
+//     out[i * 3 + 2] =
+//       z * S;
+//   }
+// }
+
+// =========================================
+// 04 Secure — Shield + Padlock
+// Logo-style shield crown
+// =========================================
+
 function shapeSecure(N, out) {
-  const top = 1.12;          // outer top peaks
-  const valley = 0.68;       // first/second W valleys
-  const centerPeak = 0.92;   // center peak
-  const shoulder = 0.28;      // where side curves begin
-  const tip = -1.2;
 
-  const maxW = 1.05;
-  const lift = 0.12;
-  const S = 0.9;
+  // =========================================
+  // SHIELD DIMENSIONS
+  // =========================================
 
-  // -----------------------------------------
-  // Shield side width
-  // -----------------------------------------
+  // Center top peak
+  const top = 1.38;
+
+  // Height of the two outer top corners
+  const outerTop = 0.92;
+
+  // Width of shield
+  const maxW = 1.18;
+
+  // Where the straight/curved side begins
+  const shoulder = 0.30;
+
+  // Bottom point
+  const tip = -1.20;
+
+  // Final vertical lift
+  const lift = 0.10;
+
+  // Overall scale
+  const S = 0.90;
+
+
+  // =========================================
+  // SHIELD SIDE WIDTH
+  // =========================================
+
   function halfW(y) {
-    // Upper side area:
-    // keep the outer sides wide
+
+    /*
+      Upper part:
+      Keep the shield wide.
+
+             |       |
+             |       |
+             |       |
+    */
+
     if (y >= shoulder) {
       return maxW;
     }
 
-    // Lower curved shield
+
+    /*
+      Lower shield:
+
+          \           /
+           \         /
+            \       /
+             \     /
+              \   /
+               \ /
+                V
+    */
+
     const t = Math.min(
       1,
       Math.max(
         0,
-        (shoulder - y) / (shoulder - tip)
+        (shoulder - y) /
+        (shoulder - tip)
       )
     );
 
     return maxW * Math.sqrt(
-      Math.max(0, 1 - t * t)
+      Math.max(
+        0,
+        1 - t * t
+      )
     );
   }
 
-  // -----------------------------------------
-  // W-shaped crown
+
+  // =========================================
+  // LOGO-STYLE TOP
+  // =========================================
   //
-  // LEFT OUTER PEAK
-  //        \ 
-  //         \
-  //          \ 
-  //           \/
-  //           /\
-  //          /  \
-  //         /    \
-  //        /
-  // RIGHT OUTER PEAK
-  // -----------------------------------------
-  function wTop(x) {
-    const ax = Math.abs(x);
+  //              /\
+  //             /  \
+  //           /      \
+  //         /          \
+  //       /              \
+  //      |                |
+  //
+  //       ONE CENTER PEAK
+  //
+  // No W
+  // No second peak
+  // No valley
+  //
+  // =========================================
 
-    // Left/right outer peak -> valley
-    if (ax >= 0.5) {
-      const t = (ax - 0.5) / 0.5;
+  function topCurve(x) {
 
-      return valley +
-        (top - valley) * Math.pow(t, 0.92);
-    }
+    const ax = Math.min(
+      1,
+      Math.abs(x)
+    );
 
-    // Valley -> center peak
-    const t = ax / 0.5;
 
-    return valley +
-      (centerPeak - valley) *
-      Math.pow(1 - t, 0.92);
+    /*
+      x = 0
+        → center peak
+
+      x = 1
+        → outer top corner
+    */
+
+    /*
+      Smooth curved transition.
+
+      Using a power curve instead of
+      cosine prevents the W shape.
+    */
+
+    const t = ax;
+
+    const curve =
+      Math.pow(t, 0.72);
+
+
+    return (
+      top -
+      (top - outerTop) *
+      curve
+    );
   }
 
+
+  // =========================================
+  // PARTICLE GENERATION
+  // =========================================
+
   for (let i = 0; i < N; i++) {
+
     const r = rnd();
 
     let x = 0;
     let y = 0;
     let z = 0;
 
-    // =========================================
+
+    // =======================================
     // OUTER SHIELD
-    // =========================================
+    // =======================================
+
     if (r < 0.48) {
 
       const edgePick = rnd();
 
+
+      // =====================================
+      // TOP CROWN
+      // =====================================
+
       if (edgePick < 0.22) {
 
-        // =====================================
-        // W-SHAPED TOP
-        // =====================================
+        /*
+          Generate position from
+          left → center → right.
+        */
 
-        const xNorm = rnd() * 2 - 1;
+        const xNorm =
+          rnd() * 2 - 1;
 
-        x = xNorm * maxW;
 
-        // Convert x position to W crown
-        y = wTop(xNorm);
+        /*
+          Horizontal position
+        */
 
-        // Small particle variation
-        x += (rnd() - 0.5) * 0.035;
-        y += (rnd() - 0.5) * 0.035;
+        x =
+          xNorm * maxW;
 
-        z = rnd() < 0.5
-          ? 0.14
-          : -0.14;
 
-      } else if (edgePick < 0.88) {
+        /*
+          Follow single-peaked shield crown
+        */
 
-        // =====================================
-        // OUTER CURVED SIDES
-        // =====================================
+        y =
+          topCurve(xNorm);
 
-        y = tip + rnd() * (top - tip);
+
+        /*
+          Very small random variation
+          so particles don't form a
+          mathematically perfect line.
+        */
+
+        x +=
+          (rnd() - 0.5) *
+          0.035;
+
+        y +=
+          (rnd() - 0.5) *
+          0.035;
+
+
+        /*
+          Slight 3D depth
+        */
+
+        z =
+          rnd() < 0.5
+            ? 0.14
+            : -0.14;
+      }
+
+
+      // =====================================
+      // OUTER CURVED SIDES
+      // =====================================
+
+      else if (edgePick < 0.88) {
+
+        /*
+          IMPORTANT:
+
+          Start from outerTop,
+          NOT from center top.
+
+          This prevents the side from
+          becoming a long vertical line
+          all the way to the center peak.
+        */
+
+        y =
+          tip +
+          rnd() *
+          (outerTop - tip);
+
 
         const side =
-          rnd() < 0.5 ? -1 : 1;
+          rnd() < 0.5
+            ? -1
+            : 1;
+
+
+        /*
+          Follow the shield curve.
+        */
 
         x =
           side *
@@ -413,78 +891,136 @@ function shapeSecure(N, out) {
             rnd() * 0.045
           );
 
-        z = rnd() < 0.5
-          ? 0.15
-          : -0.15;
 
-      } else {
+        /*
+          3D depth
+        */
 
-        // =====================================
-        // BOTTOM TIP
-        // =====================================
-
-        x = (rnd() - 0.5) * 0.10;
-
-        y = tip + rnd() * 0.10;
-
-        z = rnd() < 0.5
-          ? 0.12
-          : -0.12;
+        z =
+          rnd() < 0.5
+            ? 0.15
+            : -0.15;
       }
 
-    // =========================================
+
+      // =====================================
+      // BOTTOM TIP
+      // =====================================
+
+      else {
+
+        /*
+          Concentrate particles around
+          the bottom point.
+        */
+
+        x =
+          (rnd() - 0.5) *
+          0.10;
+
+        y =
+          tip +
+          rnd() * 0.10;
+
+        z =
+          rnd() < 0.5
+            ? 0.12
+            : -0.12;
+      }
+    }
+
+
+    // =======================================
     // INNER SHIELD RIM
-    // =========================================
-    } else if (r < 0.58) {
+    // =======================================
 
-      const xNorm = rnd() * 2 - 1;
+    else if (r < 0.58) {
 
-      x = xNorm * maxW * 0.88;
+      const xNorm =
+        rnd() * 2 - 1;
 
-      // Follow same W shape
+
+      /*
+        Inner rim is slightly narrower.
+      */
+
+      x =
+        xNorm *
+        maxW *
+        0.88;
+
+
+      /*
+        Same exact top shape,
+        slightly below the outer crown.
+      */
+
       y =
-        wTop(xNorm) -
+        topCurve(xNorm) -
         0.10;
 
-      // Lower inner rim follows curved sides
-      if (y < shoulder) {
-        const side =
-          xNorm < 0 ? -1 : 1;
 
-        const t = Math.min(
-          1,
-          Math.max(
-            0,
-            (shoulder - y) /
-            (shoulder - tip)
-          )
-        );
+      // =====================================
+      // LOWER INNER RIM
+      // =====================================
+
+      if (y < shoulder) {
+
+        const side =
+          xNorm < 0
+            ? -1
+            : 1;
+
+
+        const t =
+          Math.min(
+            1,
+            Math.max(
+              0,
+              (shoulder - y) /
+              (shoulder - tip)
+            )
+          );
+
 
         x =
           side *
           maxW *
           0.88 *
           Math.sqrt(
-            Math.max(0, 1 - t * t)
+            Math.max(
+              0,
+              1 - t * t
+            )
           );
       }
 
-      z = rnd() < 0.5
-        ? 0.09
-        : -0.09;
 
-    // =========================================
+      z =
+        rnd() < 0.5
+          ? 0.09
+          : -0.09;
+    }
+
+
+    // =======================================
     // PADLOCK BODY
-    // =========================================
-    } else if (r < 0.80) {
+    // =======================================
 
-      const bw = 0.4;
+    else if (r < 0.80) {
+
+      const bw = 0.40;
       const bh = 0.36;
 
       const bx = 0;
       const by = -0.02;
 
       const pick = rnd();
+
+
+      // =====================================
+      // PADLOCK BODY FILL
+      // =====================================
 
       if (pick < 0.72) {
 
@@ -501,126 +1037,213 @@ function shapeSecure(N, out) {
           0.92;
 
         z =
-          0.1 +
-          (rnd() - 0.5) * 0.03;
+          0.10 +
+          (rnd() - 0.5) *
+          0.03;
+      }
 
-      } else {
+
+      // =====================================
+      // PADLOCK BODY EDGES
+      // =====================================
+
+      else {
 
         const e =
           (Math.random() * 4) | 0;
 
-        const t = rnd();
+        const t =
+          rnd();
+
 
         if (e === 0) {
 
-          x = bx - bw + 2 * bw * t;
-          y = by + bh;
+          // Top edge
+          x =
+            bx -
+            bw +
+            2 * bw * t;
+
+          y =
+            by + bh;
 
         } else if (e === 1) {
 
-          x = bx - bw + 2 * bw * t;
-          y = by - bh;
+          // Bottom edge
+          x =
+            bx -
+            bw +
+            2 * bw * t;
+
+          y =
+            by - bh;
 
         } else if (e === 2) {
 
-          x = bx - bw;
-          y = by - bh + 2 * bh * t;
+          // Left edge
+          x =
+            bx - bw;
+
+          y =
+            by -
+            bh +
+            2 * bh * t;
 
         } else {
 
-          x = bx + bw;
-          y = by - bh + 2 * bh * t;
+          // Right edge
+          x =
+            bx + bw;
+
+          y =
+            by -
+            bh +
+            2 * bh * t;
         }
 
         z = 0.12;
       }
+    }
 
-    // =========================================
+
+    // =======================================
     // PADLOCK SHACKLE
-    // =========================================
-    } else if (r < 0.94) {
+    // =======================================
+
+    else if (r < 0.94) {
 
       const a0 = 0.15;
-      const a1 = Math.PI - 0.15;
+
+      const a1 =
+        Math.PI - 0.15;
+
 
       const a =
         a0 +
-        rnd() * (a1 - a0);
+        rnd() *
+        (a1 - a0);
+
 
       const rad =
         0.32 +
-        (rnd() - 0.5) * 0.05;
+        (rnd() - 0.5) *
+        0.05;
+
 
       const thick =
-        (rnd() - 0.5) * 0.07;
+        (rnd() - 0.5) *
+        0.07;
+
 
       x =
         Math.cos(a) *
         (rad + thick);
 
+
       y =
         0.36 +
         Math.sin(a) *
-        (rad * 0.95 + thick * 0.5);
+        (
+          rad * 0.95 +
+          thick * 0.5
+        );
+
 
       z =
         0.11 +
-        (rnd() - 0.5) * 0.02;
+        (rnd() - 0.5) *
+        0.02;
+
+
+      // =====================================
+      // SHACKLE CONNECTIONS
+      // =====================================
 
       if (rnd() < 0.22) {
 
         const side =
-          rnd() < 0.5 ? -1 : 1;
+          rnd() < 0.5
+            ? -1
+            : 1;
+
 
         x =
           side * 0.32 +
-          (rnd() - 0.5) * 0.05;
+          (rnd() - 0.5) *
+          0.05;
+
 
         y =
           0.18 -
           rnd() * 0.26;
 
+
         z = 0.11;
       }
+    }
 
-    // =========================================
+
+    // =======================================
     // KEYHOLE
-    // =========================================
-    } else {
+    // =======================================
+
+    else {
 
       if (rnd() < 0.55) {
 
+        /*
+          Circular keyhole head
+        */
+
         const a =
-          rnd() * Math.PI * 2;
+          rnd() *
+          Math.PI *
+          2;
+
 
         const rad =
-          rnd() * 0.09;
+          rnd() *
+          0.09;
+
 
         x =
-          Math.cos(a) * rad;
+          Math.cos(a) *
+          rad;
+
 
         y =
           0.06 +
-          Math.sin(a) * rad;
+          Math.sin(a) *
+          rad;
+
 
         z = 0.14;
+      }
 
-      } else {
+      else {
+
+        /*
+          Keyhole stem
+        */
 
         x =
-          (rnd() - 0.5) * 0.08;
+          (rnd() - 0.5) *
+          0.08;
+
 
         y =
           -0.08 -
           rnd() * 0.18;
 
+
         z = 0.14;
       }
     }
 
-    // =========================================
+
+    // =======================================
     // FINAL SCALE
-    // =========================================
+    // =======================================
 
     out[i * 3] =
       x * S;
