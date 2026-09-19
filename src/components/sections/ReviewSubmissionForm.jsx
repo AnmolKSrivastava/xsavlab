@@ -22,6 +22,12 @@ const ReviewSubmissionForm = () => {
     setSubmitting(true);
     setError('');
 
+    if (!auth) {
+      setError('Review submission is unavailable because Firebase is not configured in this environment.');
+      setSubmitting(false);
+      return;
+    }
+
     try {
       // Ensure user is authenticated (use anonymous auth if needed)
       let currentUser = auth.currentUser;
@@ -104,7 +110,7 @@ const ReviewSubmissionForm = () => {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Share Your <span className="text-primary">Experience</span>
+            Share Your <span className="text-[#38BDF8]">Experience</span>
           </h2>
           <p className="text-xl text-gray-300">
             We value your feedback! Let us know about your experience with XSAV Lab.
@@ -142,7 +148,7 @@ const ReviewSubmissionForm = () => {
                     value={formData.clientName}
                     onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
                     required
-                    className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary transition-colors"
+                    className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8] transition-colors"
                     placeholder="John Doe"
                   />
                 </div>
@@ -154,7 +160,7 @@ const ReviewSubmissionForm = () => {
                     type="text"
                     value={formData.clientRole}
                     onChange={(e) => setFormData({ ...formData, clientRole: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary transition-colors"
+                    className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8] transition-colors"
                     placeholder="CTO, VP of Technology, etc."
                   />
                 </div>
@@ -168,7 +174,7 @@ const ReviewSubmissionForm = () => {
                   type="text"
                   value={formData.clientCompany}
                   onChange={(e) => setFormData({ ...formData, clientCompany: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary transition-colors"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8] transition-colors"
                   placeholder="Your Company Name"
                 />
               </div>
@@ -191,7 +197,7 @@ const ReviewSubmissionForm = () => {
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                   required
                   rows="6"
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary transition-colors resize-none"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8] transition-colors resize-none"
                   placeholder="Share your experience with our services..."
                 />
               </div>
@@ -209,7 +215,7 @@ const ReviewSubmissionForm = () => {
                 disabled={submitting}
                 whileHover={{ scale: submitting ? 1 : 1.02 }}
                 whileTap={{ scale: submitting ? 1 : 0.98 }}
-                className="w-full bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all inline-flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all inline-flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <>

@@ -5,15 +5,11 @@ import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
-// Section Components
-import Hero from './components/sections/Hero';
-
 // UI Components
 import QuantumBackground from './components/ui/QuantumBackground';
 import ScrollToTop from './components/ui/ScrollToTop';
 
 const About = lazy(() => import('./components/sections/About'));
-const Services = lazy(() => import('./components/sections/Services'));
 const HowItWorks = lazy(() => import('./components/sections/HowItWorks'));
 const CaseStudies = lazy(() => import('./components/sections/CaseStudies'));
 const TrustSection = lazy(() => import('./components/sections/TrustSection'));
@@ -23,7 +19,7 @@ const FeaturedVentures = lazy(() => import('./components/sections/FeaturedVentur
 const LatestBlogPosts = lazy(() => import('./components/sections/LatestBlogPosts'));
 
 const AboutPage = lazy(() => import('./pages/AboutPage'));
-const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+// const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ProcessPage = lazy(() => import('./pages/ProcessPage'));
 const CaseStudiesPage = lazy(() => import('./pages/CaseStudiesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
@@ -34,6 +30,8 @@ const CareersPage = lazy(() => import('./pages/CareersPage'));
 const JobDetailPage = lazy(() => import('./pages/JobDetailPage'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const Hero = lazy(() => import('./components/Hero/hero'));
+const Services = lazy(() => import('./components/Services/Services'));
 
 const SectionLoader = () => <div className="h-16" aria-hidden="true" />;
 const PageLoader = () => <div className="min-h-[40vh]" aria-hidden="true" />;
@@ -42,12 +40,17 @@ const PageLoader = () => <div className="min-h-[40vh]" aria-hidden="true" />;
 function HomePage({ handleScheduleClick }) {
   return (
     <>
-      <Hero onScheduleClick={handleScheduleClick} />
+    <Suspense fallback={<SectionLoader />}>
+          <Hero />
+    </Suspense>
+
+
       <Suspense fallback={<SectionLoader />}>
         <About />
       </Suspense>
       <Suspense fallback={<SectionLoader />}>
-        <Services onScheduleClick={handleScheduleClick} />
+        {/* <ServicesPage /> */}
+        <Services />
       </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <FeaturedVentures />
@@ -110,7 +113,7 @@ function AppContent() {
         } 
       />
       <Route path="/about" element={<Suspense fallback={<PageLoader />}><AboutPage /></Suspense>} />
-      <Route path="/services" element={<Suspense fallback={<PageLoader />}><ServicesPage /></Suspense>} />
+      {/* <Route path="/services" element={<Suspense fallback={<PageLoader />}><ServicesPage /></Suspense>} /> */}
       <Route path="/process" element={<Suspense fallback={<PageLoader />}><ProcessPage /></Suspense>} />
       <Route path="/case-studies" element={<Suspense fallback={<PageLoader />}><CaseStudiesPage /></Suspense>} />
       <Route path="/contact" element={<Suspense fallback={<PageLoader />}><ContactPage /></Suspense>} />
@@ -122,11 +125,12 @@ function AppContent() {
       <Route path="/ventures/:category" element={<Suspense fallback={<PageLoader />}><VenturesPage /></Suspense>} />
       <Route path="/admin-login" element={<Suspense fallback={<PageLoader />}><AdminLogin /></Suspense>} />
       <Route path="/admin/dashboard" element={<Suspense fallback={<PageLoader />}><AdminDashboard /></Suspense>} />
+      <Route path="/services" element={<Suspense fallback={<PageLoader />}><Services /></Suspense>} />
     </Routes>
   );
 
   return (
-    <div className="min-h-screen bg-dark-navy text-white overflow-x-hidden relative">
+    <div className="min-h-screen bg-dark-navy text-white overflow-x-clip relative">
       {/* Quantum animated background */}
       <QuantumBackground />
       

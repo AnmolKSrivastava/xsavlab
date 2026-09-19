@@ -18,7 +18,7 @@ const MarketplaceCard = ({ icon: Icon, name, description, category, price, index
       <div className="relative z-10">
         {/* Category Badge */}
         <div className="flex items-center justify-between mb-4">
-          <span className="text-xs px-3 py-1 bg-primary/20 text-primary rounded-full font-semibold">
+          <span className="text-xs px-3 py-1 bg-[#38BDF8]/20 text-[#38BDF8] rounded-full font-semibold">
             {category}
           </span>
           <motion.div
@@ -39,7 +39,7 @@ const MarketplaceCard = ({ icon: Icon, name, description, category, price, index
         </motion.div>
 
         {/* Name */}
-        <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
+        <h3 className="text-xl font-bold mb-2 group-hover:text-[#38BDF8] transition-colors">
           {name}
         </h3>
 
@@ -50,7 +50,7 @@ const MarketplaceCard = ({ icon: Icon, name, description, category, price, index
         <div className="flex items-center justify-between">
           <div>
             <div className="text-xs text-gray-500">Starting at</div>
-            <div className="text-lg font-bold text-primary">{price}</div>
+            <div className="text-lg font-bold text-[#38BDF8]">{price}</div>
           </div>
           <motion.button
             whileHover={{ x: 5 }}
@@ -131,7 +131,7 @@ const Marketplace = () => {
           y: [0, 100, 0],
         }}
         transition={{ duration: 25, repeat: Infinity }}
-        className="absolute bottom-20 left-20 w-80 h-80 bg-primary/20 rounded-full blur-3xl"
+        className="absolute bottom-20 left-20 w-80 h-80 bg-[#38BDF8]/20 rounded-full blur-3xl"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -146,10 +146,10 @@ const Marketplace = () => {
             initial={{ opacity: 0, scale: 0.5 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center space-x-2 bg-primary/10 px-4 py-2 rounded-full mb-4"
+            className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 px-4 py-2 rounded-full mb-4"
           >
-            <Bot className="w-4 h-4 text-primary" />
-            <span className="text-primary font-semibold">AI Agent Marketplace</span>
+            <Bot className="w-4 h-4 text-[#38BDF8]" />
+            <span className="text-[#38BDF8] font-semibold">AI Agent Marketplace</span>
           </motion.div>
 
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -189,7 +189,7 @@ const Marketplace = () => {
             <ArrowRight className="w-5 h-5" />
           </motion.button>
           <p className="text-gray-400 mt-4">
-            Or <span className="text-primary cursor-pointer hover:underline">build a custom AI agent</span> tailored to your specific needs
+            Or <span className="text-[#38BDF8] cursor-pointer hover:underline">build a custom AI agent</span> tailored to your specific needs
           </p>
         </motion.div>
       </div>

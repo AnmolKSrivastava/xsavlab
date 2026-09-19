@@ -54,7 +54,7 @@ const VentureCard = ({ venture, index }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 }}
-      className="group bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl overflow-hidden transition-all duration-300"
+      className="group bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl overflow-hidden transition-all duration-300"
     >
       {/* Featured Image */}
       {venture.featuredImage && (
@@ -95,7 +95,7 @@ const VentureCard = ({ venture, index }) => {
             />
           )}
           <div>
-            <h3 className="text-xl font-bold text-white mb-1 group-hover:text-primary transition-colors">
+            <h3 className="text-xl font-bold text-white mb-1 group-hover:text-[#38BDF8] transition-colors">
               {venture.name}
             </h3>
             {venture.tagline && (
@@ -115,7 +115,7 @@ const VentureCard = ({ venture, index }) => {
         <motion.button
           onClick={handleVisit}
           whileHover={{ x: 5 }}
-          className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-primary/80 text-white font-semibold rounded-lg transition-all group/btn"
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white font-semibold rounded-lg transition-all group/btn"
         >
           <Globe className="w-4 h-4" />
           <span>Visit {venture.name}</span>
@@ -191,7 +191,7 @@ const VenturesPage = () => {
               transition={{ delay: 0.1 }}
               className="inline-block mb-4"
             >
-              <div className="bg-primary/10 border border-primary/30 px-4 py-2 rounded-full text-primary font-semibold text-sm flex items-center gap-2">
+              <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full text-[#38BDF8] font-semibold text-sm flex items-center gap-2">
                 <Package className="w-4 h-4" />
                 Our Ventures & Products
               </div>
@@ -220,7 +220,7 @@ const VenturesPage = () => {
                   onClick={() => setFilter(cat.id)}
                   className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
                     filter === cat.id
-                      ? 'bg-primary text-white'
+                      ? 'bg-[#38BDF8] text-white'
                       : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50 hover:text-white'
                   }`}
                 >
@@ -234,7 +234,7 @@ const VenturesPage = () => {
           {/* Ventures Grid */}
           {loading ? (
             <div className="text-center py-20">
-              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+              <div className="w-16 h-16 border-4 border-[#38BDF8] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
               <p className="text-gray-400">Loading our ventures...</p>
             </div>
           ) : filteredVentures.length === 0 ? (
@@ -254,7 +254,7 @@ const VenturesPage = () => {
               {/* Results Count */}
               <div className="text-center mb-8">
                 <p className="text-gray-400">
-                  Showing <span className="text-primary font-semibold">{filteredVentures.length}</span> {filteredVentures.length === 1 ? 'venture' : 'ventures'}
+                  Showing <span className="text-[#38BDF8] font-semibold">{filteredVentures.length}</span> {filteredVentures.length === 1 ? 'venture' : 'ventures'}
                 </p>
               </div>
 
@@ -288,7 +288,7 @@ const VenturesPage = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/contact')}
-                className="px-8 py-4 bg-primary hover:bg-primary/80 text-white font-semibold rounded-lg transition-all flex items-center gap-2"
+                className="px-8 py-4 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white font-semibold rounded-lg transition-all flex items-center gap-2"
               >
                 <span>Start Your Project</span>
                 <ArrowRight className="w-5 h-5" />

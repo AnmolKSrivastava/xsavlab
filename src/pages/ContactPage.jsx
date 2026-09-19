@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, CheckCircle, Clock, Shield, ArrowRight, AlertCircle, Loader } from 'lucide-react';
 import { submitEnquiry } from '../services/enquiry';
+import LogoParticles from '../components/Hero/LogoParticles';
 
 const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
   const [formData, setFormData] = useState({
@@ -77,15 +78,15 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-4"
+              className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-4"
             >
-              <Mail className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Get In Touch</span>
+              <Mail className="w-4 h-4 text-[#38BDF8]" />
+              <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">Get In Touch</span>
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Let's Discuss Your
-              <span className="text-primary"> Security/Technology Needs</span>
+              <span className="text-[#38BDF8]"> Security/Technology Needs</span>
             </h1>
 
             <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -107,6 +108,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
               className="lg:col-span-2"
             >
               <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-xl p-8 sticky top-24">
+                <LogoParticles variant="idle" className="mb-6 -mt-2" height={200} />
                 <h3 className="text-2xl font-bold text-white mb-6">Contact Information</h3>
                 
                 <div className="space-y-5 mb-8">
@@ -123,12 +125,12 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                       whileHover={{ x: 5 }}
                       className="flex items-start space-x-4 group cursor-pointer"
                     >
-                      <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg group-hover:bg-primary/20 transition-all">
-                        <item.icon className="w-5 h-5 text-primary" />
+                      <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-3 rounded-lg group-hover:bg-[#38BDF8]/20 transition-all">
+                        <item.icon className="w-5 h-5 text-[#38BDF8]" />
                       </div>
                       <div>
                         <div className="text-sm text-gray-400 mb-1">{item.label}</div>
-                        <div className="font-semibold text-white group-hover:text-primary transition-colors">
+                        <div className="font-semibold text-white group-hover:text-[#38BDF8] transition-colors">
                           {item.value}
                         </div>
                       </div>
@@ -147,7 +149,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                       transition={{ delay: 0.3 + index * 0.1 }}
                       className="flex items-center space-x-3 text-gray-300"
                     >
-                      <link.icon className="w-5 h-5 text-primary flex-shrink-0" />
+                      <link.icon className="w-5 h-5 text-[#38BDF8] flex-shrink-0" />
                       <span className="text-sm">{link.text}</span>
                     </motion.div>
                   ))}
@@ -181,7 +183,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                         <CheckCircle className="w-16 h-16 text-green-500" />
                       </motion.div>
                       <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
-                      <p className="text-gray-300">Thank you! We've sent a confirmation email to <span className="text-primary font-semibold">{formData.email}</span></p>
+                      <p className="text-gray-300">Thank you! We've sent a confirmation email to <span className="text-[#38BDF8] font-semibold">{formData.email}</span></p>
                       <p className="text-gray-400 text-sm mt-3">Our team will respond within 24 hours.</p>
                     </div>
                   </motion.div>
@@ -217,7 +219,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="John Doe"
-                        className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-[#38BDF8] focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                     <div>
@@ -232,7 +234,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="john@company.com"
-                        className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-[#38BDF8] focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -250,7 +252,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                         value={formData.company}
                         onChange={handleChange}
                         placeholder="Company Name"
-                        className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-[#38BDF8] focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                     <div>
@@ -263,7 +265,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                         disabled={loading}
                         value={formData.service}
                         onChange={handleChange}
-                        className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-[#38BDF8] focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <option value="cybersecurity">Cybersecurity Services</option>
                         <option value="cloud">Cloud Infrastructure</option>
@@ -288,7 +290,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                       onChange={handleChange}
                       rows="5"
                       placeholder="Tell us about your security challenges and goals..."
-                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-[#38BDF8] focus:ring-1 focus:ring-primary outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
 
@@ -298,7 +300,7 @@ const ContactPage = ({ preSelectedService = 'cybersecurity' }) => {
                     disabled={loading}
                     whileHover={!loading ? { scale: 1.02 } : {}}
                     whileTap={!loading ? { scale: 0.98 } : {}}
-                    className="w-full bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <>

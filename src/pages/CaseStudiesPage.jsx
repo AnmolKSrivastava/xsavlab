@@ -11,7 +11,7 @@ const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.15 }}
-      className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl p-8 transition-all duration-300"
+      className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl p-8 transition-all duration-300"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
@@ -19,10 +19,10 @@ const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: 
           <h3 className="text-2xl font-bold text-white mb-2">
             {company}
           </h3>
-          <span className="text-sm text-primary font-medium">{industry}</span>
+          <span className="text-sm text-[#38BDF8] font-medium">{industry}</span>
         </div>
-        <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg">
-          <Icon className="w-6 h-6 text-primary" />
+        <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-3 rounded-lg">
+          <Icon className="w-6 h-6 text-[#38BDF8]" />
         </div>
       </div>
 
@@ -50,7 +50,7 @@ const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: 
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.3 + idx * 0.1 }}
-                  className="text-3xl font-bold text-primary mb-1"
+                  className="text-3xl font-bold text-[#38BDF8] mb-1"
                 >
                   {result.value && (
                     <CountUpNumber
@@ -71,7 +71,7 @@ const CaseStudyCard = ({ company, industry, challenge, solution, results, icon: 
       {/* Client Testimonial */}
       {testimonial && (
         <div className="mt-6 pt-6 border-t border-gray-700">
-          <div className="bg-gray-900/50 rounded-lg p-4 border-l-4 border-primary">
+          <div className="bg-gray-900/50 rounded-lg p-4 border-l-4 border-[#38BDF8]">
             <p className="text-sm text-gray-300 italic mb-3">"{testimonial}"</p>
             {(clientName || clientRole) && (
               <p className="text-xs text-gray-400">
@@ -166,15 +166,15 @@ const CaseStudiesPage = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-4"
+              className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-4"
             >
-              <Award className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Success Stories</span>
+              <Award className="w-4 h-4 text-[#38BDF8]" />
+              <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">Success Stories</span>
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Real Results For
-              <span className="text-primary"> Real Businesses</span>
+              <span className="text-[#38BDF8]"> Real Businesses</span>
             </h1>
 
             <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -203,7 +203,7 @@ const CaseStudiesPage = () => {
                   onClick={() => setSelectedIndustry(industry)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     selectedIndustry === industry
-                      ? 'bg-primary text-white'
+                      ? 'bg-[#38BDF8] text-white'
                       : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50 hover:text-white'
                   }`}
                 >
@@ -222,7 +222,7 @@ const CaseStudiesPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {loading ? (
             <div className="text-center py-16">
-              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <div className="w-12 h-12 border-4 border-[#38BDF8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
               <p className="text-gray-400">Loading success stories...</p>
             </div>
           ) : filteredCases.length === 0 ? (
@@ -276,7 +276,7 @@ const CaseStudiesPage = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate('/contact')}
-              className="bg-primary hover:bg-primary/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all inline-flex items-center space-x-2"
+              className="bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-8 py-4 rounded-lg font-semibold text-lg shadow-xl shadow-primary/25 transition-all inline-flex items-center space-x-2"
             >
               <span>Start Your Success Story</span>
               <ArrowRight className="w-5 h-5" />

@@ -22,11 +22,11 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center space-x-3 mb-6 group cursor-pointer">
-              <div className="bg-primary/20 border border-primary/40 p-1.5 rounded-lg group-hover:bg-primary/30 transition-all">
+              <div className="bg-[#38BDF8]/20 border border-[#38BDF8]/40 p-1.5 rounded-lg group-hover:bg-[#38BDF8]/30 transition-all">
                 <img src={companyLogo} alt="XSAV Lab logo" className="w-10 h-10 rounded object-cover" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-white group-hover:text-primary transition-colors">XSAV Lab</div>
+                <div className="text-2xl font-bold text-white group-hover:text-[#38BDF8] transition-colors">XSAV Lab</div>
                 <div className="text-xs text-gray-400 tracking-wider">CYBERSECURITY SERVICES</div>
               </div>
             </Link>
@@ -37,15 +37,15 @@ const Footer = () => {
 
             {/* Contact Info */}
             <div className="space-y-3 mb-6">
-              <a href="mailto:contact@xsavlab.com" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors cursor-pointer">
+              <a href="mailto:contact@xsavlab.com" className="flex items-center space-x-2 text-gray-400 hover:text-[#38BDF8] transition-colors cursor-pointer">
                 <Mail className="w-4 h-4 flex-shrink-0" />
                 <span className="text-sm">Admin - contact@xsavlab.com</span>
               </a>
-              <a href="mailto:sales@xsavlab.com" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors cursor-pointer">
+              <a href="mailto:sales@xsavlab.com" className="flex items-center space-x-2 text-gray-400 hover:text-[#38BDF8] transition-colors cursor-pointer">
                 <Mail className="w-4 h-4 flex-shrink-0" />
                 <span className="text-sm">Sales - sales@xsavlab.com</span>
               </a>
-              <a href="tel:+919884649716" className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors cursor-pointer">
+              <a href="tel:+919884649716" className="flex items-center space-x-2 text-gray-400 hover:text-[#38BDF8] transition-colors cursor-pointer">
                 <Phone className="w-4 h-4 flex-shrink-0" />
                 <span className="text-sm">+91 9884649716</span>
               </a>
@@ -54,7 +54,7 @@ const Footer = () => {
                   href="https://www.google.com/maps/place/Sprint+Business+Tower+Hinjewadi/@18.5934873,73.7318534,17z/data=!3m1!4b1!4m6!3m5!1s0x3bc2bb589f5e17f7:0xa33b6c837f4c25fd!8m2!3d18.5934873!4d73.7318534!16s%2Fg%2F11xdfmr9j_?entry=ttu&g_ep=EgoyMDI2MDQyMi4wIKXMDSoASAFQAw%3D%3D"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors cursor-pointer"
+                  className="flex items-center space-x-2 text-gray-400 hover:text-[#38BDF8] transition-colors cursor-pointer"
                 >
                   <MapPin className="w-4 h-4 flex-shrink-0" />
                   <span className="text-sm">317-A, Sprint Tower, Hinjewadi Phase 1, Pune, Maharashtra, India - 411057</span>
@@ -89,10 +89,10 @@ const Footer = () => {
                   href="https://www.linkedin.com/company/xsavlab"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-gray-800/50 border border-gray-700 hover:border-primary hover:bg-primary/10 p-3 rounded-lg transition-all group"
+                  className="bg-gray-800/50 border border-gray-700 hover:border-[#38BDF8] hover:bg-[#38BDF8]/10 p-3 rounded-lg transition-all group"
                   aria-label="LinkedIn"
                 >
-                  <Users className="w-5 h-5 text-gray-400 group-hover:text-primary transition-colors" />
+                  <Users className="w-5 h-5 text-gray-400 group-hover:text-[#38BDF8] transition-colors" />
                 </a>
               </div>
             </div>
@@ -108,7 +108,7 @@ const Footer = () => {
                     <motion.a
                       href="#"
                       whileHover={{ x: 3 }}
-                      className="text-gray-400 hover:text-primary transition-colors text-sm inline-block"
+                      className="text-gray-400 hover:text-[#38BDF8] transition-colors text-sm inline-block"
                     >
                       {link}
                     </motion.a>
@@ -120,23 +120,23 @@ const Footer = () => {
         </div>
 
         {/* Newsletter Section */}
-        <div className="border-t border-gray-800 pt-12 mb-12">
+        <div className="border-t border-gray-800 pt-8 sm:pt-12 mb-8 sm:mb-12">
           <div className="max-w-2xl">
-            <h3 className="text-2xl font-bold text-white mb-3">Stay Updated on Security Trends</h3>
-            <p className="text-gray-400 mb-6">
+            <h3 className="text-xl sm:text-2xl font-bold leading-tight text-white mb-3">Stay Updated on Security Trends</h3>
+            <p className="text-sm sm:text-base text-gray-400 mb-5 sm:mb-6">
               Get the latest cybersecurity insights, threat intelligence, and best practices delivered to your inbox.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                className="w-full min-w-0 flex-1 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-[#38BDF8] focus:ring-1 focus:ring-primary outline-none transition-all"
               />
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 aria-label="Subscribe to security updates"
-                className="bg-primary hover:bg-primary/90 text-dark-navy px-6 py-3 rounded-lg font-semibold transition-all flex items-center space-x-2 whitespace-nowrap"
+                className="w-full sm:w-auto justify-center bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-6 py-3 rounded-lg font-semibold transition-all flex items-center space-x-2 whitespace-nowrap"
               >
                 <span>Subscribe</span>
                 <ArrowRight className="w-4 h-4" />
@@ -155,7 +155,7 @@ const Footer = () => {
               {/* Admin Login Link */}
               <Link
                 to="/admin-login"
-                className="text-xs text-gray-600 hover:text-primary transition-colors flex items-center gap-1 group"
+                className="text-xs text-gray-600 hover:text-[#38BDF8] transition-colors flex items-center gap-1 group"
                 title="Admin Portal"
               >
                 <Shield className="w-3 h-3 group-hover:rotate-12 transition-transform" />

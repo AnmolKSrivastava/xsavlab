@@ -246,7 +246,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
               featured: false
             });
           }}
-          className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center space-x-2 bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-4 py-2 rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>{isCreating ? 'Cancel' : 'New Job'}</span>
@@ -280,7 +280,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 required
                 placeholder="Senior Cybersecurity Engineer"
               />
@@ -291,7 +291,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
               <select
                 value={formData.department}
                 onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 required
               >
                 {departments.map(dept => (
@@ -306,7 +306,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
                 type="text"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 required
                 placeholder="Remote / New York, NY"
               />
@@ -317,7 +317,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
               <select
                 value={formData.jobType}
                 onChange={(e) => setFormData({ ...formData, jobType: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 required
               >
                 {jobTypes.map(type => (
@@ -331,7 +331,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
               <select
                 value={formData.experienceLevel}
                 onChange={(e) => setFormData({ ...formData, experienceLevel: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 required
               >
                 {experienceLevels.map(level => (
@@ -345,7 +345,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
               >
                 {statusOptions.map(status => (
                   <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>
@@ -359,7 +359,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
                 type="text"
                 value={formData.salaryRange}
                 onChange={(e) => setFormData({ ...formData, salaryRange: e.target.value })}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 placeholder="$100,000 - $150,000"
               />
             </div>
@@ -370,7 +370,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={4}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 required
                 placeholder="Describe the role and what we're looking for..."
               />
@@ -382,7 +382,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
                 value={formData.requirements}
                 onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
                 rows={4}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 placeholder="Bachelor's degree in Computer Science&#10;5+ years of cybersecurity experience&#10;CISSP or CEH certification preferred"
               />
             </div>
@@ -393,7 +393,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
                 value={formData.responsibilities}
                 onChange={(e) => setFormData({ ...formData, responsibilities: e.target.value })}
                 rows={4}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 placeholder="Lead security architecture design&#10;Conduct security assessments&#10;Manage incident response"
               />
             </div>
@@ -404,7 +404,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
                 value={formData.benefits}
                 onChange={(e) => setFormData({ ...formData, benefits: e.target.value })}
                 rows={3}
-                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-[#38BDF8]"
                 placeholder="Health, dental, and vision insurance&#10;401(k) matching&#10;Flexible work schedule"
               />
             </div>
@@ -427,7 +427,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
             <button
               type="submit"
               disabled={submitLoading}
-              className="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-dark-navy px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center space-x-2 bg-[#38BDF8] hover:bg-[#38BDF8]/90 text-dark-navy px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               <span>{submitLoading ? 'Saving...' : (editingJob ? 'Update Job' : 'Create Job')}</span>
@@ -454,7 +454,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
               onClick={() => setFilterStatus(status)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 filterStatus === status
-                  ? 'bg-primary text-white'
+                  ? 'bg-[#38BDF8] text-white'
                   : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
               }`}
             >
@@ -466,7 +466,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
         <select
           value={filterDepartment}
           onChange={(e) => setFilterDepartment(e.target.value)}
-          className="bg-gray-800/50 border border-gray-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary"
+          className="bg-gray-800/50 border border-gray-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-[#38BDF8]"
         >
           <option value="all">All Departments</option>
           {departments.map(dept => (
@@ -477,7 +477,7 @@ const JobsTab = ({ user, userRole, jobs, setJobs, jobsLoading, setJobsLoading })
 
       {jobsLoading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#38BDF8]"></div>
         </div>
       ) : filteredJobs.length === 0 ? (
         <div className="text-center py-12 bg-gray-800/30 rounded-lg border border-gray-700/50">

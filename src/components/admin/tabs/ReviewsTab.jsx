@@ -198,7 +198,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
           <button
             onClick={() => setActiveFilter('all')}
             className={`px-3 py-1 rounded text-sm transition-colors ${
-              activeFilter === 'all' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'
+              activeFilter === 'all' ? 'bg-[#38BDF8] text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
             All ({reviews.length})
@@ -256,7 +256,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
                   value={formData.clientName}
                   onChange={(e) => setFormData({...formData, clientName: e.target.value})}
                   required
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 />
               </div>
               <div>
@@ -265,7 +265,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
                   type="text"
                   value={formData.clientRole}
                   onChange={(e) => setFormData({...formData, clientRole: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 />
               </div>
               <div>
@@ -274,7 +274,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
                   type="text"
                   value={formData.clientCompany}
                   onChange={(e) => setFormData({...formData, clientCompany: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 />
               </div>
             </div>
@@ -286,7 +286,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
                 onChange={(e) => setFormData({...formData, content: e.target.value})}
                 required
                 rows="4"
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
 
@@ -296,7 +296,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
                 <select
                   value={formData.rating}
                   onChange={(e) => setFormData({...formData, rating: parseInt(e.target.value)})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 >
                   {[5, 4, 3, 2, 1].map(num => (
                     <option key={num} value={num}>{num} Star{num > 1 ? 's' : ''}</option>
@@ -308,7 +308,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                 >
                   <option value="pending">Pending</option>
                   <option value="approved">Approved</option>
@@ -321,7 +321,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
                   type="number"
                   value={formData.order}
                   onChange={(e) => setFormData({...formData, order: parseInt(e.target.value) || 0})}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[#38BDF8]"
                   min="0"
                 />
               </div>
@@ -331,7 +331,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
                     type="checkbox"
                     checked={formData.featured}
                     onChange={(e) => setFormData({...formData, featured: e.target.checked})}
-                    className="w-4 h-4 text-primary bg-gray-900 border-gray-700 rounded focus:ring-primary"
+                    className="w-4 h-4 text-[#38BDF8] bg-gray-900 border-gray-700 rounded focus:ring-primary"
                   />
                   <span className="text-sm text-gray-300">Featured</span>
                 </label>
@@ -341,7 +341,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
             <div className="flex gap-3 pt-4">
               <button
                 type="submit"
-                className="flex-1 px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2 bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 Update Review
@@ -361,7 +361,7 @@ const ReviewsTab = ({ user, userRole, reviews, setReviews, reviewsLoading, setRe
       <div className="space-y-4">
         {reviewsLoading ? (
           <div className="text-center py-12">
-            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-12 h-12 border-4 border-[#38BDF8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-400">Loading reviews...</p>
           </div>
         ) : filteredReviews.length === 0 ? (

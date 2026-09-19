@@ -90,7 +90,7 @@ const BlogListing = () => {
       viewport={{ once: true }}
       whileHover={{ y: -5 }}
       onClick={() => navigate(`/blog/${post.slug}`)}
-      className={`cursor-pointer bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl overflow-hidden transition-all duration-300 ${
+      className={`cursor-pointer bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl overflow-hidden transition-all duration-300 ${
         featured ? 'md:col-span-2' : ''
       }`}
     >
@@ -116,7 +116,7 @@ const BlogListing = () => {
       <div className="p-6">
         {/* Category Badge */}
         <div className="flex items-center justify-between mb-3">
-          <span className="inline-flex items-center space-x-1 bg-primary/20 border border-primary/30 text-primary px-3 py-1 rounded-full text-xs font-semibold">
+          <span className="inline-flex items-center space-x-1 bg-[#38BDF8]/20 border border-[#38BDF8]/30 text-[#38BDF8] px-3 py-1 rounded-full text-xs font-semibold">
             <Tag className="w-3 h-3" />
             <span>{post.category}</span>
           </span>
@@ -129,7 +129,7 @@ const BlogListing = () => {
         </div>
 
         {/* Title */}
-        <h3 className={`font-bold text-white mb-3 hover:text-primary transition-colors ${
+        <h3 className={`font-bold text-white mb-3 hover:text-[#38BDF8] transition-colors ${
           featured ? 'text-2xl' : 'text-xl'
         }`}>
           {post.title}
@@ -156,7 +156,7 @@ const BlogListing = () => {
             <span>{calculateReadingTime(post.content)} min read</span>
           </div>
           
-          <ArrowRight className="w-4 h-4 text-primary" />
+          <ArrowRight className="w-4 h-4 text-[#38BDF8]" />
         </div>
 
         {/* Tags */}
@@ -189,16 +189,16 @@ const BlogListing = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-4"
+              className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-4"
             >
-              <FileText className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider">
+              <FileText className="w-4 h-4 text-[#38BDF8]" />
+              <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">
                 Our Blog
               </span>
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Insights & <span className="text-primary">Updates</span>
+              Insights & <span className="text-[#38BDF8]">Updates</span>
             </h1>
 
             <p className="text-lg text-gray-300 max-w-3xl mx-auto">
@@ -216,7 +216,7 @@ const BlogListing = () => {
                 placeholder="Search blog posts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-gray-800/50 border border-gray-700 text-white pl-12 pr-4 py-3 rounded-lg focus:outline-none focus:border-primary"
+                className="w-full bg-gray-800/50 border border-gray-700 text-white pl-12 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8]"
               />
             </div>
 
@@ -226,7 +226,7 @@ const BlogListing = () => {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-gray-800/50 border border-gray-700 text-white pl-10 pr-8 py-3 rounded-lg focus:outline-none focus:border-primary appearance-none cursor-pointer"
+                className="bg-gray-800/50 border border-gray-700 text-white pl-10 pr-8 py-3 rounded-lg focus:outline-none focus:border-[#38BDF8] appearance-none cursor-pointer"
               >
                 {categories.map(cat => (
                   <option key={cat} value={cat}>
@@ -244,7 +244,7 @@ const BlogListing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {loading ? (
             <div className="flex justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#38BDF8]"></div>
             </div>
           ) : error ? (
             <div className="text-center py-20">

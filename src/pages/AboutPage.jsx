@@ -15,11 +15,11 @@ const TeamMember = ({ name, role, bio, imageSet, linkedin, email, index }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.15 }}
-      className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl p-8 transition-all duration-300 group"
+      className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl p-8 transition-all duration-300 group"
     >
       {/* Profile Image */}
       <div className="relative mb-6">
-        <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-primary/30 flex items-center justify-center overflow-hidden">
+        <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-[#38BDF8]/30 flex items-center justify-center overflow-hidden">
           {imageSet ? (
             <img
               src={imageSet.webp}
@@ -31,7 +31,7 @@ const TeamMember = ({ name, role, bio, imageSet, linkedin, email, index }) => {
               className="w-full h-full object-cover"
             />
           ) : (
-            <Shield className="w-16 h-16 text-primary" />
+            <Shield className="w-16 h-16 text-[#38BDF8]" />
           )}
         </div>
       </div>
@@ -39,7 +39,7 @@ const TeamMember = ({ name, role, bio, imageSet, linkedin, email, index }) => {
       {/* Name & Role */}
       <div className="text-center mb-4">
         <h3 className="text-xl font-bold text-white mb-1">{name}</h3>
-        <p className="text-primary font-semibold text-sm">{role}</p>
+        <p className="text-[#38BDF8] font-semibold text-sm">{role}</p>
       </div>
 
       {/* Bio */}
@@ -54,17 +54,17 @@ const TeamMember = ({ name, role, bio, imageSet, linkedin, email, index }) => {
             href={linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-primary/10 border border-primary/30 p-2 rounded-lg hover:bg-primary/20 transition-all"
+            className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-2 rounded-lg hover:bg-[#38BDF8]/20 transition-all"
           >
-            <Link2 className="w-4 h-4 text-primary" />
+            <Link2 className="w-4 h-4 text-[#38BDF8]" />
           </a>
         )}
         {email && (
           <a
             href={`mailto:${email}`}
-            className="bg-primary/10 border border-primary/30 p-2 rounded-lg hover:bg-primary/20 transition-all"
+            className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-2 rounded-lg hover:bg-[#38BDF8]/20 transition-all"
           >
-            <Mail className="w-4 h-4 text-primary" />
+            <Mail className="w-4 h-4 text-[#38BDF8]" />
           </a>
         )}
       </div>
@@ -157,15 +157,15 @@ const AboutPage = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-4"
+              className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-4"
             >
-              <Award className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider">About Us</span>
+              <Award className="w-4 h-4 text-[#38BDF8]" />
+              <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">About Us</span>
             </motion.div>
             
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Securing The Digital Future With
-              <span className="text-primary"> Expert Solutions</span>
+              <span className="text-[#38BDF8]"> Expert Solutions</span>
             </h1>
             
             <p className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -212,8 +212,8 @@ const AboutPage = () => {
               viewport={{ once: true }}
               className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 border border-gray-700/50 rounded-xl p-8"
             >
-              <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mb-6">
-                <Target className="w-8 h-8 text-primary" />
+              <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-3 rounded-lg w-fit mb-6">
+                <Target className="w-8 h-8 text-[#38BDF8]" />
               </div>
               <h3 className="text-2xl font-bold text-white mb-4">Our Mission</h3>
               <p className="text-gray-400 leading-relaxed">
@@ -229,8 +229,8 @@ const AboutPage = () => {
               viewport={{ once: true }}
               className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 border border-gray-700/50 rounded-xl p-8"
             >
-              <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mb-6">
-                <Zap className="w-8 h-8 text-primary" />
+              <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-3 rounded-lg w-fit mb-6">
+                <Zap className="w-8 h-8 text-[#38BDF8]" />
               </div>
               <h3 className="text-2xl font-bold text-white mb-4">Our Vision</h3>
               <p className="text-gray-400 leading-relaxed">
@@ -255,7 +255,7 @@ const AboutPage = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Our <span className="text-primary">Core Values</span>
+              Our <span className="text-[#38BDF8]">Core Values</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               The principles that guide everything we do
@@ -272,8 +272,8 @@ const AboutPage = () => {
                 transition={{ delay: index * 0.1 }}
                 className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6"
               >
-                <div className="bg-primary/10 border border-primary/30 p-4 rounded-lg w-fit mb-4">
-                  <value.icon className="w-8 h-8 text-primary" />
+                <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-4 rounded-lg w-fit mb-4">
+                  <value.icon className="w-8 h-8 text-[#38BDF8]" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">{value.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{value.description}</p>
@@ -300,7 +300,7 @@ const AboutPage = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Meet Our <span className="text-primary">Leadership Team</span>
+              Meet Our <span className="text-[#38BDF8]">Leadership Team</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Industry experts committed to delivering exceptional security and technology solutions

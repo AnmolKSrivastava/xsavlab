@@ -129,7 +129,7 @@ const FloatingChatbot = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleSend(reply)}
-                  className="text-xs px-3 py-2 bg-white/5 rounded-full hover:bg-primary/20 transition-colors"
+                  className="text-xs px-3 py-2 bg-white/5 rounded-full hover:bg-[#38BDF8]/20 transition-colors"
                 >
                   {reply}
                 </motion.button>
@@ -145,7 +145,7 @@ const FloatingChatbot = () => {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Type your message..."
-                  className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-primary transition-colors"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-[#38BDF8] transition-colors"
                 />
                 <motion.button
                   whileHover={{ scale: 1.1 }}

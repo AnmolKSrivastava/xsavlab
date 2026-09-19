@@ -61,10 +61,10 @@ const TrustSection = () => {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-6"
+              className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-6"
             >
-              <Star className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Client Success Stories</span>
+              <Star className="w-4 h-4 text-[#38BDF8]" />
+              <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">Client Success Stories</span>
             </motion.div>
 
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -114,9 +114,9 @@ const TrustSection = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.15 }}
-                  className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-primary/50 rounded-xl p-8 transition-all duration-300 relative"
+                  className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl p-8 transition-all duration-300 relative"
                 >
-                  <Quote className="absolute top-6 right-6 w-10 h-10 text-primary/10" />
+                  <Quote className="absolute top-6 right-6 w-10 h-10 text-[#38BDF8]/10" />
                   
                   <div className="flex mb-4">
                     {[...Array(testimonial.rating || 5)].map((_, i) => (
@@ -134,7 +134,7 @@ const TrustSection = () => {
                       <div className="text-sm text-gray-400 mb-1">{testimonial.clientRole}</div>
                     )}
                     {testimonial.clientCompany && (
-                      <div className="text-xs text-primary">{testimonial.clientCompany}</div>
+                      <div className="text-xs text-[#38BDF8]">{testimonial.clientCompany}</div>
                     )}
                   </div>
                 </motion.div>
@@ -152,7 +152,7 @@ const TrustSection = () => {
         >
           <div className="text-center mb-10">
             <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
-              Serving <span className="text-primary">Multiple Industries</span>
+              Serving <span className="text-[#38BDF8]">Multiple Industries</span>
             </h3>
             <p className="text-gray-400">Specialized expertise across diverse sectors</p>
           </div>
@@ -168,7 +168,7 @@ const TrustSection = () => {
                   transition={{ delay: index * 0.05 }}
                   className="flex items-center space-x-2 text-gray-300"
                 >
-                  <Building2 className="w-5 h-5 text-primary flex-shrink-0" />
+                  <Building2 className="w-5 h-5 text-[#38BDF8] flex-shrink-0" />
                   <span className="text-sm font-medium">{industry}</span>
                 </motion.div>
               ))}
@@ -190,10 +190,10 @@ const TrustSection = () => {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/30 px-4 py-2 rounded-full mb-6"
+              className="inline-flex items-center space-x-2 bg-[#38BDF8]/10 border border-[#38BDF8]/30 px-4 py-2 rounded-full mb-6"
             >
-              <Award className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Certifications & Compliance</span>
+              <Award className="w-4 h-4 text-[#38BDF8]" />
+              <span className="text-sm font-semibold text-[#38BDF8] uppercase tracking-wider">Certifications & Compliance</span>
             </motion.div>
 
             <h3 className="text-3xl md:text-4xl font-bold text-white mb-2">
@@ -210,12 +210,12 @@ const TrustSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 hover:border-primary/50 rounded-xl p-6 text-center transition-all duration-300 group"
+                className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 hover:border-[#38BDF8]/50 rounded-xl p-6 text-center transition-all duration-300 group"
               >
-                <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg w-fit mx-auto mb-3 group-hover:bg-primary/20 transition-all">
-                  <Shield className="w-6 h-6 text-primary" />
+                <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-3 rounded-lg w-fit mx-auto mb-3 group-hover:bg-[#38BDF8]/20 transition-all">
+                  <Shield className="w-6 h-6 text-[#38BDF8]" />
                 </div>
-                <div className="text-base font-bold text-white mb-1 group-hover:text-primary transition-colors">
+                <div className="text-base font-bold text-white mb-1 group-hover:text-[#38BDF8] transition-colors">
                   {cert.name}
                 </div>
                 <div className="text-sm text-gray-400">{cert.desc}</div>

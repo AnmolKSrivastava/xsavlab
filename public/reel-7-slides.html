@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XSAV Lab &mdash; seven-slide pinned stage</title>
+<style>
+
+/* ============================================================
+   XSAV LAB - capability showcase, v4 "morph"
+   Pinned stage. One 60k-point model that changes form on scroll.
+   Raw WebGL, single file, nothing fetched.
+   ============================================================ */
+
+:root {
+  color-scheme: dark;
+
+  --void:      #04060C;
+  --void-2:    #070B14;
+  --panel:     #0C1322;
+  --panel-2:   #101929;
+  --line:      #1B2740;
+  --line-hot:  #2B3E63;
+
+  --signal:    #38BDF8;
+  --amber:     #FFB020;
+
+  --ice:       #F2F5FA;
+  --slate:     #93A6C4;
+  --slate-dim: #5B6C89;
+  --ok:        #34D399;
+
+  /* the exact stack xsavlab.com renders with - every element on the live site
+     computes to this; its Google Font links never actually load */
+  --ui: -apple-system, system-ui, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+        "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  --display: var(--ui);
+  --sans: var(--ui);
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  --fs-label: 0.6875rem;
+  --shell: 1440px;
+  --gut: clamp(18px, 4vw, 60px);
+  --head: 68px;
+}
+
+:root[data-theme="light"], :root[data-theme="dark"] { color-scheme: dark; }
+
+* { box-sizing: border-box; }
+
+html, body { scroll-behavior: smooth; scroll-padding-top: var(--head); }
+@media (prefers-reduced-motion: reduce) { html, body { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--void);
+  color: var(--ice);
+  font-family: var(--sans);
+  font-size: clamp(1rem, .5vw + .88rem, 1.0625rem);
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  /* clip, not hidden: hidden would make <body> a scroll container and break
+     position:sticky, which the pinned stage depends on */
+  overflow-x: clip;
+}
+
+::selection { background: var(--amber); color: #12100A; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+p { margin: 0; }
+
+/* matches xsavlab.com: same system family, weight 700, sentence case,
+   near-normal tracking. Caps are kept only for the wordmark and the
+   small mono labels, which the live site also sets in caps. */
+.dsp { font-family: var(--display); font-weight: 800; text-transform: uppercase; line-height: .9; letter-spacing: -0.028em; margin: 0; text-wrap: balance; }
+.h-sec { font-size: clamp(2.4rem, 6.4vw, 6rem); }
+.h-sub { font-size: clamp(1.5rem, 2.6vw, 2.6rem); line-height: .95; }
+.tint { color: var(--signal); }
+.tint-a { color: var(--amber); }
+
+.shell { width: 100%; max-width: var(--shell); margin-inline: auto; padding-inline: var(--gut); }
+
+/* flex-start + offset keeps the rule on the first line when the label wraps */
+.eyebrow { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .22em; text-transform: uppercase; color: var(--signal); display: flex; align-items: flex-start; gap: 12px; margin: 0; }
+.eyebrow::before { content: ""; width: 26px; height: 2px; background: currentColor; flex: none; margin-top: .62em; }
+.eyebrow.amber { color: var(--amber); }
+
+.lede { color: var(--slate); max-width: 60ch; }
+
+.band { position: relative; padding-block: clamp(72px, 9vw, 150px); border-top: 1px solid var(--line); }
+.band-head { display: flex; flex-direction: column; gap: 22px; margin-bottom: clamp(40px, 5vw, 76px); }
+
+.js .rise { opacity: 0; transform: translateY(26px); transition: opacity .85s cubic-bezier(.22,1,.36,1), transform .85s cubic-bezier(.22,1,.36,1); }
+.js .rise.seen { opacity: 1; transform: none; }
+
+.swap { display: block; overflow: hidden; padding-bottom: .14em; margin-bottom: -.14em; }
+.swap-track { display: block; position: relative; }
+.swap-track > span { display: block; }
+.swap-track .gh { position: absolute; top: 100%; left: 0; right: 0; color: var(--slate-dim); opacity: .38; }
+.js .swap-track { transform: translateY(-100%); transition: transform 1s cubic-bezier(.16,1,.3,1); }
+.js .seen .swap-track { transform: translateY(0); }
+.js .swap-track .gh { transition: opacity .25s ease; }
+.js .seen .swap-track .gh { opacity: 0; transition-delay: 1s; }
+.js .seen .sector:nth-child(2) .swap-track { transition-delay: .1s; }
+.js .seen .sector:nth-child(3) .swap-track { transition-delay: .2s; }
+
+/* ============================================================
+   MASTHEAD
+   ============================================================ */
+
+.masthead { position: fixed; inset: 0 0 auto 0; z-index: 60; border-bottom: 1px solid transparent; transition: background .4s ease, border-color .4s ease; }
+.masthead.docked { background: rgba(4,6,12,.8); backdrop-filter: blur(16px) saturate(150%); border-bottom-color: var(--line); }
+.masthead-in { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: var(--head); }
+
+.wordmark { display: flex; align-items: center; gap: 11px; text-decoration: none; flex: none; }
+.wordmark .mark { width: 24px; height: 24px; display: block; color: var(--signal); }
+.wordmark b { font-family: var(--display); font-weight: 800; font-size: 1.0625rem; letter-spacing: -0.01em; text-transform: uppercase; }
+
+.nav-links { display: none; gap: 26px; font-family: var(--mono); font-size: .6875rem; letter-spacing: .16em; text-transform: uppercase; }
+
+/* --- mobile menu --- */
+.nav-toggle {
+  display: inline-flex; flex-direction: column; justify-content: center; gap: 5px;
+  width: 40px; height: 40px; padding: 0 9px; margin-left: auto;
+  background: none; border: 1px solid var(--line-hot); border-radius: 999px; cursor: pointer;
+}
+@media (min-width: 940px) { .nav-toggle { display: none; } }
+.nav-toggle i { display: block; height: 2px; background: var(--ice); transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .25s ease; }
+.nav-toggle[aria-expanded="true"] i:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] i:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+#navPanel {
+  position: fixed; inset: var(--head) 0 auto 0; z-index: 55;
+  background: rgba(4,6,12,.97); backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows .45s cubic-bezier(.22,1,.36,1);
+}
+#navPanel > div { overflow: hidden; }
+#navPanel.open { grid-template-rows: 1fr; }
+#navPanel a {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 17px var(--gut); border-bottom: 1px solid var(--line);
+  text-decoration: none; color: var(--ice);
+  font-family: var(--display); font-weight: 800; text-transform: uppercase;
+  font-size: 1.25rem; letter-spacing: -0.02em;
+}
+#navPanel a span { font-family: var(--mono); font-size: .5625rem; letter-spacing: .16em; color: var(--slate-dim); font-weight: 400; }
+#navPanel a:last-child { border-bottom: 0; }
+@media (min-width: 940px) { #navPanel { display: none; } }
+@media (min-width: 940px) { .nav-links { display: flex; } }
+.nav-links a { color: var(--slate); text-decoration: none; position: relative; padding-block: 4px; transition: color .3s ease; }
+.nav-links a::after { content: ""; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; background: var(--amber); transition: width .35s cubic-bezier(.22,1,.36,1); }
+.nav-links a:hover { color: var(--ice); }
+.nav-links a:hover::after { width: 100%; }
+
+.btn {
+  --bg: var(--amber); --fg: #12100A;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 13px 22px; background: var(--bg); color: var(--fg);
+  border: 2px solid var(--bg); border-radius: 999px;
+  font-family: var(--mono); font-size: .6875rem; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase; text-decoration: none;
+  cursor: pointer; white-space: nowrap;
+  transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease, border-color .3s ease, color .3s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 12px 34px -12px rgba(255,176,32,.8); }
+.btn .arw { transition: transform .35s cubic-bezier(.22,1,.36,1); }
+.btn:hover .arw { transform: translate(3px,-3px); }
+.btn.ghost { --bg: transparent; --fg: var(--ice); border-color: var(--line-hot); }
+.btn.ghost:hover { border-color: var(--ice); box-shadow: none; }
+.btn.compact { padding: 10px 18px; }
+
+@media (max-width: 619px) {
+  .masthead .btn { padding: 9px 13px; letter-spacing: .08em; gap: 0; }
+  .masthead .btn .arw { display: none; }
+}
+
+/* ============================================================
+   THE REEL - pinned stage, content changes on scroll
+   ============================================================ */
+
+.reel { position: relative; }
+
+.reel-stage {
+  position: sticky; top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: flex; align-items: center;
+}
+
+#stage3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.reel-grade {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(58% 58% at 68% 50%, rgba(56,189,248,.07), transparent 68%),
+    linear-gradient(90deg, var(--void) 0%, rgba(4,6,12,.86) 34%, rgba(4,6,12,.3) 62%, transparent 84%);
+}
+/* On narrow screens the model sits in the upper half and the copy sits under
+   it, so the 3D is genuinely visible instead of buried behind a full scrim. */
+@media (max-width: 1023px) {
+  .reel-stage { align-items: flex-end; }
+  .reel-in { padding-top: 0; padding-bottom: clamp(40px, 8vh, 96px); }
+  .reel-grade {
+    background: linear-gradient(180deg,
+      rgba(4,6,12,.10) 0%, rgba(4,6,12,.22) 26%, rgba(4,6,12,.72) 46%,
+      rgba(4,6,12,.94) 62%, var(--void) 84%);
+  }
+}
+
+.reel-in { position: relative; z-index: 3; width: 100%; padding-top: var(--head); }
+
+.slides { position: relative; }
+@media (min-width: 1024px) { .slides { max-width: 46%; } }
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 20px;
+  opacity: 0; visibility: hidden;
+  transform: translateY(26px);
+  will-change: opacity, transform;
+}
+.slide.on { position: relative; opacity: 1; visibility: visible; transform: none; }
+
+.slide h2 { font-size: clamp(2.1rem, 4.6vw, 4.2rem); }
+.slide p { color: var(--slate); max-width: 46ch; }
+
+/* separate pills, not a bordered table: nothing can be clipped, no leftover
+   cell can show, and it matches the pill language of the buttons */
+.slide-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.slide-meta span {
+  flex: 0 0 auto;
+  border: 1px solid var(--line-hot); border-radius: 999px;
+  background: rgba(7,11,20,.55); backdrop-filter: blur(6px);
+  padding: 8px 14px;
+  font-family: var(--mono); font-size: .625rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--slate); white-space: nowrap;
+}
+
+.slide-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+
+/* progress rail */
+.reel-nav {
+  position: absolute; right: clamp(14px, 2.4vw, 34px); top: 50%;
+  transform: translateY(-50%); z-index: 4;
+  display: none; flex-direction: column; gap: 14px;
+}
+@media (min-width: 720px) { .reel-nav { display: flex; } }
+
+.reel-dot {
+  display: flex; align-items: center; gap: 10px;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font-family: var(--mono); font-size: .5625rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--slate-dim); transition: color .35s ease;
+}
+.reel-dot u { text-decoration: none; opacity: 0; transition: opacity .35s ease; white-space: nowrap; }
+.reel-dot i { width: 26px; height: 2px; background: currentColor; flex: none; transition: width .4s cubic-bezier(.22,1,.36,1), background .35s ease; }
+.reel-nav:hover .reel-dot u { opacity: 1; }
+.reel-dot[aria-current="true"] { color: var(--amber); }
+.reel-dot[aria-current="true"] i { width: 46px; }
+
+/* scroll cue */
+.reel-cue {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 4;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: .5rem; letter-spacing: .24em; text-transform: uppercase; color: var(--slate-dim);
+  transition: opacity .5s ease;
+}
+.reel-cue i { width: 2px; height: 34px; background: linear-gradient(180deg, var(--amber), transparent); animation: drop 2.4s ease-in-out infinite; }
+@keyframes drop { 0%,100% { transform: scaleY(.3); transform-origin: top; opacity: .35; } 50% { transform: scaleY(1); transform-origin: top; opacity: 1; } }
+
+/* ---------- mobile reel: reserve the top for the model, keep copy clear
+     of the fixed header, and never let the slide outgrow the viewport ---------- */
+@media (max-width: 1023px) {
+  .reel-stage { align-items: flex-end; }
+  .reel-in { padding-top: calc(var(--head) + 12px); padding-bottom: clamp(26px, 5vh, 64px); }
+  .reel-cue { display: none; }
+  .slide { gap: 11px; }
+  .slide h2 { font-size: clamp(1.45rem, 7vw, 2.6rem); }
+  .slide p { font-size: .875rem; line-height: 1.5; }
+  .slide-actions { width: 100%; gap: 9px; }
+  .slide-actions .btn { flex: 1 1 auto; justify-content: center; padding: 12px 14px; }
+}
+
+/* pills wrap and show their full label - no horizontal clipping */
+@media (max-width: 700px) {
+  .slide-meta { gap: 6px; }
+  .slide-meta span { padding: 6px 10px; font-size: .5625rem; letter-spacing: .08em; white-space: normal; }
+  .chips { gap: 7px; }
+  .chips span { padding: 9px 13px; font-size: .5625rem; letter-spacing: .1em; white-space: normal; }
+}
+
+@media (max-width: 400px) {
+  .slide h2 { font-size: 1.45rem; }
+  .slide p { font-size: .8125rem; }
+  .slide-actions { flex-direction: column; }
+}
+
+/* the logo mark's fill (lives further down in the full stylesheet) */
+.mark path { fill: currentColor; }
+</style>
+</head>
+<body>
+<script>document.documentElement.className += " js";</script>
+
+<nav id="navPanel" aria-label="Mobile"><div>
+  <a href="#detail">Services<span>01</span></a>
+  <a href="#process">Process<span>02</span></a>
+  <a href="#ventures">Ventures<span>03</span></a>
+  <a href="#sectors">Industries<span>04</span></a>
+  <a href="#contact">Contact<span>05</span></a>
+</div></nav>
+
+<main id="top">
+
+<!-- ============ THE REEL: pinned stage ============ -->
+<section class="reel" id="reel">
+  <div class="reel-stage">
+    <canvas id="stage3d" aria-hidden="true"></canvas>
+    <div class="reel-grade" aria-hidden="true"></div>
+
+    <div class="reel-in">
+      <div class="shell">
+        <div class="slides" id="slides">
+
+          <article class="slide on">
+            <p class="eyebrow">Trusted security partner</p>
+            <h2 class="dsp">Innovate with AI.<br><span class="tint">Secure with confidence.</span></h2>
+            <p>Comprehensive security solutions, cloud infrastructure management, and expert consulting to safeguard your digital assets and ensure business continuity.</p>
+            <div class="slide-meta">
+              <span>24/7 Security Operations Center</span><span>ISO 27001 &amp; SOC 2 Certified</span><span>Zero Trust Architecture Specialists</span>
+            </div>
+            <div class="slide-actions">
+              <a class="btn" href="mailto:contact@xsavlab.com?subject=Security%20assessment%20request">Request security assessment <svg class="arw" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <a class="btn ghost" href="#detail">View services</a>
+            </div>
+          </article>
+
+          <article class="slide">
+            <p class="eyebrow">Service 01 &mdash; Cybersecurity</p>
+            <h2 class="dsp">Cybersecurity<br><span class="tint">services.</span></h2>
+            <p>Comprehensive security solutions to protect your business from evolving cyber threats with 24/7 monitoring and expert response.</p>
+            <div class="slide-meta">
+              <span>Security assessment &amp; penetration testing</span><span>Managed security operations (SOC)</span><span>Incident response &amp; forensics</span><span>Compliance management (ISO, GDPR, SOC 2)</span><span>Security awareness training</span><span>Vulnerability management</span>
+            </div>
+          </article>
+
+          <article class="slide">
+            <p class="eyebrow">Service 02 &mdash; Cloud</p>
+            <h2 class="dsp">Cloud<br><span class="tint">infrastructure.</span></h2>
+            <p>Scalable and secure cloud solutions with DevOps automation, cost optimization, and enterprise-grade reliability.</p>
+            <div class="slide-meta">
+              <span>Cloud migration &amp; strategy (AWS, Azure, GCP)</span><span>DevOps &amp; CI/CD implementation</span><span>Infrastructure as Code (IaC)</span><span>Cloud security &amp; governance</span><span>Disaster recovery &amp; business continuity</span><span>Performance optimization</span>
+            </div>
+          </article>
+
+          <article class="slide">
+            <p class="eyebrow amber">Service 03 &mdash; AI</p>
+            <h2 class="dsp">AI integration<br><span class="tint-a">services.</span></h2>
+            <p>Strategic AI implementation and custom automation solutions to enhance efficiency and drive business innovation.</p>
+            <div class="slide-meta">
+              <span>AI strategy &amp; consulting</span><span>Custom AI agent development</span><span>Intelligent process automation</span><span>Machine learning implementation</span><span>AI security &amp; risk management</span><span>Natural language processing</span>
+            </div>
+          </article>
+
+          <article class="slide">
+            <p class="eyebrow">Service 04 &mdash; Web</p>
+            <h2 class="dsp">Custom website<br><span class="tint">development.</span></h2>
+            <p>Professional web solutions tailored to your business needs, from corporate websites to complex web applications.</p>
+            <div class="slide-meta">
+              <span>Custom website design &amp; development</span><span>E-commerce &amp; booking systems</span><span>Progressive web apps (PWA)</span><span>Responsive &amp; mobile-first design</span><span>SEO optimization &amp; performance</span><span>Content management systems (CMS)</span>
+            </div>
+          </article>
+
+          <article class="slide">
+            <p class="eyebrow amber">Service 05 &mdash; Software</p>
+            <h2 class="dsp">Enterprise software<br><span class="tint-a">solutions.</span></h2>
+            <p>Scalable, secure custom software solutions built to streamline operations and drive business growth.</p>
+            <div class="slide-meta">
+              <span>Custom business applications</span><span>ERP &amp; CRM system integration</span><span>Workflow automation tools</span><span>Database design &amp; management</span><span>API development &amp; integration</span><span>Legacy system modernization</span>
+            </div>
+          </article>
+
+          <article class="slide">
+            <p class="eyebrow">Reach</p>
+            <h2 class="dsp">Serving multiple<br><span class="tint">industries.</span></h2>
+            <p>Specialised expertise across diverse sectors, delivered on enterprise-grade infrastructure from Microsoft Azure, Amazon Web Services, and Google Cloud Platform.</p>
+            <div class="slide-meta">
+              <span>Financial services</span><span>Healthcare</span><span>Retail &amp; e-commerce</span><span>Manufacturing</span><span>Technology</span><span>Government</span>
+            </div>
+            <div class="slide-actions">
+              <a class="btn" href="mailto:contact@xsavlab.com?subject=Consultation%20request">Schedule consultation <svg class="arw" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </div>
+
+    <nav class="reel-nav" id="reelNav" aria-label="Showcase sections"></nav>
+    <div class="reel-cue" id="reelCue" aria-hidden="true"><i></i>Scroll</div>
+  </div>
+</section>
+
+</main>
+
+<script>
+
+(function () {
+  "use strict";
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.documentElement.classList.add("lit");
+
+  /* mobile menu */
+  var navToggle = document.getElementById("navToggle"),
+      navPanel  = document.getElementById("navPanel");
+  function setNav(open) {
+    navPanel.classList.toggle("open", open);
+    navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  if (navToggle) {
+    navToggle.addEventListener("click", function () {
+      setNav(navPanel.className.indexOf("open") === -1);
+    });
+    navPanel.addEventListener("click", function (e) { if (e.target.closest("a")) setNav(false); });
+    addEventListener("keydown", function (e) { if (e.key === "Escape") setNav(false); });
+  }
+
+  var masthead = document.getElementById("masthead");
+  function dock() { masthead.classList.toggle("docked", (window.pageYOffset||0) > 40); }
+  dock();
+
+  /* ---------- accordion ---------- */
+  var matrix = document.getElementById("matrix");
+  if (matrix) matrix.addEventListener("click", function (e) {
+    var btn = e.target.closest(".pillar-btn");
+    if (!btn) return;
+    var pillar = btn.parentElement, wasOpen = pillar.classList.contains("open");
+    matrix.querySelectorAll(".pillar").forEach(function (p) {
+      p.classList.remove("open");
+      p.querySelector(".pillar-btn").setAttribute("aria-expanded", "false");
+    });
+    if (!wasOpen) { pillar.classList.add("open"); btn.setAttribute("aria-expanded", "true"); }
+  });
+
+  /* ---------- reveals + counters ---------- */
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      en.target.classList.add("seen");
+      en.target.querySelectorAll(".count").forEach(runCount);
+      io.unobserve(en.target);
+    });
+  }, { threshold: 0.14, rootMargin: "0px 0px -5% 0px" });
+  document.querySelectorAll(".rise").forEach(function (el) { io.observe(el); });
+
+  function runCount(el) {
+    if (el.dataset.done) return;
+    el.dataset.done = "1";
+    var target = parseFloat(el.dataset.count), dec = parseInt(el.dataset.dec || "0", 10),
+        suffix = el.dataset.suffix || "", sep = el.dataset.sep === "1";
+    function render(v) {
+      var s = v.toFixed(dec);
+      if (sep) s = Number(s).toLocaleString("en-US");
+      el.textContent = s + suffix;
+    }
+    if (reduce) { render(target); return; }
+    var dur = 1500, t0 = performance.now();
+    (function step(now) {
+      var p = Math.min((now - t0) / dur, 1);
+      render(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  /* ============================================================
+     MATRIX HELPERS
+     ============================================================ */
+  var M = {
+    ident: function () { return new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]); },
+    persp: function (fov, a, n, f) {
+      var t = 1 / Math.tan(fov / 2), nf = 1 / (n - f);
+      return new Float32Array([t/a,0,0,0, 0,t,0,0, 0,0,(f+n)*nf,-1, 0,0,2*f*n*nf,0]);
+    },
+    mul: function (a, b) {
+      var o = new Float32Array(16), i, j, k, s;
+      for (i = 0; i < 4; i++) for (j = 0; j < 4; j++) {
+        s = 0; for (k = 0; k < 4; k++) s += a[k*4+j] * b[i*4+k];
+        o[i*4+j] = s;
+      }
+      return o;
+    },
+    trans: function (x, y, z) { var m = M.ident(); m[12]=x; m[13]=y; m[14]=z; return m; },
+    rotX: function (r) { var c=Math.cos(r), s=Math.sin(r), m=M.ident(); m[5]=c; m[6]=s; m[9]=-s; m[10]=c; return m; },
+    rotY: function (r) { var c=Math.cos(r), s=Math.sin(r), m=M.ident(); m[0]=c; m[2]=-s; m[8]=s; m[10]=c; return m; }
+  };
+
+  function sh(gl, type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.warn(gl.getShaderInfoLog(s)); return null; }
+    return s;
+  }
+  function prog(gl, v, f) {
+    var vs = sh(gl, gl.VERTEX_SHADER, v), fs = sh(gl, gl.FRAGMENT_SHADER, f);
+    if (!vs || !fs) return null;
+    var p = gl.createProgram();
+    gl.attachShader(p, vs); gl.attachShader(p, fs); gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) { console.warn(gl.getProgramInfoLog(p)); return null; }
+    return p;
+  }
+  function buf(gl, data) {
+    var b = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    return b;
+  }
+  function attrib(gl, p, name, b, size) {
+    var l = gl.getAttribLocation(p, name);
+    if (l < 0) return;
+    gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.enableVertexAttribArray(l);
+    gl.vertexAttribPointer(l, size, gl.FLOAT, false, 0, 0);
+  }
+
+  /* ============================================================
+     THE MORPH MODEL
+     Six forms, identical point count, interpolated in the shader.
+     ============================================================ */
+
+  var V_MORPH =
+    "attribute vec3 aA; attribute vec3 aB; attribute float aSeed;" +
+    "uniform mat4 uProj,uView,uModel; uniform float uMix,uTime,uSize,uBurst;" +
+    "varying float vSeed; varying float vDepth;" +
+    "void main(){" +
+    " vec3 p = mix(aA,aB,uMix);" +
+    /* points bloom outward mid-transition so the change reads as a transform */
+    " vec3 dir = normalize(p + vec3(0.0001));" +
+    " p += dir * uBurst * (0.30 + aSeed*0.55);" +
+    " p += 0.009*vec3(sin(uTime*0.8+aSeed*31.0), cos(uTime*0.7+aSeed*27.0), sin(uTime*0.6+aSeed*19.0));" +
+    " vec4 e = uView * uModel * vec4(p,1.0);" +
+    " vDepth = -e.z; vSeed = aSeed;" +
+    " gl_Position = uProj * e;" +
+    " gl_PointSize = uSize * (0.70 + aSeed*0.55) * (5.2 / max(vDepth, 0.7));" +
+    "}";
+
+  var F_MORPH =
+    "precision mediump float;" +
+    "varying float vSeed; varying float vDepth;" +
+    "uniform vec3 uC1,uC2; uniform float uOp;" +
+    "void main(){" +
+    " vec2 d = gl_PointCoord - vec2(0.5);" +
+    " float r2 = dot(d,d);" +
+    " if (r2 > 0.25) discard;" +
+    " float a = smoothstep(0.25, 0.15, r2);" +   /* hard-ish edge: crisp points, not soft blobs */
+    /* squared so the primary tone dominates and the second reads as highlight */
+    " vec3 c = mix(uC1, uC2, vSeed * vSeed);" +
+    " float fog = clamp((11.0 - vDepth) / 8.5, 0.0, 1.0);" +
+    " gl_FragColor = vec4(c, a * uOp * fog);" +
+    "}";
+
+  /* --- shape generators: each fills exactly N points --- */
+
+  function rnd() { return Math.random(); }
+
+  /* 0 - the XSAV Lab mark, extruded.
+     Four IDENTICAL right triangles, one per quadrant, right angle at the
+     top-right of each - taken from the mark on xsavlab.com, not a pinwheel. */
+  function shapeMark(N, out) {
+    var quads = [
+      [[-1, 1], [0, 1], [0, 0]],
+      [[ 0, 1], [1, 1], [1, 0]],
+      [[-1, 0], [0, 0], [0,-1]],
+      [[ 0, 0], [1, 0], [1,-1]]
+    ];
+    for (var i = 0; i < N; i++) {
+      var t = quads[i & 3], d = 0.17;
+      var r1 = rnd(), r2 = rnd();
+      if (r1 + r2 > 1) { r1 = 1 - r1; r2 = 1 - r2; }
+      var x = t[0][0] + r1*(t[1][0]-t[0][0]) + r2*(t[2][0]-t[0][0]);
+      var y = t[0][1] + r1*(t[1][1]-t[0][1]) + r2*(t[2][1]-t[0][1]);
+      var z = (rnd() < 0.72) ? (rnd() < 0.5 ? d : -d) : (rnd()*2-1)*d;
+      out[i*3] = x * 1.08; out[i*3+1] = y * 1.08; out[i*3+2] = z;
+    }
+  }
+
+  /* 5 - a browser layout: frame, header bar, tiles, copy lines (web build) */
+  function shapeScreen(N, out) {
+    var W = 1.55, H = 1.02;
+    for (var i = 0; i < N; i++) {
+      var r = rnd(), x, y;
+      if (r < 0.26) {                       /* frame */
+        var e = (Math.random()*4)|0, t = rnd();
+        if (e === 0)      { x = -W + 2*W*t; y =  H; }
+        else if (e === 1) { x = -W + 2*W*t; y = -H; }
+        else if (e === 2) { x = -W; y = -H + 2*H*t; }
+        else              { x =  W; y = -H + 2*H*t; }
+      } else if (r < 0.40) {                /* header bar */
+        x = (rnd()*2-1) * W * 0.94;
+        y = H * 0.74 + (rnd()-0.5) * 0.07;
+      } else if (r < 0.78) {                /* three tiles */
+        var k = (Math.random()*3)|0;
+        x = (-W*0.60 + k*W*0.60) + (rnd()*2-1)*W*0.24;
+        y = H*0.16 + (rnd()*2-1)*H*0.30;
+      } else {                              /* copy lines */
+        var L = (Math.random()*3)|0;
+        x = -W*0.86 + rnd()*W*(1.25 - L*0.28);
+        y = -H*0.46 - L*0.19;
+      }
+      out[i*3] = x; out[i*3+1] = y; out[i*3+2] = (rnd()-0.5)*0.06;
+    }
+  }
+
+  /* 1 - shield: domed face, tapering to a point (cybersecurity) */
+  function shapeShield(N, out) {
+    for (var i = 0; i < N; i++) {
+      var v = rnd();                       /* 0 top .. 1 bottom */
+      var y = 1.15 - v * 2.5;
+      var w;
+      if (y > 0.15) w = 0.95;
+      else {
+        var f = (0.15 - y) / 1.5;
+        w = 0.95 * Math.sqrt(Math.max(0, 1 - f*f));
+      }
+      var x = (rnd()*2 - 1) * w;
+      var edge = Math.sqrt(Math.max(0, 1 - (w ? (x/w)*(x/w) : 1)));
+      var z = 0.42 * edge * (rnd() < 0.5 ? 1 : -1);
+      out[i*3] = x; out[i*3+1] = y; out[i*3+2] = z;
+    }
+  }
+
+  /* 2 - neural lattice: layered nodes joined by edges (AI) */
+  function shapeNeural(N, out) {
+    var layers = 4, per = 7, nodes = [];
+    for (var L = 0; L < layers; L++) {
+      for (var j = 0; j < per; j++) {
+        var a = (j / per) * Math.PI * 2 + L * 0.4;
+        nodes.push([ (L/(layers-1) - 0.5) * 2.5,
+                     Math.cos(a) * (0.85 + (L%2)*0.2),
+                     Math.sin(a) * (0.85 + (L%2)*0.2) ]);
+      }
+    }
+    for (var i = 0; i < N; i++) {
+      if (i % 5 === 0) {                       /* cluster at a node */
+        var n = nodes[(Math.random()*nodes.length)|0];
+        out[i*3]   = n[0] + (rnd()-0.5)*0.14;
+        out[i*3+1] = n[1] + (rnd()-0.5)*0.14;
+        out[i*3+2] = n[2] + (rnd()-0.5)*0.14;
+      } else {                                  /* along an edge */
+        var Li = (Math.random()*(layers-1))|0;
+        var a1 = nodes[Li*per + ((Math.random()*per)|0)];
+        var b1 = nodes[(Li+1)*per + ((Math.random()*per)|0)];
+        var t = rnd();
+        out[i*3]   = a1[0] + (b1[0]-a1[0])*t + (rnd()-0.5)*0.03;
+        out[i*3+1] = a1[1] + (b1[1]-a1[1])*t + (rnd()-0.5)*0.03;
+        out[i*3+2] = a1[2] + (b1[2]-a1[2])*t + (rnd()-0.5)*0.03;
+      }
+    }
+  }
+
+  /* 3 - cloud: union of spheres (cloud engineering) */
+  function shapeCloud(N, out) {
+    var lobes = [
+      [ 0.00, 0.10, 0.00, 0.78],[-0.85, -0.05, 0.10, 0.55],[ 0.85, -0.02,-0.10, 0.58],
+      [-0.40, 0.48, 0.14, 0.46],[ 0.42, 0.44,-0.14, 0.44],[ 1.35, -0.18, 0.06, 0.36],
+      [-1.35, -0.20,-0.06, 0.34],[ 0.05, -0.32, 0.30, 0.44],[ 0.00, 0.62, 0.00, 0.34]
+    ];
+    for (var i = 0; i < N; i++) {
+      var L = lobes[(Math.random()*lobes.length)|0];
+      var u = rnd()*2 - 1, ph = rnd()*Math.PI*2, s = Math.sqrt(Math.max(0,1-u*u));
+      out[i*3]   = L[0] + Math.cos(ph)*s*L[3];
+      out[i*3+1] = L[1] + u*L[3] * 0.85;
+      out[i*3+2] = L[2] + Math.sin(ph)*s*L[3];
+    }
+  }
+
+  /* 4 - stacked application panels (enterprise apps) */
+  function shapeStack(N, out) {
+    var slabs = [[-0.55, -0.30], [0.0, 0.0], [0.55, 0.30]];
+    var w = 1.25, d = 0.85, th = 0.06;
+    for (var i = 0; i < N; i++) {
+      var S = slabs[i % slabs.length];
+      var x = (rnd()*2-1) * w + S[1] * 0.5;
+      var z = (rnd()*2-1) * d;
+      var y = S[0] + (rnd() < 0.86 ? (rnd() < 0.5 ? th : -th) : (rnd()*2-1)*th);
+      /* thicken the rim so the panels read as slabs, not sheets */
+      if (rnd() < 0.22) {
+        if (rnd() < 0.5) x = (rnd() < 0.5 ? -w : w) + S[1]*0.5;
+        else z = (rnd() < 0.5 ? -d : d);
+        y = S[0] + (rnd()*2-1)*th;
+      }
+      out[i*3] = x; out[i*3+1] = y * 1.5; out[i*3+2] = z;
+    }
+  }
+
+  /* 5 - globe with orbital arcs (reach) */
+  function shapeGlobe(N, out) {
+    for (var i = 0; i < N; i++) {
+      if (i % 9 === 0) {                       /* orbital band */
+        var a = rnd()*Math.PI*2, tilt = ((i/9)|0) % 3;
+        var rr = 1.32 + tilt*0.1;
+        var cx = Math.cos(a)*rr, cy = Math.sin(a)*rr*0.25, cz = Math.sin(a)*rr;
+        var ta = tilt*0.7;
+        out[i*3]   = cx*Math.cos(ta) - cz*Math.sin(ta);
+        out[i*3+1] = cy;
+        out[i*3+2] = cx*Math.sin(ta) + cz*Math.cos(ta);
+      } else {
+        var u = rnd()*2 - 1, ph = rnd()*Math.PI*2, s = Math.sqrt(Math.max(0,1-u*u));
+        out[i*3] = Math.cos(ph)*s*1.15; out[i*3+1] = u*1.15; out[i*3+2] = Math.sin(ph)*s*1.15;
+      }
+    }
+  }
+
+  /* one form per service, in the order xsavlab.com lists them */
+  var SHAPES = [shapeMark, shapeShield, shapeCloud, shapeNeural, shapeScreen, shapeStack, shapeGlobe];
+  var LABELS = ["Overview", "Cybersecurity", "Cloud", "AI", "Web", "Software", "Reach"];
+  var TONES = [
+    [[0.22,0.74,0.97],[1.00,0.69,0.13]],
+    [[0.22,0.74,0.97],[0.42,0.86,1.00]],
+    [[0.22,0.74,0.97],[0.55,0.90,1.00]],
+    [[1.00,0.69,0.13],[1.00,0.85,0.45]],
+    [[0.22,0.74,0.97],[0.60,0.88,1.00]],
+    [[1.00,0.69,0.13],[0.98,0.55,0.20]],
+    [[0.22,0.74,0.97],[1.00,0.69,0.13]]
+  ];
+
+  /* ---------- reel state ---------- */
+  var reel = document.getElementById("reel");
+  var stage = document.getElementById("stage3d");
+  var slideEls = [].slice.call(document.querySelectorAll("#slides .slide"));
+  var nav = document.getElementById("reelNav");
+  var cue = document.getElementById("reelCue");
+  var COUNT = SHAPES.length;
+
+  /* the reel needs one viewport of scroll per transition, plus one to read on */
+  if (reel) reel.style.height = (COUNT * 100) + "svh";
+
+  /* nav dots */
+  if (nav) {
+    LABELS.forEach(function (name, i) {
+      var b = document.createElement("button");
+      b.className = "reel-dot";
+      b.setAttribute("aria-label", "Go to " + name);
+      b.innerHTML = '<u>' + name + '</u><i></i>';
+      b.addEventListener("click", function () {
+        var total = reel.offsetHeight - innerHeight;
+        var y = reel.offsetTop + (i / (COUNT - 1)) * total;
+        window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
+      });
+      nav.appendChild(b);
+    });
+  }
+
+  var dots = [].slice.call(document.querySelectorAll(".reel-dot"));
+  var current = -1, progress = 0, shownIdx = 0, mixT = 0, burst = 0;
+
+  function readProgress() {
+    if (!reel) return;
+    var total = Math.max(1, reel.offsetHeight - innerHeight);
+    var p = (-reel.getBoundingClientRect().top) / total;
+    progress = Math.max(0, Math.min(1, p));
+
+    var f = progress * (COUNT - 1);
+    var i = Math.min(COUNT - 2, Math.floor(f));
+    var t = f - i;
+
+    /* hold at each end so every slide gets dwell time, then transition */
+    var e = t < 0.30 ? 0 : t > 0.80 ? 1 : (t - 0.30) / 0.50;
+    e = e * e * (3 - 2 * e);
+
+    shownIdx = i; mixT = e;
+    burst = Math.sin(Math.PI * e) * 0.5;   /* bloom peaks mid-transition */
+
+    var active = e < 0.5 ? i : i + 1;
+    if (active !== current) {
+      current = active;
+      slideEls.forEach(function (el, k) { el.classList.toggle("on", k === active); });
+      dots.forEach(function (d, k) { d.setAttribute("aria-current", k === active ? "true" : "false"); });
+    }
+    if (cue) cue.style.opacity = progress > 0.02 ? "0" : "1";
+  }
+
+  /* ---------- the stage renderer ---------- */
+  var gl = null, pm = null, bufs = [], bSeed = null, N = 0, U = {};
+
+  function initStage() {
+    if (!stage) return;
+    gl = stage.getContext("webgl", { antialias: true, alpha: true, premultipliedAlpha: false })
+      || stage.getContext("experimental-webgl", { antialias: true, alpha: true });
+    if (!gl) return;
+
+    pm = prog(gl, V_MORPH, F_MORPH);
+    if (!pm) { gl = null; return; }
+
+    var wide = innerWidth;
+    N = wide >= 1200 ? 110000 : wide >= 800 ? 60000 : 34000;
+
+    var tmp = new Float32Array(N * 3);
+    for (var i = 0; i < SHAPES.length; i++) {
+      SHAPES[i](N, tmp);
+      bufs.push(buf(gl, tmp));
+    }
+    var seeds = new Float32Array(N);
+    for (var j = 0; j < N; j++) seeds[j] = Math.random();
+    bSeed = buf(gl, seeds);
+
+    ["uProj","uView","uModel","uMix","uTime","uSize","uBurst","uC1","uC2","uOp"].forEach(function (k) {
+      U[k] = gl.getUniformLocation(pm, k);
+    });
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);   /* additive glow */
+    gl.disable(gl.DEPTH_TEST);
+    sizeStage();
+  }
+
+  var dpr = 1;
+
+  /* Reconciles the drawing buffer with the element's real box. Called every
+     frame, not just on resize: a canvas created while the tab is hidden or
+     zero-sized would otherwise stay stuck at the 300x150 default forever. */
+  function sizeStage(r) {
+    if (!gl || !stage) return false;
+    r = r || stage.getBoundingClientRect();
+    if (!r.width || !r.height) return false;
+    /* render at native device resolution - on a 4K panel this is a 4K buffer */
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+    if (stage.width === w && stage.height === h) return true;
+    stage.width = w; stage.height = h;
+    gl.viewport(0, 0, w, h);
+    return true;
+  }
+
+  var mx = 0, my = 0, tx = 0, ty = 0, clock = 0;
+
+  function drawStage(dt) {
+    if (!gl || !pm) return;
+    var r = stage.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    if (!sizeStage(r)) return;
+
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(pm);
+
+    var aspect = stage.width / stage.height;
+    var wideLayout = r.width >= 1024;
+    gl.uniformMatrix4fv(U.uProj, false, M.persp(0.9, aspect, 0.1, 60));
+    /* wide: model right of the copy. narrow: lifted into the upper half so it
+       reads as its own element above the text rather than sitting behind it */
+    gl.uniformMatrix4fv(U.uView, false, wideLayout
+      ? M.trans(1.3, 0, -4.5)
+      : M.trans(0, 0.85, -5.9));   /* far enough back that the full mark fits the narrow frame */
+
+    /* sway, don't spin: a full rotation leaves each form edge-on half the time,
+       and these shapes have to be legible as the service they stand for */
+    var yaw = Math.sin(clock * 0.22) * 0.42 + mx * 0.5 + progress * 0.55;
+    var model = M.mul(M.rotY(yaw), M.rotX(-0.10 + my * 0.26));
+    gl.uniformMatrix4fv(U.uModel, false, model);
+
+    var a = bufs[shownIdx], b = bufs[Math.min(shownIdx + 1, COUNT - 1)];
+    attrib(gl, pm, "aA", a, 3);
+    attrib(gl, pm, "aB", b, 3);
+    attrib(gl, pm, "aSeed", bSeed, 1);
+
+    var t1 = TONES[shownIdx], t2 = TONES[Math.min(shownIdx + 1, COUNT - 1)];
+    function lerp3(p, q, k, i) { return p[i] + (q[i] - p[i]) * k; }
+    gl.uniform3f(U.uC1, lerp3(t1[0],t2[0],mixT,0), lerp3(t1[0],t2[0],mixT,1), lerp3(t1[0],t2[0],mixT,2));
+    gl.uniform3f(U.uC2, lerp3(t1[1],t2[1],mixT,0), lerp3(t1[1],t2[1],mixT,1), lerp3(t1[1],t2[1],mixT,2));
+
+    gl.uniform1f(U.uMix, mixT);
+    gl.uniform1f(U.uBurst, burst);
+    gl.uniform1f(U.uTime, clock);
+    /* small screens run far fewer particles, so each needs to be bigger to keep
+       the form readable; desktop stays small and sharp */
+    gl.uniform1f(U.uSize, (r.width < 800 ? 2.6 : 1.95) * dpr);
+    gl.uniform1f(U.uOp, r.width < 800 ? 0.9 : 0.95);
+
+    gl.drawArrays(gl.POINTS, 0, N);
+  }
+
+  /* ============================================================
+     BOOT + LOOP
+     ============================================================ */
+  initStage();
+  readProgress();
+
+  if (matchMedia("(pointer: fine)").matches && !reduce) {
+    addEventListener("pointermove", function (e) {
+      tx = (e.clientX / innerWidth - 0.5) * 2;
+      ty = (e.clientY / innerHeight - 0.5) * 2;
+    }, { passive: true });
+  }
+
+  var ticking = false;
+  addEventListener("scroll", function () {
+    dock();
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { readProgress(); ticking = false; });
+  }, { passive: true });
+
+  var rz;
+  addEventListener("resize", function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      if (reel) reel.style.height = (COUNT * 100) + "svh";
+      sizeStage(); readProgress();
+      if (reduce) { drawStage(0); }
+    }, 160);
+  }, { passive: true });
+
+  var last = performance.now();
+  function loop(now) {
+    var dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    clock += dt;
+    mx += (tx - mx) * 0.06;
+    my += (ty - my) * 0.06;
+    readProgress();   /* cheap, and keeps the reel correct if it booted pre-layout */
+    drawStage(dt);
+    requestAnimationFrame(loop);
+  }
+
+  if (reduce) { drawStage(0); }
+  else requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
