@@ -1319,15 +1319,61 @@ export default function Services() {
       }
     }
 
+    // Reach — refined globe with lat/long grid + 6 industry hotspots
     function shapeGlobe(N, out) {
+      const R = 1.18;
+      // Hotspots roughly matching industry "regions" on the sphere
+      const hotspots = [
+        [0.85, 0.55, 0.35],   // Financial
+        [-0.75, 0.5, 0.45],   // Healthcare
+        [0.15, 0.95, -0.25],  // Retail
+        [0.7, -0.35, 0.75],   // Manufacturing
+        [-0.55, -0.15, 0.9],  // Technology
+        [-0.2, -0.75, 0.65],  // Government
+      ].map(([x, y, z]) => {
+        const len = Math.sqrt(x * x + y * y + z * z) || 1;
+        return [(x / len) * R, (y / len) * R, (z / len) * R];
+      });
+
       for (let i = 0; i < N; i++) {
-        if (i % 9 === 0) {
-          const a = rnd() * Math.PI * 2, tilt = ((i / 9) | 0) % 3, rr = 1.32 + tilt * 0.1;
-          const cx = Math.cos(a) * rr, cy = Math.sin(a) * rr * 0.25, cz = Math.sin(a) * rr, ta = tilt * 0.7;
-          out[i * 3] = cx * Math.cos(ta) - cz * Math.sin(ta); out[i * 3 + 1] = cy; out[i * 3 + 2] = cx * Math.sin(ta) + cz * Math.cos(ta);
+        const r = rnd();
+        if (r < 0.42) {
+          // Sphere surface fill
+          const u = rnd() * 2 - 1;
+          const ph = rnd() * Math.PI * 2;
+          const s = Math.sqrt(Math.max(0, 1 - u * u));
+          out[i * 3] = Math.cos(ph) * s * R;
+          out[i * 3 + 1] = u * R;
+          out[i * 3 + 2] = Math.sin(ph) * s * R;
+        } else if (r < 0.62) {
+          // Longitude meridians
+          const meridians = 8;
+          const m = (Math.random() * meridians) | 0;
+          const lon = (m / meridians) * Math.PI * 2;
+          const lat = (rnd() * 2 - 1) * Math.PI * 0.5;
+          const c = Math.cos(lat);
+          out[i * 3] = Math.cos(lon) * c * R;
+          out[i * 3 + 1] = Math.sin(lat) * R;
+          out[i * 3 + 2] = Math.sin(lon) * c * R;
+        } else if (r < 0.78) {
+          // Latitude parallels
+          const parallels = [-0.75, -0.4, 0, 0.4, 0.75];
+          const y = parallels[(Math.random() * parallels.length) | 0] * R;
+          const ring = Math.sqrt(Math.max(0, R * R - y * y));
+          const a = rnd() * Math.PI * 2;
+          out[i * 3] = Math.cos(a) * ring;
+          out[i * 3 + 1] = y;
+          out[i * 3 + 2] = Math.sin(a) * ring;
         } else {
-          const u = rnd() * 2 - 1, ph = rnd() * Math.PI * 2, s = Math.sqrt(Math.max(0, 1 - u * u));
-          out[i * 3] = Math.cos(ph) * s * 1.15; out[i * 3 + 1] = u * 1.15; out[i * 3 + 2] = Math.sin(ph) * s * 1.15;
+          // Industry hotspots (bright clusters on the surface)
+          const h = hotspots[(Math.random() * hotspots.length) | 0];
+          const a = rnd() * Math.PI * 2;
+          const u = rnd() * 2 - 1;
+          const s = Math.sqrt(Math.max(0, 1 - u * u));
+          const rad = rnd() * 0.16;
+          out[i * 3] = h[0] + Math.cos(a) * s * rad;
+          out[i * 3 + 1] = h[1] + u * rad;
+          out[i * 3 + 2] = h[2] + Math.sin(a) * s * rad;
         }
       }
     }
@@ -1378,7 +1424,7 @@ export default function Services() {
       ? 110000
       : wide >= 800
         ? 60000
-        : 10000;
+        : 16000;
     const bufs = [];
     const tmp = new Float32Array(N * 3);
     SHAPES.forEach(shape => { shape(N, tmp); bufs.push(buffer(gl, tmp)); });
@@ -1457,7 +1503,7 @@ export default function Services() {
 
       gl.uniform1f(
         U.uOp,
-        r.width < 800 ? 0.4 : 0.95
+        r.width < 800 ? 1 : 0.95
       );
       gl.drawArrays(gl.POINTS, 0, N);
     }

@@ -978,7 +978,7 @@ function shapeSecure(N, out) {
   ? 80000
   : wide >= 800
     ? 48000
-    : 12000;
+    : 18000;
     const bufs = [];
     const tmp = new Float32Array(N * 3);
     SHAPES.forEach((shape) => {
@@ -1103,7 +1103,7 @@ function shapeSecure(N, out) {
       gl.uniform1f(U.uTime, clock);
       // gl.uniform1f(U.uSize, (r.width < 800 ? 2.6 : 1.95) * dpr);
       // gl.uniform1f(U.uOp, r.width < 800 ? 0.9 : 0.95);
-      gl.uniform1f(U.uOp, r.width < 800 ? 0.45 : 0.95);
+      gl.uniform1f(U.uOp, r.width < 800 ? 1 : 0.95);
       gl.uniform1f(U.uSize, (r.width < 800 ? 2.0 : 1.95) * dpr);
       gl.drawArrays(gl.POINTS, 0, N);
     }

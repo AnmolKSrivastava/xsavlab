@@ -158,7 +158,7 @@ const REEL_CSS = `
     padding-bottom: max(22px, env(safe-area-inset-bottom));
   }
   .reel-root #stage3d {
-    opacity: 0.40;
+    opacity: 1;
   }
   .reel-root .reel-grade {
     background: linear-gradient(180deg,

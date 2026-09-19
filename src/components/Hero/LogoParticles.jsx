@@ -203,9 +203,9 @@ export default function LogoParticles({
     let N;
 
     if (idle) {
-      N = wide < 768 ? 8000 : 18000;
+      N = wide < 768 ? 12000 : 18000;
     } else {
-      N = wide >= 1200 ? 110000 : wide >= 800 ? 60000 : 10000;
+      N = wide >= 1200 ? 110000 : wide >= 800 ? 60000 : 16000;
     }
 
     const positions = new Float32Array(N * 3);
@@ -271,7 +271,7 @@ export default function LogoParticles({
         const pitch = -0.1 + Math.sin(clock * 0.18) * 0.06;
         gl.uniformMatrix4fv(U.uModel, false, M.mul(M.rotY(yaw), M.rotX(pitch)));
         gl.uniform1f(U.uSize, 2.4 * dpr);
-        gl.uniform1f(U.uOp, 0.95);
+        gl.uniform1f(U.uOp, canvas.width / dpr < 800 ? 1 : 0.95);
       } else {
         const wideLayout = r.width >= 1024;
         gl.uniformMatrix4fv(U.uProj, false, M.persp(0.9, aspect, 0.1, 60));
@@ -288,7 +288,7 @@ export default function LogoParticles({
         const model = M.mul(M.rotY(yaw), M.rotX(-0.1 + my * 0.26));
         gl.uniformMatrix4fv(U.uModel, false, model);
         gl.uniform1f(U.uSize, (r.width < 800 ? 2.6 : 1.95) * dpr);
-        gl.uniform1f(U.uOp, r.width < 800 ? 0.9 : 0.95);
+        gl.uniform1f(U.uOp, r.width < 800 ? 1 : 0.95);
       }
 
       attrib(pm, 'aA', bPos, 3);
