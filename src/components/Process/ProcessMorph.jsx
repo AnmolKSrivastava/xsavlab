@@ -973,7 +973,12 @@ function shapeSecure(N, out) {
 
     const wide = window.innerWidth;
     // Slightly lighter than Services — Process is one page sticky stage
-    const N = wide >= 1200 ? 80000 : wide >= 800 ? 48000 : 28000;
+    // const N = wide >= 1200 ? 80000 : wide >= 800 ? 48000 : 28000;
+    const N = wide >= 1200
+  ? 80000
+  : wide >= 800
+    ? 48000
+    : 12000;
     const bufs = [];
     const tmp = new Float32Array(N * 3);
     SHAPES.forEach((shape) => {
@@ -1096,8 +1101,10 @@ function shapeSecure(N, out) {
       gl.uniform1f(U.uMix, mixT);
       gl.uniform1f(U.uBurst, burst);
       gl.uniform1f(U.uTime, clock);
-      gl.uniform1f(U.uSize, (r.width < 800 ? 2.6 : 1.95) * dpr);
-      gl.uniform1f(U.uOp, r.width < 800 ? 0.9 : 0.95);
+      // gl.uniform1f(U.uSize, (r.width < 800 ? 2.6 : 1.95) * dpr);
+      // gl.uniform1f(U.uOp, r.width < 800 ? 0.9 : 0.95);
+      gl.uniform1f(U.uOp, r.width < 800 ? 0.45 : 0.95);
+      gl.uniform1f(U.uSize, (r.width < 800 ? 2.0 : 1.95) * dpr);
       gl.drawArrays(gl.POINTS, 0, N);
     }
 

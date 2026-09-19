@@ -191,12 +191,21 @@ export default function LogoParticles({
       }
     }
 
+    // const wide = window.innerWidth;
+    // let N;
+    // if (idle) {
+    //   N = wide < 768 ? 12000 : 18000;
+    // } else {
+    //   N = wide >= 1200 ? 110000 : wide >= 800 ? 60000 : 34000;
+    // }
+
     const wide = window.innerWidth;
     let N;
+
     if (idle) {
-      N = wide < 768 ? 12000 : 18000;
+      N = wide < 768 ? 8000 : 18000;
     } else {
-      N = wide >= 1200 ? 110000 : wide >= 800 ? 60000 : 34000;
+      N = wide >= 1200 ? 110000 : wide >= 800 ? 60000 : 10000;
     }
 
     const positions = new Float32Array(N * 3);

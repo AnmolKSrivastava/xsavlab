@@ -3,17 +3,17 @@ import { BriefcaseBusiness } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const SERVICES = [
-//   {
-//     label: "Trusted security partner",
-//     title: <>Innovate with AI.<br /><span className="tint">Secure with confidence.</span></>,
-//     description: "Comprehensive security solutions, cloud infrastructure management, and expert consulting to safeguard your digital assets and ensure business continuity.",
-//     meta: [
-//       "24/7 Security Operations Center",
-//       "ISO 27001 & SOC 2 Certified",
-//       "Zero Trust Architecture Specialists",
-//     ],
-//     overview: true,
-//   },
+  //   {
+  //     label: "Trusted security partner",
+  //     title: <>Innovate with AI.<br /><span className="tint">Secure with confidence.</span></>,
+  //     description: "Comprehensive security solutions, cloud infrastructure management, and expert consulting to safeguard your digital assets and ensure business continuity.",
+  //     meta: [
+  //       "24/7 Security Operations Center",
+  //       "ISO 27001 & SOC 2 Certified",
+  //       "Zero Trust Architecture Specialists",
+  //     ],
+  //     overview: true,
+  //   },
   {
     label: "Service 01 — Cybersecurity",
     title: <>Cybersecurity<br /><span className="tint">services</span></>,
@@ -142,43 +142,43 @@ export default function Services() {
     reel.style.height = `${COUNT * 100}svh`;
 
     const M = {
-      ident: () => new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]),
+      ident: () => new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
       persp: (fov, a, n, f) => {
         const t = 1 / Math.tan(fov / 2), nf = 1 / (n - f);
-        return new Float32Array([t/a,0,0,0, 0,t,0,0, 0,0,(f+n)*nf,-1, 0,0,2*f*n*nf,0]);
+        return new Float32Array([t / a, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) * nf, -1, 0, 0, 2 * f * n * nf, 0]);
       },
       mul: (a, b) => {
         const o = new Float32Array(16);
         for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
           let s = 0;
-          for (let k = 0; k < 4; k++) s += a[k*4+j] * b[i*4+k];
-          o[i*4+j] = s;
+          for (let k = 0; k < 4; k++) s += a[k * 4 + j] * b[i * 4 + k];
+          o[i * 4 + j] = s;
         }
         return o;
       },
-      trans: (x, y, z) => { const m = M.ident(); m[12]=x; m[13]=y; m[14]=z; return m; },
-      rotX: (r) => { const c=Math.cos(r), s=Math.sin(r), m=M.ident(); m[5]=c; m[6]=s; m[9]=-s; m[10]=c; return m; },
-      rotY: (r) => { const c=Math.cos(r), s=Math.sin(r), m=M.ident(); m[0]=c; m[2]=-s; m[8]=s; m[10]=c; return m; },
+      trans: (x, y, z) => { const m = M.ident(); m[12] = x; m[13] = y; m[14] = z; return m; },
+      rotX: (r) => { const c = Math.cos(r), s = Math.sin(r), m = M.ident(); m[5] = c; m[6] = s; m[9] = -s; m[10] = c; return m; },
+      rotY: (r) => { const c = Math.cos(r), s = Math.sin(r), m = M.ident(); m[0] = c; m[2] = -s; m[8] = s; m[10] = c; return m; },
     };
 
     function rnd() { return Math.random(); }
 
-    function shapeShield(N, out) {
-      for (let i = 0; i < N; i++) {
-        const v = rnd();
-        const y = 1.15 - v * 2.5;
-        let w;
-        if (y > 0.15) w = 0.95;
-        else {
-          const f = (0.15 - y) / 1.5;
-          w = 0.95 * Math.sqrt(Math.max(0, 1 - f*f));
-        }
-        const x = (rnd()*2 - 1) * w;
-        const edge = Math.sqrt(Math.max(0, 1 - (w ? (x/w)*(x/w) : 1)));
-        const z = 0.42 * edge * (rnd() < 0.5 ? 1 : -1);
-        out[i*3] = x; out[i*3+1] = y; out[i*3+2] = z;
-      }
-    }
+    // function shapeShield(N, out) {
+    //   for (let i = 0; i < N; i++) {
+    //     const v = rnd();
+    //     const y = 1.15 - v * 2.5;
+    //     let w;
+    //     if (y > 0.15) w = 0.95;
+    //     else {
+    //       const f = (0.15 - y) / 1.5;
+    //       w = 0.95 * Math.sqrt(Math.max(0, 1 - f * f));
+    //     }
+    //     const x = (rnd() * 2 - 1) * w;
+    //     const edge = Math.sqrt(Math.max(0, 1 - (w ? (x / w) * (x / w) : 1)));
+    //     const z = 0.42 * edge * (rnd() < 0.5 ? 1 : -1);
+    //     out[i * 3] = x; out[i * 3 + 1] = y; out[i * 3 + 2] = z;
+    //   }
+    // }
 
     // function shapeSecure(N, out) {
     //   const top = 1.12;
@@ -292,1104 +292,1110 @@ export default function Services() {
     // }
 
     // 04 Secure — W-shaped crown shield + padlock
-// function shapeSecure(N, out) {
-//   const top = 1.12;          // outer top peaks
-//   const valley = 0.68;       // first/second W valleys
-//   const centerPeak = 0.92;   // center peak
-//   const shoulder = 0.28;      // where side curves begin
-//   const tip = -1.2;
-
-//   const maxW = 1.05;
-//   const lift = 0.12;
-//   const S = 0.9;
-
-//   // -----------------------------------------
-//   // Shield side width
-//   // -----------------------------------------
-//   function halfW(y) {
-//     // Upper side area:
-//     // keep the outer sides wide
-//     if (y >= shoulder) {
-//       return maxW;
-//     }
-
-//     // Lower curved shield
-//     const t = Math.min(
-//       1,
-//       Math.max(
-//         0,
-//         (shoulder - y) / (shoulder - tip)
-//       )
-//     );
-
-//     return maxW * Math.sqrt(
-//       Math.max(0, 1 - t * t)
-//     );
-//   }
-
-//   // -----------------------------------------
-//   // W-shaped crown
-//   //
-//   // LEFT OUTER PEAK
-//   //        \ 
-//   //         \
-//   //          \ 
-//   //           \/
-//   //           /\
-//   //          /  \
-//   //         /    \
-//   //        /
-//   // RIGHT OUTER PEAK
-//   // -----------------------------------------
-//   function wTop(x) {
-//     const ax = Math.abs(x);
-
-//     // Left/right outer peak -> valley
-//     if (ax >= 0.5) {
-//       const t = (ax - 0.5) / 0.5;
-
-//       return valley +
-//         (top - valley) * Math.pow(t, 0.92);
-//     }
-
-//     // Valley -> center peak
-//     const t = ax / 0.5;
-
-//     return valley +
-//       (centerPeak - valley) *
-//       Math.pow(1 - t, 0.92);
-//   }
-
-//   for (let i = 0; i < N; i++) {
-//     const r = rnd();
-
-//     let x = 0;
-//     let y = 0;
-//     let z = 0;
-
-//     // =========================================
-//     // OUTER SHIELD
-//     // =========================================
-//     if (r < 0.48) {
-
-//       const edgePick = rnd();
-
-//       if (edgePick < 0.22) {
-
-//         // =====================================
-//         // W-SHAPED TOP
-//         // =====================================
-
-//         const xNorm = rnd() * 2 - 1;
-
-//         x = xNorm * maxW;
-
-//         // Convert x position to W crown
-//         y = wTop(xNorm);
-
-//         // Small particle variation
-//         x += (rnd() - 0.5) * 0.035;
-//         y += (rnd() - 0.5) * 0.035;
-
-//         z = rnd() < 0.5
-//           ? 0.14
-//           : -0.14;
+    // function shapeSecure(N, out) {
+    //   const top = 1.12;          // outer top peaks
+    //   const valley = 0.68;       // first/second W valleys
+    //   const centerPeak = 0.92;   // center peak
+    //   const shoulder = 0.28;      // where side curves begin
+    //   const tip = -1.2;
+
+    //   const maxW = 1.05;
+    //   const lift = 0.12;
+    //   const S = 0.9;
+
+    //   // -----------------------------------------
+    //   // Shield side width
+    //   // -----------------------------------------
+    //   function halfW(y) {
+    //     // Upper side area:
+    //     // keep the outer sides wide
+    //     if (y >= shoulder) {
+    //       return maxW;
+    //     }
+
+    //     // Lower curved shield
+    //     const t = Math.min(
+    //       1,
+    //       Math.max(
+    //         0,
+    //         (shoulder - y) / (shoulder - tip)
+    //       )
+    //     );
+
+    //     return maxW * Math.sqrt(
+    //       Math.max(0, 1 - t * t)
+    //     );
+    //   }
+
+    //   // -----------------------------------------
+    //   // W-shaped crown
+    //   //
+    //   // LEFT OUTER PEAK
+    //   //        \ 
+    //   //         \
+    //   //          \ 
+    //   //           \/
+    //   //           /\
+    //   //          /  \
+    //   //         /    \
+    //   //        /
+    //   // RIGHT OUTER PEAK
+    //   // -----------------------------------------
+    //   function wTop(x) {
+    //     const ax = Math.abs(x);
+
+    //     // Left/right outer peak -> valley
+    //     if (ax >= 0.5) {
+    //       const t = (ax - 0.5) / 0.5;
+
+    //       return valley +
+    //         (top - valley) * Math.pow(t, 0.92);
+    //     }
+
+    //     // Valley -> center peak
+    //     const t = ax / 0.5;
+
+    //     return valley +
+    //       (centerPeak - valley) *
+    //       Math.pow(1 - t, 0.92);
+    //   }
+
+    //   for (let i = 0; i < N; i++) {
+    //     const r = rnd();
+
+    //     let x = 0;
+    //     let y = 0;
+    //     let z = 0;
+
+    //     // =========================================
+    //     // OUTER SHIELD
+    //     // =========================================
+    //     if (r < 0.48) {
+
+    //       const edgePick = rnd();
+
+    //       if (edgePick < 0.22) {
+
+    //         // =====================================
+    //         // W-SHAPED TOP
+    //         // =====================================
+
+    //         const xNorm = rnd() * 2 - 1;
+
+    //         x = xNorm * maxW;
+
+    //         // Convert x position to W crown
+    //         y = wTop(xNorm);
+
+    //         // Small particle variation
+    //         x += (rnd() - 0.5) * 0.035;
+    //         y += (rnd() - 0.5) * 0.035;
+
+    //         z = rnd() < 0.5
+    //           ? 0.14
+    //           : -0.14;
 
-//       } else if (edgePick < 0.88) {
+    //       } else if (edgePick < 0.88) {
 
-//         // =====================================
-//         // OUTER CURVED SIDES
-//         // =====================================
+    //         // =====================================
+    //         // OUTER CURVED SIDES
+    //         // =====================================
 
-//         y = tip + rnd() * (top - tip);
-
-//         const side =
-//           rnd() < 0.5 ? -1 : 1;
-
-//         x =
-//           side *
-//           (
-//             halfW(y) -
-//             rnd() * 0.045
-//           );
+    //         y = tip + rnd() * (top - tip);
+
+    //         const side =
+    //           rnd() < 0.5 ? -1 : 1;
+
+    //         x =
+    //           side *
+    //           (
+    //             halfW(y) -
+    //             rnd() * 0.045
+    //           );
 
-//         z = rnd() < 0.5
-//           ? 0.15
-//           : -0.15;
+    //         z = rnd() < 0.5
+    //           ? 0.15
+    //           : -0.15;
 
-//       } else {
+    //       } else {
 
-//         // =====================================
-//         // BOTTOM TIP
-//         // =====================================
+    //         // =====================================
+    //         // BOTTOM TIP
+    //         // =====================================
 
-//         x = (rnd() - 0.5) * 0.10;
+    //         x = (rnd() - 0.5) * 0.10;
 
-//         y = tip + rnd() * 0.10;
+    //         y = tip + rnd() * 0.10;
 
-//         z = rnd() < 0.5
-//           ? 0.12
-//           : -0.12;
-//       }
+    //         z = rnd() < 0.5
+    //           ? 0.12
+    //           : -0.12;
+    //       }
 
-//     // =========================================
-//     // INNER SHIELD RIM
-//     // =========================================
-//     } else if (r < 0.58) {
+    //     // =========================================
+    //     // INNER SHIELD RIM
+    //     // =========================================
+    //     } else if (r < 0.58) {
 
-//       const xNorm = rnd() * 2 - 1;
+    //       const xNorm = rnd() * 2 - 1;
 
-//       x = xNorm * maxW * 0.88;
+    //       x = xNorm * maxW * 0.88;
 
-//       // Follow same W shape
-//       y =
-//         wTop(xNorm) -
-//         0.10;
+    //       // Follow same W shape
+    //       y =
+    //         wTop(xNorm) -
+    //         0.10;
 
-//       // Lower inner rim follows curved sides
-//       if (y < shoulder) {
-//         const side =
-//           xNorm < 0 ? -1 : 1;
+    //       // Lower inner rim follows curved sides
+    //       if (y < shoulder) {
+    //         const side =
+    //           xNorm < 0 ? -1 : 1;
 
-//         const t = Math.min(
-//           1,
-//           Math.max(
-//             0,
-//             (shoulder - y) /
-//             (shoulder - tip)
-//           )
-//         );
+    //         const t = Math.min(
+    //           1,
+    //           Math.max(
+    //             0,
+    //             (shoulder - y) /
+    //             (shoulder - tip)
+    //           )
+    //         );
 
-//         x =
-//           side *
-//           maxW *
-//           0.88 *
-//           Math.sqrt(
-//             Math.max(0, 1 - t * t)
-//           );
-//       }
+    //         x =
+    //           side *
+    //           maxW *
+    //           0.88 *
+    //           Math.sqrt(
+    //             Math.max(0, 1 - t * t)
+    //           );
+    //       }
 
-//       z = rnd() < 0.5
-//         ? 0.09
-//         : -0.09;
+    //       z = rnd() < 0.5
+    //         ? 0.09
+    //         : -0.09;
 
-//     // =========================================
-//     // PADLOCK BODY
-//     // =========================================
-//     } else if (r < 0.80) {
+    //     // =========================================
+    //     // PADLOCK BODY
+    //     // =========================================
+    //     } else if (r < 0.80) {
 
-//       const bw = 0.4;
-//       const bh = 0.36;
+    //       const bw = 0.4;
+    //       const bh = 0.36;
 
-//       const bx = 0;
-//       const by = -0.02;
+    //       const bx = 0;
+    //       const by = -0.02;
 
-//       const pick = rnd();
+    //       const pick = rnd();
 
-//       if (pick < 0.72) {
+    //       if (pick < 0.72) {
 
-//         x =
-//           bx +
-//           (rnd() * 2 - 1) *
-//           bw *
-//           0.92;
+    //         x =
+    //           bx +
+    //           (rnd() * 2 - 1) *
+    //           bw *
+    //           0.92;
 
-//         y =
-//           by +
-//           (rnd() * 2 - 1) *
-//           bh *
-//           0.92;
+    //         y =
+    //           by +
+    //           (rnd() * 2 - 1) *
+    //           bh *
+    //           0.92;
 
-//         z =
-//           0.1 +
-//           (rnd() - 0.5) * 0.03;
+    //         z =
+    //           0.1 +
+    //           (rnd() - 0.5) * 0.03;
 
-//       } else {
+    //       } else {
 
-//         const e =
-//           (Math.random() * 4) | 0;
+    //         const e =
+    //           (Math.random() * 4) | 0;
 
-//         const t = rnd();
+    //         const t = rnd();
 
-//         if (e === 0) {
+    //         if (e === 0) {
 
-//           x = bx - bw + 2 * bw * t;
-//           y = by + bh;
+    //           x = bx - bw + 2 * bw * t;
+    //           y = by + bh;
 
-//         } else if (e === 1) {
+    //         } else if (e === 1) {
 
-//           x = bx - bw + 2 * bw * t;
-//           y = by - bh;
+    //           x = bx - bw + 2 * bw * t;
+    //           y = by - bh;
 
-//         } else if (e === 2) {
+    //         } else if (e === 2) {
 
-//           x = bx - bw;
-//           y = by - bh + 2 * bh * t;
+    //           x = bx - bw;
+    //           y = by - bh + 2 * bh * t;
 
-//         } else {
+    //         } else {
 
-//           x = bx + bw;
-//           y = by - bh + 2 * bh * t;
-//         }
+    //           x = bx + bw;
+    //           y = by - bh + 2 * bh * t;
+    //         }
 
-//         z = 0.12;
-//       }
+    //         z = 0.12;
+    //       }
 
-//     // =========================================
-//     // PADLOCK SHACKLE
-//     // =========================================
-//     } else if (r < 0.94) {
+    //     // =========================================
+    //     // PADLOCK SHACKLE
+    //     // =========================================
+    //     } else if (r < 0.94) {
 
-//       const a0 = 0.15;
-//       const a1 = Math.PI - 0.15;
+    //       const a0 = 0.15;
+    //       const a1 = Math.PI - 0.15;
 
-//       const a =
-//         a0 +
-//         rnd() * (a1 - a0);
+    //       const a =
+    //         a0 +
+    //         rnd() * (a1 - a0);
 
-//       const rad =
-//         0.32 +
-//         (rnd() - 0.5) * 0.05;
+    //       const rad =
+    //         0.32 +
+    //         (rnd() - 0.5) * 0.05;
 
-//       const thick =
-//         (rnd() - 0.5) * 0.07;
+    //       const thick =
+    //         (rnd() - 0.5) * 0.07;
 
-//       x =
-//         Math.cos(a) *
-//         (rad + thick);
+    //       x =
+    //         Math.cos(a) *
+    //         (rad + thick);
 
-//       y =
-//         0.36 +
-//         Math.sin(a) *
-//         (rad * 0.95 + thick * 0.5);
+    //       y =
+    //         0.36 +
+    //         Math.sin(a) *
+    //         (rad * 0.95 + thick * 0.5);
 
-//       z =
-//         0.11 +
-//         (rnd() - 0.5) * 0.02;
+    //       z =
+    //         0.11 +
+    //         (rnd() - 0.5) * 0.02;
 
-//       if (rnd() < 0.22) {
+    //       if (rnd() < 0.22) {
 
-//         const side =
-//           rnd() < 0.5 ? -1 : 1;
+    //         const side =
+    //           rnd() < 0.5 ? -1 : 1;
 
-//         x =
-//           side * 0.32 +
-//           (rnd() - 0.5) * 0.05;
+    //         x =
+    //           side * 0.32 +
+    //           (rnd() - 0.5) * 0.05;
 
-//         y =
-//           0.18 -
-//           rnd() * 0.26;
+    //         y =
+    //           0.18 -
+    //           rnd() * 0.26;
 
-//         z = 0.11;
-//       }
+    //         z = 0.11;
+    //       }
 
-//     // =========================================
-//     // KEYHOLE
-//     // =========================================
-//     } else {
+    //     // =========================================
+    //     // KEYHOLE
+    //     // =========================================
+    //     } else {
 
-//       if (rnd() < 0.55) {
+    //       if (rnd() < 0.55) {
 
-//         const a =
-//           rnd() * Math.PI * 2;
+    //         const a =
+    //           rnd() * Math.PI * 2;
 
-//         const rad =
-//           rnd() * 0.09;
+    //         const rad =
+    //           rnd() * 0.09;
 
-//         x =
-//           Math.cos(a) * rad;
+    //         x =
+    //           Math.cos(a) * rad;
 
-//         y =
-//           0.06 +
-//           Math.sin(a) * rad;
+    //         y =
+    //           0.06 +
+    //           Math.sin(a) * rad;
 
-//         z = 0.14;
+    //         z = 0.14;
 
-//       } else {
+    //       } else {
 
-//         x =
-//           (rnd() - 0.5) * 0.08;
+    //         x =
+    //           (rnd() - 0.5) * 0.08;
 
-//         y =
-//           -0.08 -
-//           rnd() * 0.18;
+    //         y =
+    //           -0.08 -
+    //           rnd() * 0.18;
 
-//         z = 0.14;
-//       }
-//     }
+    //         z = 0.14;
+    //       }
+    //     }
 
-//     // =========================================
-//     // FINAL SCALE
-//     // =========================================
+    //     // =========================================
+    //     // FINAL SCALE
+    //     // =========================================
 
-//     out[i * 3] =
-//       x * S;
+    //     out[i * 3] =
+    //       x * S;
 
-//     out[i * 3 + 1] =
-//       (y + lift) * S;
+    //     out[i * 3 + 1] =
+    //       (y + lift) * S;
 
-//     out[i * 3 + 2] =
-//       z * S;
-//   }
-// }
+    //     out[i * 3 + 2] =
+    //       z * S;
+    //   }
+    // }
 
-// =========================================
-// 04 Secure — Shield + Padlock
-// Logo-style shield crown
-// =========================================
+    // =========================================
+    // 04 Secure — Shield + Padlock
+    // Logo-style shield crown
+    // =========================================
 
-function shapeSecure(N, out) {
+    function shapeSecure(N, out) {
 
-  // =========================================
-  // SHIELD DIMENSIONS
-  // =========================================
+      // =========================================
+      // SHIELD DIMENSIONS
+      // =========================================
 
-  // Center top peak
-  const top = 1.38;
+      // Center top peak
+      const top = 1.38;
 
-  // Height of the two outer top corners
-  const outerTop = 0.92;
+      // Height of the two outer top corners
+      const outerTop = 0.92;
 
-  // Width of shield
-  const maxW = 1.18;
+      // Width of shield
+      const maxW = 1.18;
 
-  // Where the straight/curved side begins
-  const shoulder = 0.30;
+      // Where the straight/curved side begins
+      const shoulder = 0.30;
 
-  // Bottom point
-  const tip = -1.20;
+      // Bottom point
+      const tip = -1.20;
 
-  // Final vertical lift
-  const lift = 0.10;
+      // Final vertical lift
+      const lift = 0.10;
 
-  // Overall scale
-  const S = 0.90;
+      // Overall scale
+      const S = 0.90;
 
 
-  // =========================================
-  // SHIELD SIDE WIDTH
-  // =========================================
+      // =========================================
+      // SHIELD SIDE WIDTH
+      // =========================================
 
-  function halfW(y) {
-
-    /*
-      Upper part:
-      Keep the shield wide.
-
-             |       |
-             |       |
-             |       |
-    */
-
-    if (y >= shoulder) {
-      return maxW;
-    }
-
-
-    /*
-      Lower shield:
-
-          \           /
-           \         /
-            \       /
-             \     /
-              \   /
-               \ /
-                V
-    */
-
-    const t = Math.min(
-      1,
-      Math.max(
-        0,
-        (shoulder - y) /
-        (shoulder - tip)
-      )
-    );
-
-    return maxW * Math.sqrt(
-      Math.max(
-        0,
-        1 - t * t
-      )
-    );
-  }
-
-
-  // =========================================
-  // LOGO-STYLE TOP
-  // =========================================
-  //
-  //              /\
-  //             /  \
-  //           /      \
-  //         /          \
-  //       /              \
-  //      |                |
-  //
-  //       ONE CENTER PEAK
-  //
-  // No W
-  // No second peak
-  // No valley
-  //
-  // =========================================
-
-  function topCurve(x) {
-
-    const ax = Math.min(
-      1,
-      Math.abs(x)
-    );
-
-
-    /*
-      x = 0
-        → center peak
-
-      x = 1
-        → outer top corner
-    */
-
-    /*
-      Smooth curved transition.
-
-      Using a power curve instead of
-      cosine prevents the W shape.
-    */
-
-    const t = ax;
-
-    const curve =
-      Math.pow(t, 0.72);
-
-
-    return (
-      top -
-      (top - outerTop) *
-      curve
-    );
-  }
-
-
-  // =========================================
-  // PARTICLE GENERATION
-  // =========================================
-
-  for (let i = 0; i < N; i++) {
-
-    const r = rnd();
-
-    let x = 0;
-    let y = 0;
-    let z = 0;
-
-
-    // =======================================
-    // OUTER SHIELD
-    // =======================================
-
-    if (r < 0.48) {
-
-      const edgePick = rnd();
-
-
-      // =====================================
-      // TOP CROWN
-      // =====================================
-
-      if (edgePick < 0.22) {
+      function halfW(y) {
 
         /*
-          Generate position from
-          left → center → right.
+          Upper part:
+          Keep the shield wide.
+    
+                 |       |
+                 |       |
+                 |       |
         */
 
-        const xNorm =
-          rnd() * 2 - 1;
-
-
-        /*
-          Horizontal position
-        */
-
-        x =
-          xNorm * maxW;
-
-
-        /*
-          Follow single-peaked shield crown
-        */
-
-        y =
-          topCurve(xNorm);
-
-
-        /*
-          Very small random variation
-          so particles don't form a
-          mathematically perfect line.
-        */
-
-        x +=
-          (rnd() - 0.5) *
-          0.035;
-
-        y +=
-          (rnd() - 0.5) *
-          0.035;
-
-
-        /*
-          Slight 3D depth
-        */
-
-        z =
-          rnd() < 0.5
-            ? 0.14
-            : -0.14;
-      }
-
-
-      // =====================================
-      // OUTER CURVED SIDES
-      // =====================================
-
-      else if (edgePick < 0.88) {
-
-        /*
-          IMPORTANT:
-
-          Start from outerTop,
-          NOT from center top.
-
-          This prevents the side from
-          becoming a long vertical line
-          all the way to the center peak.
-        */
-
-        y =
-          tip +
-          rnd() *
-          (outerTop - tip);
-
-
-        const side =
-          rnd() < 0.5
-            ? -1
-            : 1;
-
-
-        /*
-          Follow the shield curve.
-        */
-
-        x =
-          side *
-          (
-            halfW(y) -
-            rnd() * 0.045
-          );
-
-
-        /*
-          3D depth
-        */
-
-        z =
-          rnd() < 0.5
-            ? 0.15
-            : -0.15;
-      }
-
-
-      // =====================================
-      // BOTTOM TIP
-      // =====================================
-
-      else {
-
-        /*
-          Concentrate particles around
-          the bottom point.
-        */
-
-        x =
-          (rnd() - 0.5) *
-          0.10;
-
-        y =
-          tip +
-          rnd() * 0.10;
-
-        z =
-          rnd() < 0.5
-            ? 0.12
-            : -0.12;
-      }
-    }
-
-
-    // =======================================
-    // INNER SHIELD RIM
-    // =======================================
-
-    else if (r < 0.58) {
-
-      const xNorm =
-        rnd() * 2 - 1;
-
-
-      /*
-        Inner rim is slightly narrower.
-      */
-
-      x =
-        xNorm *
-        maxW *
-        0.88;
-
-
-      /*
-        Same exact top shape,
-        slightly below the outer crown.
-      */
-
-      y =
-        topCurve(xNorm) -
-        0.10;
-
-
-      // =====================================
-      // LOWER INNER RIM
-      // =====================================
-
-      if (y < shoulder) {
-
-        const side =
-          xNorm < 0
-            ? -1
-            : 1;
-
-
-        const t =
-          Math.min(
-            1,
-            Math.max(
-              0,
-              (shoulder - y) /
-              (shoulder - tip)
-            )
-          );
-
-
-        x =
-          side *
-          maxW *
-          0.88 *
-          Math.sqrt(
-            Math.max(
-              0,
-              1 - t * t
-            )
-          );
-      }
-
-
-      z =
-        rnd() < 0.5
-          ? 0.09
-          : -0.09;
-    }
-
-
-    // =======================================
-    // PADLOCK BODY
-    // =======================================
-
-    else if (r < 0.80) {
-
-      const bw = 0.40;
-      const bh = 0.36;
-
-      const bx = 0;
-      const by = -0.02;
-
-      const pick = rnd();
-
-
-      // =====================================
-      // PADLOCK BODY FILL
-      // =====================================
-
-      if (pick < 0.72) {
-
-        x =
-          bx +
-          (rnd() * 2 - 1) *
-          bw *
-          0.92;
-
-        y =
-          by +
-          (rnd() * 2 - 1) *
-          bh *
-          0.92;
-
-        z =
-          0.10 +
-          (rnd() - 0.5) *
-          0.03;
-      }
-
-
-      // =====================================
-      // PADLOCK BODY EDGES
-      // =====================================
-
-      else {
-
-        const e =
-          (Math.random() * 4) | 0;
-
-        const t =
-          rnd();
-
-
-        if (e === 0) {
-
-          // Top edge
-          x =
-            bx -
-            bw +
-            2 * bw * t;
-
-          y =
-            by + bh;
-
-        } else if (e === 1) {
-
-          // Bottom edge
-          x =
-            bx -
-            bw +
-            2 * bw * t;
-
-          y =
-            by - bh;
-
-        } else if (e === 2) {
-
-          // Left edge
-          x =
-            bx - bw;
-
-          y =
-            by -
-            bh +
-            2 * bh * t;
-
-        } else {
-
-          // Right edge
-          x =
-            bx + bw;
-
-          y =
-            by -
-            bh +
-            2 * bh * t;
+        if (y >= shoulder) {
+          return maxW;
         }
 
-        z = 0.12;
+
+        /*
+          Lower shield:
+    
+              \           /
+               \         /
+                \       /
+                 \     /
+                  \   /
+                   \ /
+                    V
+        */
+
+        const t = Math.min(
+          1,
+          Math.max(
+            0,
+            (shoulder - y) /
+            (shoulder - tip)
+          )
+        );
+
+        return maxW * Math.sqrt(
+          Math.max(
+            0,
+            1 - t * t
+          )
+        );
       }
-    }
 
 
-    // =======================================
-    // PADLOCK SHACKLE
-    // =======================================
+      // =========================================
+      // LOGO-STYLE TOP
+      // =========================================
+      //
+      //              /\
+      //             /  \
+      //           /      \
+      //         /          \
+      //       /              \
+      //      |                |
+      //
+      //       ONE CENTER PEAK
+      //
+      // No W
+      // No second peak
+      // No valley
+      //
+      // =========================================
 
-    else if (r < 0.94) {
+      function topCurve(x) {
 
-      const a0 = 0.15;
-
-      const a1 =
-        Math.PI - 0.15;
-
-
-      const a =
-        a0 +
-        rnd() *
-        (a1 - a0);
-
-
-      const rad =
-        0.32 +
-        (rnd() - 0.5) *
-        0.05;
-
-
-      const thick =
-        (rnd() - 0.5) *
-        0.07;
-
-
-      x =
-        Math.cos(a) *
-        (rad + thick);
-
-
-      y =
-        0.36 +
-        Math.sin(a) *
-        (
-          rad * 0.95 +
-          thick * 0.5
+        const ax = Math.min(
+          1,
+          Math.abs(x)
         );
 
 
-      z =
-        0.11 +
-        (rnd() - 0.5) *
-        0.02;
-
-
-      // =====================================
-      // SHACKLE CONNECTIONS
-      // =====================================
-
-      if (rnd() < 0.22) {
-
-        const side =
-          rnd() < 0.5
-            ? -1
-            : 1;
-
-
-        x =
-          side * 0.32 +
-          (rnd() - 0.5) *
-          0.05;
-
-
-        y =
-          0.18 -
-          rnd() * 0.26;
-
-
-        z = 0.11;
-      }
-    }
-
-
-    // =======================================
-    // KEYHOLE
-    // =======================================
-
-    else {
-
-      if (rnd() < 0.55) {
-
         /*
-          Circular keyhole head
+          x = 0
+            → center peak
+    
+          x = 1
+            → outer top corner
         */
 
-        const a =
-          rnd() *
-          Math.PI *
-          2;
-
-
-        const rad =
-          rnd() *
-          0.09;
-
-
-        x =
-          Math.cos(a) *
-          rad;
-
-
-        y =
-          0.06 +
-          Math.sin(a) *
-          rad;
-
-
-        z = 0.14;
-      }
-
-      else {
-
         /*
-          Keyhole stem
+          Smooth curved transition.
+    
+          Using a power curve instead of
+          cosine prevents the W shape.
         */
 
-        x =
-          (rnd() - 0.5) *
-          0.08;
+        const t = ax;
+
+        const curve =
+          Math.pow(t, 0.72);
 
 
-        y =
-          -0.08 -
-          rnd() * 0.18;
+        return (
+          top -
+          (top - outerTop) *
+          curve
+        );
+      }
 
 
-        z = 0.14;
+      // =========================================
+      // PARTICLE GENERATION
+      // =========================================
+
+      for (let i = 0; i < N; i++) {
+
+        const r = rnd();
+
+        let x = 0;
+        let y = 0;
+        let z = 0;
+
+
+        // =======================================
+        // OUTER SHIELD
+        // =======================================
+
+        if (r < 0.48) {
+
+          const edgePick = rnd();
+
+
+          // =====================================
+          // TOP CROWN
+          // =====================================
+
+          if (edgePick < 0.22) {
+
+            /*
+              Generate position from
+              left → center → right.
+            */
+
+            const xNorm =
+              rnd() * 2 - 1;
+
+
+            /*
+              Horizontal position
+            */
+
+            x =
+              xNorm * maxW;
+
+
+            /*
+              Follow single-peaked shield crown
+            */
+
+            y =
+              topCurve(xNorm);
+
+
+            /*
+              Very small random variation
+              so particles don't form a
+              mathematically perfect line.
+            */
+
+            x +=
+              (rnd() - 0.5) *
+              0.035;
+
+            y +=
+              (rnd() - 0.5) *
+              0.035;
+
+
+            /*
+              Slight 3D depth
+            */
+
+            z =
+              rnd() < 0.5
+                ? 0.14
+                : -0.14;
+          }
+
+
+          // =====================================
+          // OUTER CURVED SIDES
+          // =====================================
+
+          else if (edgePick < 0.88) {
+
+            /*
+              IMPORTANT:
+    
+              Start from outerTop,
+              NOT from center top.
+    
+              This prevents the side from
+              becoming a long vertical line
+              all the way to the center peak.
+            */
+
+            y =
+              tip +
+              rnd() *
+              (outerTop - tip);
+
+
+            const side =
+              rnd() < 0.5
+                ? -1
+                : 1;
+
+
+            /*
+              Follow the shield curve.
+            */
+
+            x =
+              side *
+              (
+                halfW(y) -
+                rnd() * 0.045
+              );
+
+
+            /*
+              3D depth
+            */
+
+            z =
+              rnd() < 0.5
+                ? 0.15
+                : -0.15;
+          }
+
+
+          // =====================================
+          // BOTTOM TIP
+          // =====================================
+
+          else {
+
+            /*
+              Concentrate particles around
+              the bottom point.
+            */
+
+            x =
+              (rnd() - 0.5) *
+              0.10;
+
+            y =
+              tip +
+              rnd() * 0.10;
+
+            z =
+              rnd() < 0.5
+                ? 0.12
+                : -0.12;
+          }
+        }
+
+
+        // =======================================
+        // INNER SHIELD RIM
+        // =======================================
+
+        else if (r < 0.58) {
+
+          const xNorm =
+            rnd() * 2 - 1;
+
+
+          /*
+            Inner rim is slightly narrower.
+          */
+
+          x =
+            xNorm *
+            maxW *
+            0.88;
+
+
+          /*
+            Same exact top shape,
+            slightly below the outer crown.
+          */
+
+          y =
+            topCurve(xNorm) -
+            0.10;
+
+
+          // =====================================
+          // LOWER INNER RIM
+          // =====================================
+
+          if (y < shoulder) {
+
+            const side =
+              xNorm < 0
+                ? -1
+                : 1;
+
+
+            const t =
+              Math.min(
+                1,
+                Math.max(
+                  0,
+                  (shoulder - y) /
+                  (shoulder - tip)
+                )
+              );
+
+
+            x =
+              side *
+              maxW *
+              0.88 *
+              Math.sqrt(
+                Math.max(
+                  0,
+                  1 - t * t
+                )
+              );
+          }
+
+
+          z =
+            rnd() < 0.5
+              ? 0.09
+              : -0.09;
+        }
+
+
+        // =======================================
+        // PADLOCK BODY
+        // =======================================
+
+        else if (r < 0.80) {
+
+          const bw = 0.40;
+          const bh = 0.36;
+
+          const bx = 0;
+          const by = -0.02;
+
+          const pick = rnd();
+
+
+          // =====================================
+          // PADLOCK BODY FILL
+          // =====================================
+
+          if (pick < 0.72) {
+
+            x =
+              bx +
+              (rnd() * 2 - 1) *
+              bw *
+              0.92;
+
+            y =
+              by +
+              (rnd() * 2 - 1) *
+              bh *
+              0.92;
+
+            z =
+              0.10 +
+              (rnd() - 0.5) *
+              0.03;
+          }
+
+
+          // =====================================
+          // PADLOCK BODY EDGES
+          // =====================================
+
+          else {
+
+            const e =
+              (Math.random() * 4) | 0;
+
+            const t =
+              rnd();
+
+
+            if (e === 0) {
+
+              // Top edge
+              x =
+                bx -
+                bw +
+                2 * bw * t;
+
+              y =
+                by + bh;
+
+            } else if (e === 1) {
+
+              // Bottom edge
+              x =
+                bx -
+                bw +
+                2 * bw * t;
+
+              y =
+                by - bh;
+
+            } else if (e === 2) {
+
+              // Left edge
+              x =
+                bx - bw;
+
+              y =
+                by -
+                bh +
+                2 * bh * t;
+
+            } else {
+
+              // Right edge
+              x =
+                bx + bw;
+
+              y =
+                by -
+                bh +
+                2 * bh * t;
+            }
+
+            z = 0.12;
+          }
+        }
+
+
+        // =======================================
+        // PADLOCK SHACKLE
+        // =======================================
+
+        else if (r < 0.94) {
+
+          const a0 = 0.15;
+
+          const a1 =
+            Math.PI - 0.15;
+
+
+          const a =
+            a0 +
+            rnd() *
+            (a1 - a0);
+
+
+          const rad =
+            0.32 +
+            (rnd() - 0.5) *
+            0.05;
+
+
+          const thick =
+            (rnd() - 0.5) *
+            0.07;
+
+
+          x =
+            Math.cos(a) *
+            (rad + thick);
+
+
+          y =
+            0.36 +
+            Math.sin(a) *
+            (
+              rad * 0.95 +
+              thick * 0.5
+            );
+
+
+          z =
+            0.11 +
+            (rnd() - 0.5) *
+            0.02;
+
+
+          // =====================================
+          // SHACKLE CONNECTIONS
+          // =====================================
+
+          if (rnd() < 0.22) {
+
+            const side =
+              rnd() < 0.5
+                ? -1
+                : 1;
+
+
+            x =
+              side * 0.32 +
+              (rnd() - 0.5) *
+              0.05;
+
+
+            y =
+              0.18 -
+              rnd() * 0.26;
+
+
+            z = 0.11;
+          }
+        }
+
+
+        // =======================================
+        // KEYHOLE
+        // =======================================
+
+        else {
+
+          if (rnd() < 0.55) {
+
+            /*
+              Circular keyhole head
+            */
+
+            const a =
+              rnd() *
+              Math.PI *
+              2;
+
+
+            const rad =
+              rnd() *
+              0.09;
+
+
+            x =
+              Math.cos(a) *
+              rad;
+
+
+            y =
+              0.06 +
+              Math.sin(a) *
+              rad;
+
+
+            z = 0.14;
+          }
+
+          else {
+
+            /*
+              Keyhole stem
+            */
+
+            x =
+              (rnd() - 0.5) *
+              0.08;
+
+
+            y =
+              -0.08 -
+              rnd() * 0.18;
+
+
+            z = 0.14;
+          }
+        }
+
+
+        // =======================================
+        // FINAL SCALE
+        // =======================================
+
+        out[i * 3] =
+          x * S;
+
+        out[i * 3 + 1] =
+          (y + lift) * S;
+
+        out[i * 3 + 2] =
+          z * S;
       }
     }
-
-
-    // =======================================
-    // FINAL SCALE
-    // =======================================
-
-    out[i * 3] =
-      x * S;
-
-    out[i * 3 + 1] =
-      (y + lift) * S;
-
-    out[i * 3 + 2] =
-      z * S;
-  }
-}
 
     function shapeCloud(N, out) {
       const lobes = [
-        [0.00,0.10,0.00,0.78],[-0.85,-0.05,0.10,0.55],[0.85,-0.02,-0.10,0.58],
-        [-0.40,0.48,0.14,0.46],[0.42,0.44,-0.14,0.44],[1.35,-0.18,0.06,0.36],
-        [-1.35,-0.20,-0.06,0.34],[0.05,-0.32,0.30,0.44],[0.00,0.62,0.00,0.34]
+        [0.00, 0.10, 0.00, 0.78], [-0.85, -0.05, 0.10, 0.55], [0.85, -0.02, -0.10, 0.58],
+        [-0.40, 0.48, 0.14, 0.46], [0.42, 0.44, -0.14, 0.44], [1.35, -0.18, 0.06, 0.36],
+        [-1.35, -0.20, -0.06, 0.34], [0.05, -0.32, 0.30, 0.44], [0.00, 0.62, 0.00, 0.34]
       ];
       for (let i = 0; i < N; i++) {
-        const L = lobes[(Math.random()*lobes.length)|0];
-        const u = rnd()*2 - 1, ph = rnd()*Math.PI*2, s = Math.sqrt(Math.max(0,1-u*u));
-        out[i*3] = L[0] + Math.cos(ph)*s*L[3];
-        out[i*3+1] = L[1] + u*L[3]*0.85;
-        out[i*3+2] = L[2] + Math.sin(ph)*s*L[3];
+        const L = lobes[(Math.random() * lobes.length) | 0];
+        const u = rnd() * 2 - 1, ph = rnd() * Math.PI * 2, s = Math.sqrt(Math.max(0, 1 - u * u));
+        out[i * 3] = L[0] + Math.cos(ph) * s * L[3];
+        out[i * 3 + 1] = L[1] + u * L[3] * 0.85;
+        out[i * 3 + 2] = L[2] + Math.sin(ph) * s * L[3];
       }
     }
 
     function shapeNeural(N, out) {
       const layers = 4, per = 7, nodes = [];
       for (let L = 0; L < layers; L++) for (let j = 0; j < per; j++) {
-        const a = (j/per)*Math.PI*2 + L*0.4;
-        nodes.push([(L/(layers-1)-0.5)*2.5, Math.cos(a)*(0.85+(L%2)*0.2), Math.sin(a)*(0.85+(L%2)*0.2)]);
+        const a = (j / per) * Math.PI * 2 + L * 0.4;
+        nodes.push([(L / (layers - 1) - 0.5) * 2.5, Math.cos(a) * (0.85 + (L % 2) * 0.2), Math.sin(a) * (0.85 + (L % 2) * 0.2)]);
       }
       for (let i = 0; i < N; i++) {
         if (i % 5 === 0) {
-          const n = nodes[(Math.random()*nodes.length)|0];
-          out[i*3]=n[0]+(rnd()-0.5)*0.14; out[i*3+1]=n[1]+(rnd()-0.5)*0.14; out[i*3+2]=n[2]+(rnd()-0.5)*0.14;
+          const n = nodes[(Math.random() * nodes.length) | 0];
+          out[i * 3] = n[0] + (rnd() - 0.5) * 0.14; out[i * 3 + 1] = n[1] + (rnd() - 0.5) * 0.14; out[i * 3 + 2] = n[2] + (rnd() - 0.5) * 0.14;
         } else {
-          const Li=(Math.random()*(layers-1))|0;
-          const a1=nodes[Li*per+((Math.random()*per)|0)], b1=nodes[(Li+1)*per+((Math.random()*per)|0)], t=rnd();
-          out[i*3]=a1[0]+(b1[0]-a1[0])*t+(rnd()-0.5)*0.03;
-          out[i*3+1]=a1[1]+(b1[1]-a1[1])*t+(rnd()-0.5)*0.03;
-          out[i*3+2]=a1[2]+(b1[2]-a1[2])*t+(rnd()-0.5)*0.03;
+          const Li = (Math.random() * (layers - 1)) | 0;
+          const a1 = nodes[Li * per + ((Math.random() * per) | 0)], b1 = nodes[(Li + 1) * per + ((Math.random() * per) | 0)], t = rnd();
+          out[i * 3] = a1[0] + (b1[0] - a1[0]) * t + (rnd() - 0.5) * 0.03;
+          out[i * 3 + 1] = a1[1] + (b1[1] - a1[1]) * t + (rnd() - 0.5) * 0.03;
+          out[i * 3 + 2] = a1[2] + (b1[2] - a1[2]) * t + (rnd() - 0.5) * 0.03;
         }
       }
     }
 
     function shapeScreen(N, out) {
-      const W=1.55,H=1.02;
-      for (let i=0;i<N;i++) {
-        const r=rnd(); let x,y;
-        if (r<0.26) {
-          const e=(Math.random()*4)|0,t=rnd();
-          if(e===0){x=-W+2*W*t;y=H;} else if(e===1){x=-W+2*W*t;y=-H;} else if(e===2){x=-W;y=-H+2*H*t;} else {x=W;y=-H+2*H*t;}
-        } else if(r<0.40) {
-          x=(rnd()*2-1)*W*0.94; y=H*0.74+(rnd()-0.5)*0.07;
-        } else if(r<0.78) {
-          const k=(Math.random()*3)|0; x=(-W*0.60+k*W*0.60)+(rnd()*2-1)*W*0.24; y=H*0.16+(rnd()*2-1)*H*0.30;
+      const W = 1.55, H = 1.02;
+      for (let i = 0; i < N; i++) {
+        const r = rnd(); let x, y;
+        if (r < 0.26) {
+          const e = (Math.random() * 4) | 0, t = rnd();
+          if (e === 0) { x = -W + 2 * W * t; y = H; } else if (e === 1) { x = -W + 2 * W * t; y = -H; } else if (e === 2) { x = -W; y = -H + 2 * H * t; } else { x = W; y = -H + 2 * H * t; }
+        } else if (r < 0.40) {
+          x = (rnd() * 2 - 1) * W * 0.94; y = H * 0.74 + (rnd() - 0.5) * 0.07;
+        } else if (r < 0.78) {
+          const k = (Math.random() * 3) | 0; x = (-W * 0.60 + k * W * 0.60) + (rnd() * 2 - 1) * W * 0.24; y = H * 0.16 + (rnd() * 2 - 1) * H * 0.30;
         } else {
-          const L=(Math.random()*3)|0; x=-W*0.86+rnd()*W*(1.25-L*0.28); y=-H*0.46-L*0.19;
+          const L = (Math.random() * 3) | 0; x = -W * 0.86 + rnd() * W * (1.25 - L * 0.28); y = -H * 0.46 - L * 0.19;
         }
-        out[i*3]=x; out[i*3+1]=y; out[i*3+2]=(rnd()-0.5)*0.06;
+        out[i * 3] = x; out[i * 3 + 1] = y; out[i * 3 + 2] = (rnd() - 0.5) * 0.06;
       }
     }
 
     function shapeStack(N, out) {
-      const slabs=[[-0.55,-0.30],[0.0,0.0],[0.55,0.30]], w=1.25,d=0.85,th=0.06;
-      for(let i=0;i<N;i++){
-        const S=slabs[i%slabs.length]; let x=(rnd()*2-1)*w+S[1]*0.5, z=(rnd()*2-1)*d;
-        let y=S[0]+(rnd()<0.86?(rnd()<0.5?th:-th):(rnd()*2-1)*th);
-        if(rnd()<0.22){ if(rnd()<0.5)x=(rnd()<0.5?-w:w)+S[1]*0.5; else z=(rnd()<0.5?-d:d); y=S[0]+(rnd()*2-1)*th; }
-        out[i*3]=x; out[i*3+1]=y*1.5; out[i*3+2]=z;
+      const slabs = [[-0.55, -0.30], [0.0, 0.0], [0.55, 0.30]], w = 1.25, d = 0.85, th = 0.06;
+      for (let i = 0; i < N; i++) {
+        const S = slabs[i % slabs.length]; let x = (rnd() * 2 - 1) * w + S[1] * 0.5, z = (rnd() * 2 - 1) * d;
+        let y = S[0] + (rnd() < 0.86 ? (rnd() < 0.5 ? th : -th) : (rnd() * 2 - 1) * th);
+        if (rnd() < 0.22) { if (rnd() < 0.5) x = (rnd() < 0.5 ? -w : w) + S[1] * 0.5; else z = (rnd() < 0.5 ? -d : d); y = S[0] + (rnd() * 2 - 1) * th; }
+        out[i * 3] = x; out[i * 3 + 1] = y * 1.5; out[i * 3 + 2] = z;
       }
     }
 
     function shapeGlobe(N, out) {
-      for(let i=0;i<N;i++){
-        if(i%9===0){
-          const a=rnd()*Math.PI*2, tilt=((i/9)|0)%3, rr=1.32+tilt*0.1;
-          const cx=Math.cos(a)*rr,cy=Math.sin(a)*rr*0.25,cz=Math.sin(a)*rr,ta=tilt*0.7;
-          out[i*3]=cx*Math.cos(ta)-cz*Math.sin(ta); out[i*3+1]=cy; out[i*3+2]=cx*Math.sin(ta)+cz*Math.cos(ta);
-        }else{
-          const u=rnd()*2-1,ph=rnd()*Math.PI*2,s=Math.sqrt(Math.max(0,1-u*u));
-          out[i*3]=Math.cos(ph)*s*1.15; out[i*3+1]=u*1.15; out[i*3+2]=Math.sin(ph)*s*1.15;
+      for (let i = 0; i < N; i++) {
+        if (i % 9 === 0) {
+          const a = rnd() * Math.PI * 2, tilt = ((i / 9) | 0) % 3, rr = 1.32 + tilt * 0.1;
+          const cx = Math.cos(a) * rr, cy = Math.sin(a) * rr * 0.25, cz = Math.sin(a) * rr, ta = tilt * 0.7;
+          out[i * 3] = cx * Math.cos(ta) - cz * Math.sin(ta); out[i * 3 + 1] = cy; out[i * 3 + 2] = cx * Math.sin(ta) + cz * Math.cos(ta);
+        } else {
+          const u = rnd() * 2 - 1, ph = rnd() * Math.PI * 2, s = Math.sqrt(Math.max(0, 1 - u * u));
+          out[i * 3] = Math.cos(ph) * s * 1.15; out[i * 3 + 1] = u * 1.15; out[i * 3 + 2] = Math.sin(ph) * s * 1.15;
         }
       }
     }
 
-    const SHAPES=[shapeSecure,shapeCloud,shapeNeural,shapeScreen,shapeStack,shapeGlobe];
+    const SHAPES = [shapeSecure, shapeCloud, shapeNeural, shapeScreen, shapeStack, shapeGlobe];
 
     const V_MORPH =
-      "attribute vec3 aA; attribute vec3 aB; attribute float aSeed;"+
-      "uniform mat4 uProj,uView,uModel; uniform float uMix,uTime,uSize,uBurst;"+
-      "varying float vSeed; varying float vDepth;"+
-      "void main(){"+
-      " vec3 p=mix(aA,aB,uMix);"+
-      " vec3 dir=normalize(p+vec3(0.0001));"+
-      " p+=dir*uBurst*(0.30+aSeed*0.55);"+
-      " p+=0.009*vec3(sin(uTime*0.8+aSeed*31.0),cos(uTime*0.7+aSeed*27.0),sin(uTime*0.6+aSeed*19.0));"+
-      " vec4 e=uView*uModel*vec4(p,1.0);"+
-      " vDepth=-e.z; vSeed=aSeed; gl_Position=uProj*e;"+
-      " gl_PointSize=uSize*(0.70+aSeed*0.55)*(5.2/max(vDepth,0.7));"+
+      "attribute vec3 aA; attribute vec3 aB; attribute float aSeed;" +
+      "uniform mat4 uProj,uView,uModel; uniform float uMix,uTime,uSize,uBurst;" +
+      "varying float vSeed; varying float vDepth;" +
+      "void main(){" +
+      " vec3 p=mix(aA,aB,uMix);" +
+      " vec3 dir=normalize(p+vec3(0.0001));" +
+      " p+=dir*uBurst*(0.30+aSeed*0.55);" +
+      " p+=0.009*vec3(sin(uTime*0.8+aSeed*31.0),cos(uTime*0.7+aSeed*27.0),sin(uTime*0.6+aSeed*19.0));" +
+      " vec4 e=uView*uModel*vec4(p,1.0);" +
+      " vDepth=-e.z; vSeed=aSeed; gl_Position=uProj*e;" +
+      " gl_PointSize=uSize*(0.70+aSeed*0.55)*(5.2/max(vDepth,0.7));" +
       "}";
 
     const F_MORPH =
-      "precision mediump float;"+
-      "varying float vSeed; varying float vDepth;"+
-      "uniform vec3 uC1,uC2; uniform float uOp;"+
-      "void main(){"+
-      " vec2 d=gl_PointCoord-vec2(0.5); float r2=dot(d,d);"+
-      " if(r2>0.25) discard;"+
-      " float a=smoothstep(0.25,0.15,r2);"+
-      " vec3 c=mix(uC1,uC2,vSeed*vSeed);"+
-      " float fog=clamp((11.0-vDepth)/8.5,0.0,1.0);"+
-      " gl_FragColor=vec4(c,a*uOp*fog);"+
+      "precision mediump float;" +
+      "varying float vSeed; varying float vDepth;" +
+      "uniform vec3 uC1,uC2; uniform float uOp;" +
+      "void main(){" +
+      " vec2 d=gl_PointCoord-vec2(0.5); float r2=dot(d,d);" +
+      " if(r2>0.25) discard;" +
+      " float a=smoothstep(0.25,0.15,r2);" +
+      " vec3 c=mix(uC1,uC2,vSeed*vSeed);" +
+      " float fog=clamp((11.0-vDepth)/8.5,0.0,1.0);" +
+      " gl_FragColor=vec4(c,a*uOp*fog);" +
       "}";
 
-    function shader(gl,type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);return gl.getShaderParameter(s,gl.COMPILE_STATUS)?s:null;}
-    function program(gl,v,f){const vs=shader(gl,gl.VERTEX_SHADER,v),fs=shader(gl,gl.FRAGMENT_SHADER,f);if(!vs||!fs)return null;const p=gl.createProgram();gl.attachShader(p,vs);gl.attachShader(p,fs);gl.linkProgram(p);return gl.getProgramParameter(p,gl.LINK_STATUS)?p:null;}
-    function buffer(gl,data){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);return b;}
-    function attrib(gl,p,name,b,size){const l=gl.getAttribLocation(p,name);if(l<0)return;gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.enableVertexAttribArray(l);gl.vertexAttribPointer(l,size,gl.FLOAT,false,0,0);}
+    function shader(gl, type, src) { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; }
+    function program(gl, v, f) { const vs = shader(gl, gl.VERTEX_SHADER, v), fs = shader(gl, gl.FRAGMENT_SHADER, f); if (!vs || !fs) return null; const p = gl.createProgram(); gl.attachShader(p, vs); gl.attachShader(p, fs); gl.linkProgram(p); return gl.getProgramParameter(p, gl.LINK_STATUS) ? p : null; }
+    function buffer(gl, data) { const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW); return b; }
+    function attrib(gl, p, name, b, size) { const l = gl.getAttribLocation(p, name); if (l < 0) return; gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.enableVertexAttribArray(l); gl.vertexAttribPointer(l, size, gl.FLOAT, false, 0, 0); }
 
-    const gl=stage.getContext("webgl",{antialias:true,alpha:true,premultipliedAlpha:false})||stage.getContext("experimental-webgl",{antialias:true,alpha:true});
-    if(!gl) return undefined;
-    const pm=program(gl,V_MORPH,F_MORPH);
-    if(!pm) return undefined;
+    const gl = stage.getContext("webgl", { antialias: true, alpha: true, premultipliedAlpha: false }) || stage.getContext("experimental-webgl", { antialias: true, alpha: true });
+    if (!gl) return undefined;
+    const pm = program(gl, V_MORPH, F_MORPH);
+    if (!pm) return undefined;
 
-    const wide=window.innerWidth;
-    const N=wide>=1200?110000:wide>=800?60000:34000;
-    const bufs=[];
-    const tmp=new Float32Array(N*3);
-    SHAPES.forEach(shape=>{shape(N,tmp);bufs.push(buffer(gl,tmp));});
-    const seeds=new Float32Array(N);for(let i=0;i<N;i++)seeds[i]=Math.random();
-    const bSeed=buffer(gl,seeds);
-    const U={};["uProj","uView","uModel","uMix","uTime","uSize","uBurst","uC1","uC2","uOp"].forEach(k=>U[k]=gl.getUniformLocation(pm,k));
-    gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.disable(gl.DEPTH_TEST);
+    // const wide=window.innerWidth;
+    // const N=wide>=1200?110000:wide>=800?60000:34000;
+    const wide = window.innerWidth;
+    const N = wide >= 1200
+      ? 110000
+      : wide >= 800
+        ? 60000
+        : 10000;
+    const bufs = [];
+    const tmp = new Float32Array(N * 3);
+    SHAPES.forEach(shape => { shape(N, tmp); bufs.push(buffer(gl, tmp)); });
+    const seeds = new Float32Array(N); for (let i = 0; i < N; i++)seeds[i] = Math.random();
+    const bSeed = buffer(gl, seeds);
+    const U = {};["uProj", "uView", "uModel", "uMix", "uTime", "uSize", "uBurst", "uC1", "uC2", "uOp"].forEach(k => U[k] = gl.getUniformLocation(pm, k));
+    gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE); gl.disable(gl.DEPTH_TEST);
 
-    let dpr=1,mx=0,my=0,tx=0,ty=0,clock=0,current=-1,progress=0,shownIdx=0,mixT=0,burst=0,raf=0,ticking=false,settleT=0;
+    let dpr = 1, mx = 0, my = 0, tx = 0, ty = 0, clock = 0, current = -1, progress = 0, shownIdx = 0, mixT = 0, burst = 0, raf = 0, ticking = false, settleT = 0;
 
-    function sizeStage(){
-      const r=stage.getBoundingClientRect();if(!r.width||!r.height)return false;
-      dpr=Math.min(window.devicePixelRatio||1,2);const w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);
-      if(stage.width===w&&stage.height===h)return true;stage.width=w;stage.height=h;gl.viewport(0,0,w,h);return true;
+    function sizeStage() {
+      const r = stage.getBoundingClientRect(); if (!r.width || !r.height) return false;
+      dpr = Math.min(window.devicePixelRatio || 1, 2); const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+      if (stage.width === w && stage.height === h) return true; stage.width = w; stage.height = h; gl.viewport(0, 0, w, h); return true;
     }
 
-    function readProgress(){
+    function readProgress() {
       // Drive progress from real page scroll through the tall sticky section
       const rect = reel.getBoundingClientRect();
       const totalScrollable = reel.offsetHeight - window.innerHeight;
@@ -1422,27 +1428,38 @@ function shapeSecure(N, out) {
       if (cue) cue.style.opacity = progress > 0.02 ? "0" : "1";
     }
 
-    function drawStage(){
-      const r=stage.getBoundingClientRect();if(r.bottom<0||r.top>window.innerHeight||!sizeStage())return;
-      gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(pm);
-      const aspect=stage.width/stage.height,wideLayout=r.width>=1024;
-      gl.uniformMatrix4fv(U.uProj,false,M.persp(0.9,aspect,0.1,60));
-      gl.uniformMatrix4fv(U.uView,false,wideLayout?M.trans(1.3,0,-4.5):r.width<480?M.trans(0,1.2,-7.1):M.trans(0.2,1.0,-6.8));
+    function drawStage() {
+      const r = stage.getBoundingClientRect(); if (r.bottom < 0 || r.top > window.innerHeight || !sizeStage()) return;
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.useProgram(pm);
+      const aspect = stage.width / stage.height, wideLayout = r.width >= 1024;
+      gl.uniformMatrix4fv(U.uProj, false, M.persp(0.9, aspect, 0.1, 60));
+      gl.uniformMatrix4fv(U.uView, false, wideLayout ? M.trans(1.3, 0, -4.5) : r.width < 480 ? M.trans(0, 1.2, -7.1) : M.trans(0.2, 1.0, -6.8));
       // Front-facing on section entry, then ease into sway (dampen during morph)
-      const settle=Math.min(1,settleT/1.35);
-      const settleEase=settle*settle*(3-2*settle);
-      const morphDamp=1-Math.sin(Math.PI*mixT)*0.9;
-      const amp=settleEase*morphDamp;
-      const yaw=Math.sin(clock*0.22)*0.42*amp+mx*0.45*amp;
-      const pitch=(-0.08+my*0.22)*amp;
-      gl.uniformMatrix4fv(U.uModel,false,M.mul(M.rotY(yaw),M.rotX(pitch)));
-      attrib(gl,pm,"aA",bufs[shownIdx],3);attrib(gl,pm,"aB",bufs[Math.min(shownIdx+1,COUNT-1)],3);attrib(gl,pm,"aSeed",bSeed,1);
-      const t1=TONES[shownIdx],t2=TONES[Math.min(shownIdx+1,COUNT-1)];
-      const lerp=(a,b,k,i)=>a[i]+(b[i]-a[i])*k;
-      gl.uniform3f(U.uC1,lerp(t1[0],t2[0],mixT,0),lerp(t1[0],t2[0],mixT,1),lerp(t1[0],t2[0],mixT,2));
-      gl.uniform3f(U.uC2,lerp(t1[1],t2[1],mixT,0),lerp(t1[1],t2[1],mixT,1),lerp(t1[1],t2[1],mixT,2));
-      gl.uniform1f(U.uMix,mixT);gl.uniform1f(U.uBurst,burst);gl.uniform1f(U.uTime,clock);gl.uniform1f(U.uSize,(r.width<800?2.6:1.95)*dpr);gl.uniform1f(U.uOp,r.width<800?0.9:0.95);
-      gl.drawArrays(gl.POINTS,0,N);
+      const settle = Math.min(1, settleT / 1.35);
+      const settleEase = settle * settle * (3 - 2 * settle);
+      const morphDamp = 1 - Math.sin(Math.PI * mixT) * 0.9;
+      const amp = settleEase * morphDamp;
+      const yaw = Math.sin(clock * 0.22) * 0.42 * amp + mx * 0.45 * amp;
+      const pitch = (-0.08 + my * 0.22) * amp;
+      gl.uniformMatrix4fv(U.uModel, false, M.mul(M.rotY(yaw), M.rotX(pitch)));
+      attrib(gl, pm, "aA", bufs[shownIdx], 3); attrib(gl, pm, "aB", bufs[Math.min(shownIdx + 1, COUNT - 1)], 3); attrib(gl, pm, "aSeed", bSeed, 1);
+      const t1 = TONES[shownIdx], t2 = TONES[Math.min(shownIdx + 1, COUNT - 1)];
+      const lerp = (a, b, k, i) => a[i] + (b[i] - a[i]) * k;
+      gl.uniform3f(U.uC1, lerp(t1[0], t2[0], mixT, 0), lerp(t1[0], t2[0], mixT, 1), lerp(t1[0], t2[0], mixT, 2));
+      gl.uniform3f(U.uC2, lerp(t1[1], t2[1], mixT, 0), lerp(t1[1], t2[1], mixT, 1), lerp(t1[1], t2[1], mixT, 2));
+      gl.uniform1f(U.uMix, mixT); gl.uniform1f(U.uBurst, burst); gl.uniform1f(U.uTime, clock);
+      // gl.uniform1f(U.uSize, (r.width < 800 ? 2.6 : 1.95) * dpr); 
+      // gl.uniform1f(U.uOp, r.width < 800 ? 0.9 : 0.95);
+      gl.uniform1f(
+        U.uSize,
+        (r.width < 800 ? 2.0 : 1.95) * dpr
+      );
+
+      gl.uniform1f(
+        U.uOp,
+        r.width < 800 ? 0.4 : 0.95
+      );
+      gl.drawArrays(gl.POINTS, 0, N);
     }
 
     // Nav dots jump the page scroll to the matching service

@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Menu, X } from 'lucide-react';
+import {  Menu, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 const companyLogo = `${process.env.PUBLIC_URL}/xsavlab_logo.png`;
 
 const Navbar = ({ onScheduleClick }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  // const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     setScrolled(window.scrollY > 50);
+  //   };
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => window.removeEventListener('scroll', handleScroll);
+  // }, []);
 
   const menuItems = [
     { label: 'About', href: '/about', type: 'route' },
@@ -80,7 +80,7 @@ const Navbar = ({ onScheduleClick }) => {
           {/* Logo */}
           <motion.div
             onClick={() => navigate('/')}
-            className="lg:flex hidden items-center space-x-3 cursor-pointer"
+            className="flex items-center space-x-3 cursor-pointer"
             whileHover={{ scale: 1.02 }}
           >
             <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/30 p-1.5 rounded-lg">
@@ -93,14 +93,14 @@ const Navbar = ({ onScheduleClick }) => {
               <span className="text-xs text-gray-400 tracking-wider">CYBERSECURITY SERVICES</span>
             </div>
           </motion.div>
-          <button
+          {/* <button
             type="button"
             className="lg:hidden text-white p-2 hover:bg-white/5 rounded-lg transition-colors"
             onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}
             aria-label="Go back"
           >
             <ArrowLeft size={24} aria-hidden="true" />
-          </button>
+          </button> */}
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center space-x-1">
