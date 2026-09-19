@@ -42,9 +42,10 @@ const VentureCard = ({ venture, index }) => {
       console.error('Failed to track click:', error);
     }
 
-    // Open website
-    if (venture.website) {
-      window.open(venture.website, '_blank');
+    // Open website (API stores websiteUrl; keep website as fallback)
+    const url = venture.websiteUrl || venture.website;
+    if (url) {
+      window.open(url, '_blank');
     }
   };
 

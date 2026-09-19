@@ -168,8 +168,8 @@ const CareersPage = () => {
               </p>
               <p className="text-gray-400">
                 Check back soon or send us your resume at{' '}
-                <a href="mailto:careers@xsavlab.com" className="text-[#38BDF8] hover:underline">
-                  careers@xsavlab.com
+                <a href="mailto:xsavtechnology@gmail.com" className="text-[#38BDF8] hover:underline">
+                  xsavtechnology@gmail.com
                 </a>
               </p>
             </motion.div>
@@ -369,8 +369,19 @@ const CareersPage = () => {
               Send us your resume and let's talk about future opportunities!
             </p>
             <a
-              href="mailto:careers@xsavlab.com"
-              className="inline-block bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white px-8 py-4 rounded-lg font-semibold transition-colors"
+              href="mailto:xsavtechnology@gmail.com?subject=Resume%20-%20XSAV%20Lab%20Careers"
+              onClick={(e) => {
+                e.preventDefault();
+                const email = 'xsavtechnology@gmail.com';
+                const subject = encodeURIComponent('Resume - XSAV Lab Careers');
+                // Open Gmail compose in a new tab (works even with no desktop mail app)
+                window.open(
+                  `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}`,
+                  '_blank',
+                  'noopener,noreferrer'
+                );
+              }}
+              className="inline-block bg-[#38BDF8] hover:bg-[#38BDF8]/80 text-white px-8 py-4 rounded-lg font-semibold transition-colors cursor-pointer"
             >
               Send Your Resume
             </a>
