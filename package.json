@@ -9,7 +9,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.30.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^6.2.2"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.1",
