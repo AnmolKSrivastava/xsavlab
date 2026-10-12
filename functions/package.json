@@ -33,7 +33,8 @@
     "qs": "^6.15.2",
     "js-yaml": "^4.1.2",
     "websocket-driver": "^0.7.5",
-    "ts-deepmerge": "^8.0.0"
+    "ts-deepmerge": "^8.0.0",
+    "proxy-addr": "^2.0.8"
   },
   "private": true
 }
